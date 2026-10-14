@@ -28,8 +28,7 @@ const STANDARD_EVENTS = new Set([
   'SubmitApplication',
 ]);
 
-/** ID efectivo: el de la configuración; para pruebas, PUBLIC_META_PIXEL_ID en .env. */
-export const pixelId: string = SITE.metaPixelId || (import.meta.env.PUBLIC_META_PIXEL_ID as string | undefined) || '';
+const pixelId: string = SITE.metaPixelId;
 
 let granted = false;
 let loaded = false;

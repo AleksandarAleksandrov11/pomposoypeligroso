@@ -1,8 +1,11 @@
 /**
  * Atribución: UTMs, IDs de campaña, fbclid/fbc/fbp y datos del dispositivo.
- * Guarda primer y último contacto en localStorage durante 30 días, para no perderlos
- * si la usuaria navega a las páginas legales y vuelve.
+ * Guarda primer y último contacto para no perderlos si la usuaria navega a las páginas
+ * legales y vuelve:
+ *  - Con consentimiento de marketing: localStorage durante 30 días.
+ *  - Sin consentimiento: sessionStorage (solo mientras la pestaña está abierta).
  */
+import { readConsent } from './consent';
 
 const FIRST_KEY = 'pyp_first_touch';
 const LAST_KEY = 'pyp_last_touch';
@@ -34,12 +37,21 @@ export interface Touch extends Partial<Record<ParamName, string>> {
   ts: number;
 }
 
+function store(): Storage | null {
+  try {
+    return readConsent()?.marketing ? localStorage : sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
 function read(key: string): Touch | null {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
     if (!raw) return null;
     const t = JSON.parse(raw) as Touch;
     if (!t.ts || Date.now() - t.ts > TTL_MS) {
+      sessionStorage.removeItem(key);
       localStorage.removeItem(key);
       return null;
     }
@@ -51,9 +63,29 @@ function read(key: string): Touch | null {
 
 function write(key: string, t: Touch) {
   try {
-    localStorage.setItem(key, JSON.stringify(t));
+    store()?.setItem(key, JSON.stringify(t));
   } catch {
     /* sin almacenamiento disponible */
+  }
+}
+
+/** Mueve los datos al almacenamiento que toca cuando cambia el consentimiento. */
+export function syncAttributionStorage() {
+  try {
+    const marketing = !!readConsent()?.marketing;
+    for (const key of [FIRST_KEY, LAST_KEY]) {
+      const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
+      if (!raw) continue;
+      if (marketing) {
+        localStorage.setItem(key, raw);
+        sessionStorage.removeItem(key);
+      } else {
+        sessionStorage.setItem(key, raw);
+        localStorage.removeItem(key);
+      }
+    }
+  } catch {
+    /* sin almacenamiento */
   }
 }
 

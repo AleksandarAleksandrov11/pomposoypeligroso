@@ -9,7 +9,7 @@ import { track, hasMarketingConsent } from './pixel';
 import { getAttribution } from './tracking';
 
 const DEV = import.meta.env.DEV;
-const ENDPOINT: string = SITE.formEndpoint || (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) || '';
+const ENDPOINT: string = SITE.formEndpoint;
 const TIMEOUT_MS = 12000;
 const PROGRESS_KEY = 'pyp_form_progress';
 const STARTED_KEY = 'pyp_form_started';

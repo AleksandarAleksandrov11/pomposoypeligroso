@@ -2,7 +2,7 @@
 /** Símbolo SVG del mono (se define una vez por página y se reutiliza con <use>). */
 ---
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<svg class="mono-sprite" width="0" height="0" aria-hidden="true" focusable="false">
   <symbol id="pyp-mono" viewBox="0 0 1584 1584">
     <circle cx="792" cy="792" r="792" fill="#B9A4F2"></circle>
     <g transform="matrix(1 0 0 -1 0 1584)">
@@ -11,3 +11,12 @@
     </g>
   </symbol>
 </svg>
+
+<style>
+  .mono-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

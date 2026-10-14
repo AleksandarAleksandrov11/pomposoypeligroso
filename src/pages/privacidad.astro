@@ -1,0 +1,121 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { SITE, hasPhone } from '../config/site';
+const L = SITE.legal;
+---
+
+<Legal title="Política de privacidad" description="Cómo tratamos tus datos cuando rellenas el formulario de Pomposo y Peligroso." path="/privacidad">
+  <p>
+    Esta política explica qué datos personales recogemos en esta web, para qué los usamos y qué derechos tienes. Se aplica
+    el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos
+    digitales (LOPDGDD).
+  </p>
+
+  <h2>1. Responsable del tratamiento</h2>
+  <dl>
+    <dt>Responsable</dt>
+    <dd>{L.company} ({SITE.name})</dd>
+    <dt>CIF</dt>
+    <dd>{L.cif}</dd>
+    <dt>Domicilio</dt>
+    <dd>{L.address}</dd>
+    <dt>Email</dt>
+    <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+    {
+      hasPhone && (
+        <>
+          <dt>Teléfono</dt>
+          <dd>
+            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>
+          </dd>
+        </>
+      )
+    }
+  </dl>
+
+  <h2>2. Qué datos tratamos</h2>
+  <p>Cuando rellenas el formulario nos facilitas:</p>
+  <ul>
+    <li>Tu tramo de edad y el tiempo que llevas entrenando.</li>
+    <li>Tu nombre.</li>
+    <li>Tu número de teléfono.</li>
+  </ul>
+  <p>Además, junto con tu solicitud se guardan de forma automática:</p>
+  <ul>
+    <li>
+      Datos de campaña: de qué anuncio, campaña o enlace llegas (parámetros UTM, identificadores de campaña, conjunto y
+      anuncio de Meta, ubicación del anuncio y el identificador de clic <em>fbclid</em>).
+    </li>
+    <li>
+      Datos técnicos: tipo de dispositivo, navegador, si usas el navegador de Instagram o Facebook, tamaño de pantalla,
+      idioma, página de llegada, página de procedencia, fecha y hora, el tiempo que tardaste en completar el formulario y
+      un identificador único del envío para no contar dos veces la misma solicitud.
+    </li>
+    <li>
+      Solo si aceptas las cookies de marketing: los identificadores de las cookies de Meta (<em>_fbp</em> y <em>_fbc</em>).
+    </li>
+  </ul>
+  <p>No pedimos datos de salud. Si nos los cuentas después por WhatsApp o en la videollamada, los usaremos solo para valorar si el programa encaja contigo.</p>
+
+  <h2>3. Para qué los usamos</h2>
+  <ul>
+    <li>Contactarte por WhatsApp o por teléfono para informarte del programa y agendar una videollamada.</li>
+    <li>Saber qué anuncios y campañas funcionan, para mejorar nuestra publicidad.</li>
+    <li>Detectar envíos automáticos o fraudulentos.</li>
+  </ul>
+  <p>No tomamos decisiones automatizadas que te afecten ni elaboramos perfiles con efectos jurídicos.</p>
+
+  <h2>4. Base legal</h2>
+  <p>
+    Tu consentimiento (artículo 6.1.a del RGPD), que nos das al marcar la casilla del formulario. En el caso del píxel de
+    Meta, tu consentimiento en el banner o en la configuración de cookies. Puedes retirarlo cuando quieras, sin que afecte
+    a lo tratado antes.
+  </p>
+
+  <h2>5. Cuánto tiempo los conservamos</h2>
+  <p>
+    Hasta que retires tu consentimiento y, como máximo, 12 meses desde tu solicitud si no te unes al programa. Si te haces
+    alumna, tus datos pasan a tratarse según las condiciones del servicio y las obligaciones legales que correspondan.
+  </p>
+
+  <h2>6. Quién más accede a tus datos</h2>
+  <p>No vendemos tus datos. Solo acceden a ellos proveedores que nos prestan un servicio, con contrato de encargo de tratamiento:</p>
+  <ul>
+    <li><strong>Google LLC</strong> (Google Sheets y Google Apps Script), donde se guardan las solicitudes.</li>
+    <li><strong>Vercel Inc.</strong>, que aloja esta web.</li>
+    <li>
+      <strong>Meta Platforms Ireland Ltd.</strong>, solo si aceptas las cookies de marketing, para medir los anuncios de
+      Instagram y Facebook.
+    </li>
+    <li><strong>WhatsApp Ireland Ltd.</strong>, cuando te escribimos o nos escribes por WhatsApp.</li>
+  </ul>
+  <p>
+    Algunos de estos proveedores pueden tratar datos en Estados Unidos. Esas transferencias están amparadas por el Marco de
+    Privacidad de Datos UE‑EE. UU. (Data Privacy Framework) o por las cláusulas contractuales tipo aprobadas por la Comisión
+    Europea.
+  </p>
+
+  <h2>7. Tus derechos</h2>
+  <p>
+    Puedes pedir el acceso, la rectificación o la supresión de tus datos, oponerte a su tratamiento, pedir su limitación o
+    su portabilidad y retirar tu consentimiento. Escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a> indicando
+    qué derecho quieres ejercer. Te responderemos en el plazo de un mes.
+  </p>
+  <p>
+    Si crees que no hemos tratado bien tus datos, puedes reclamar ante la Agencia Española de Protección de Datos:
+    <a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>.
+  </p>
+
+  <h2>8. Edad mínima</h2>
+  <p>El programa y este formulario son solo para mayores de 18 años. Si eres menor de edad, no nos envíes tus datos.</p>
+
+  <h2>9. Seguridad</h2>
+  <p>
+    Aplicamos medidas técnicas y organizativas para proteger tus datos: conexión cifrada (HTTPS), acceso restringido a la
+    hoja de solicitudes y revisión de los proveedores. Si el envío del formulario falla, tu solicitud se guarda solo en tu
+    propio navegador para reintentarlo en tu próxima visita.
+  </p>
+
+  <h2>10. Cambios</h2>
+  <p>Podemos actualizar esta política. Publicaremos aquí cualquier cambio con su fecha de actualización.</p>
+</Legal>

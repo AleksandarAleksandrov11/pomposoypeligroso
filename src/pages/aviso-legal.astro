@@ -1,0 +1,93 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { SITE, hasPhone } from '../config/site';
+const L = SITE.legal;
+const site = Astro.site ?? new URL('http://localhost:4321');
+const domain = site.hostname;
+---
+
+<Legal title="Aviso legal" description="Aviso legal de la web de Pomposo y Peligroso, de The Monkeys Centro de Entrenamiento S.L." path="/aviso-legal">
+  <h2>1. Datos identificativos</h2>
+  <p>
+    En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de
+    Comercio Electrónico (LSSI‑CE), te informamos de los datos del titular de esta web:
+  </p>
+  <dl>
+    <dt>Titular</dt>
+    <dd>{L.company}</dd>
+    <dt>Marca</dt>
+    <dd>{SITE.name}</dd>
+    <dt>CIF</dt>
+    <dd>{L.cif}</dd>
+    <dt>Domicilio</dt>
+    <dd>{L.address}</dd>
+    <dt>Email</dt>
+    <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+    {
+      hasPhone && (
+        <>
+          <dt>Teléfono</dt>
+          <dd>
+            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>
+          </dd>
+        </>
+      )
+    }
+    <dt>Datos registrales</dt>
+    <dd>{L.registry || 'Sociedad inscrita en el Registro Mercantil de Barcelona.'}</dd>
+  </dl>
+
+  <h2>2. Objeto</h2>
+  <p>
+    Esta web ({domain}) informa sobre {SITE.name}, un programa online de entrenamiento, nutrición y seguimiento para mujeres,
+    y permite solicitar que te contactemos para explicarte el programa. Rellenar el formulario no supone ninguna
+    contratación ni compromiso de compra.
+  </p>
+
+  <h2>3. Condiciones de uso</h2>
+  <p>
+    Al navegar por esta web aceptas este aviso legal. Te comprometes a usarla de forma lícita, a no dañar ni sobrecargar
+    sus sistemas y a facilitar datos verdaderos cuando rellenes el formulario. Podemos modificar los contenidos y estas
+    condiciones en cualquier momento; la versión aplicable es la publicada en cada momento.
+  </p>
+
+  <h2>4. Propiedad intelectual e industrial</h2>
+  <p>
+    Los textos, el diseño, el logotipo, la marca {SITE.name} y el resto de contenidos de esta web pertenecen a {L.company} o
+    se usan con licencia de sus titulares. No está permitido reproducirlos, distribuirlos ni transformarlos sin
+    autorización previa por escrito, salvo para tu uso personal y privado.
+  </p>
+  <p>
+    Algunas fotografías proceden de bancos de imágenes con licencia de uso comercial y no muestran a alumnas del programa.
+  </p>
+
+  <h2>5. Responsabilidad</h2>
+  <p>
+    Trabajamos para que la información de esta web sea correcta y esté actualizada, pero no garantizamos que no contenga
+    errores ni que esté siempre disponible. No respondemos de los daños derivados de interrupciones técnicas, virus o un
+    uso de la web contrario a este aviso.
+  </p>
+  <p>
+    Los enlaces a webs de terceros (por ejemplo, Instagram o WhatsApp) se ofrecen solo como referencia. No controlamos
+    esos sitios ni somos responsables de sus contenidos o de sus políticas.
+  </p>
+
+  <h2>6. Salud</h2>
+  <p>
+    La información de esta web es general y no sustituye el consejo de un profesional sanitario. Si tienes alguna
+    patología, lesión, estás embarazada o tomas medicación, consulta con tu médico antes de empezar cualquier programa de
+    entrenamiento o nutrición. Los resultados dependen de cada persona.
+  </p>
+
+  <h2>7. Protección de datos y cookies</h2>
+  <p>
+    El tratamiento de tus datos personales se explica en la <a href="/privacidad">Política de privacidad</a> y el uso de
+    cookies en la <a href="/cookies">Política de cookies</a>.
+  </p>
+
+  <h2>8. Legislación aplicable y jurisdicción</h2>
+  <p>
+    Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados
+    y tribunales que correspondan conforme a la ley. Si actúas como consumidora, serán competentes los de tu domicilio.
+  </p>
+</Legal>

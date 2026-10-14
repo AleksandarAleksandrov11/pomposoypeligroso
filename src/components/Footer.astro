@@ -210,8 +210,8 @@ const year = new Date().getFullYear();
     user-select: none;
   }
   @media (max-width: 767px) {
-    .site-footer {
-      /* Hueco para que la barra fija móvil no tape el final del footer */
+    /* Hueco para que la barra fija móvil no tape el final del footer (solo en páginas con barra) */
+    :global(body:has([data-mobilebar])) .site-footer {
       padding-bottom: calc(var(--mobilebar-h) + env(safe-area-inset-bottom, 0px));
     }
   }

@@ -19,6 +19,7 @@ interface Props {
   home?: boolean;
   /** Texto y destino del enlace "saltar". */
   skipTo?: { href: string; label: string };
+  headerCta?: boolean;
 }
 
 const {
@@ -28,6 +29,7 @@ const {
   noindex = false,
   home = false,
   skipTo = { href: '#contenido', label: 'Saltar al contenido' },
+  headerCta = true,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('http://localhost:4321');
@@ -83,7 +85,7 @@ const ogImage = new URL('/og.jpg', site).href;
   <body id="top">
     <a class="skip-link" href={skipTo.href}>{skipTo.label}</a>
     <MonoSprite />
-    <Header home={home} />
+    <Header home={home} cta={headerCta} />
     <main id="contenido">
       <slot />
     </main>

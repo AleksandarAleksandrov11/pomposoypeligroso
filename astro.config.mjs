@@ -26,4 +26,31 @@ export default defineConfig({
   image: {
     responsiveStyles: false,
   },
+  /**
+   * Content-Security-Policy en una <meta> con hashes de los scripts y estilos inline.
+   * Permite: el píxel de Meta (connect.facebook.net / www.facebook.com) y el envío del
+   * formulario al Apps Script (script.google.com, que redirige a script.googleusercontent.com).
+   * Si añades otro proveedor (TikTok, Google Ads...), añade aquí su dominio.
+   */
+  security: {
+    csp: {
+      algorithm: 'SHA-256',
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data: https://www.facebook.com",
+        "font-src 'self'",
+        "connect-src 'self' https://script.google.com https://script.googleusercontent.com https://www.facebook.com https://connect.facebook.net",
+        "manifest-src 'self'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "object-src 'none'",
+      ],
+      scriptDirective: {
+        resources: ["'self'", 'https://connect.facebook.net'],
+      },
+      styleDirective: {
+        resources: ["'self'"],
+      },
+    },
+  },
 });

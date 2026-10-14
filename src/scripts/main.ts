@@ -1,14 +1,16 @@
 /**
  * Punto de entrada común a todas las páginas.
- * Orden: atribución → consentimiento (y píxel si procede) → interfaz → leads pendientes.
+ * Orden: consentimiento (y píxel si procede) → atribución → interfaz → leads pendientes.
  */
-import { captureAttribution } from './tracking';
+import { captureAttribution, syncAttributionStorage } from './tracking';
 import { initConsent } from './consent';
 import { initUI } from './ui';
 import { retryPendingLeads } from './form';
 
-captureAttribution();
 initConsent();
+syncAttributionStorage();
+captureAttribution();
+document.addEventListener('pyp:consent', syncAttributionStorage);
 initUI();
 
 const idle = (cb: () => void) =>

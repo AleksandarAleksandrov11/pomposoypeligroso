@@ -4,8 +4,10 @@ import Logo from './Logo.astro';
 interface Props {
   /** En la home los enlaces son anclas; en el resto de páginas apuntan a la home. */
   home?: boolean;
+  /** Mostrar el botón "Quiero mi plaza" (se oculta en /gracias). */
+  cta?: boolean;
 }
-const { home = true } = Astro.props;
+const { home = true, cta = true } = Astro.props;
 const base = home ? '' : '/';
 ---
 
@@ -17,7 +19,7 @@ const base = home ? '' : '/';
       <a href={`${base}#resultados`}>Resultados</a>
       <a href={`${base}#preguntas`}>Preguntas</a>
     </nav>
-    <a class="btn site-header__cta" href={`${base}#formulario`} data-cta="header">Quiero mi plaza</a>
+    {cta && <a class="btn site-header__cta" href={`${base}#formulario`} data-cta="header">Quiero mi plaza</a>}
   </div>
 </header>
 

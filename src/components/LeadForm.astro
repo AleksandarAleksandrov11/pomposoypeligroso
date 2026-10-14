@@ -306,10 +306,17 @@ const prefixes: [string, string][] = [
     margin: 0;
     padding: 0;
     border: 0;
+    /* La que sale se oculta al terminar la animación; la que entra es visible al instante (para poder recibir el foco) */
     transition:
       opacity 0.2s ease,
       transform 0.2s ease,
-      visibility 0.2s;
+      visibility 0s linear 0.2s;
+  }
+  .step.is-active {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s;
   }
   .step:not(.is-active) {
     visibility: hidden;
