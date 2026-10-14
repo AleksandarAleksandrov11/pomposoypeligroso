@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check:copy": "node scripts/check-copy.mjs",
-    "test:apps-script": "node --test apps-script/test/"
+    "test:apps-script": "node --test apps-script/test/code.test.mjs"
   },
   "engines": {
     "node": ">=22.12.0"
