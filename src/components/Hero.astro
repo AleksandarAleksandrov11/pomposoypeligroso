@@ -1,0 +1,152 @@
+---
+import Pic from './Pic.astro';
+import heroV from '../assets/img/hero-mujer-sentadilla-goblet-vertical.jpg';
+import heroH from '../assets/img/hero-mujer-sentadilla-goblet-horizontal.jpg';
+import { HERO } from '../lib/images';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__media">
+      <span class="hero__circle" aria-hidden="true"></span>
+      <Pic
+        src={heroV}
+        art={[{ src: heroH, media: HERO.media, widths: HERO.widths, sizes: HERO.sizesMobile }]}
+        widths={HERO.widths}
+        sizes={HERO.sizesDesktop}
+        alt="Mujer sonriente haciendo una sentadilla con mancuerna en el gimnasio, vista de lado"
+        priority
+        class="hero__img"
+        pictureClass="hero__picture"
+      />
+    </div>
+
+    <div class="hero__content">
+      <p class="pill">Para mujeres +30</p>
+      <h1 id="hero-title">Un glúteo pomposo. <span class="script">Y peligroso.</span></h1>
+      <p class="hero__lead">
+        Programa online de 12 semanas. Entrenas 3 días por semana, comes sin dietas restrictivas y tienes a alguien que
+        revisa tu progreso cada semana.
+      </p>
+      <div class="hero__ctas">
+        <a class="btn btn--block-mobile" href="#formulario" data-hero-cta data-cta="hero">Quiero mi plaza</a>
+        <a class="link" href="#resultados">Ver resultados</a>
+      </div>
+      <p class="micro hero__note">Rellénalo en 30 segundos. Te escribimos nosotras.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    overflow-x: clip;
+    padding-top: 12px;
+    padding-bottom: clamp(48px, 7vw, 96px);
+  }
+  .hero__grid {
+    display: grid;
+    gap: 22px;
+  }
+  .hero__media {
+    position: relative;
+    isolation: isolate;
+  }
+  .hero__circle {
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    background: var(--lilac);
+    width: 46%;
+    aspect-ratio: 1;
+    right: -8%;
+    top: -14%;
+  }
+  .hero__media :global(.hero__picture) {
+    display: block;
+  }
+  .hero__media :global(.hero__img) {
+    width: 100%;
+    /* Alto calculado para que el CTA se vea sin hacer scroll incluso en un iPhone SE */
+    height: clamp(170px, calc(100vh - 482px), 400px);
+    height: clamp(170px, calc(100svh - 482px), 400px);
+    object-fit: cover;
+    object-position: 50% 40%;
+    border-radius: var(--radius);
+    background: var(--lilac-50);
+  }
+  .hero__content .pill {
+    margin-bottom: 14px;
+  }
+  .hero__lead {
+    margin-top: 14px;
+    max-width: 34rem;
+    color: var(--ink);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 24px;
+    margin-top: 22px;
+  }
+  .hero__note {
+    margin-top: 4px;
+  }
+  @media (max-width: 599px) {
+    .hero__ctas {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .hero__ctas .link {
+      align-self: center;
+    }
+    .hero__note {
+      text-align: center;
+    }
+  }
+  @media (min-width: 600px) and (max-width: 959px) {
+    .hero__media :global(.hero__img) {
+      height: clamp(260px, calc(100svh - 500px), 460px);
+    }
+  }
+  @media (min-width: 960px) {
+    .hero {
+      padding-top: clamp(24px, 4vw, 56px);
+    }
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: center;
+      gap: clamp(40px, 6vw, 96px);
+      min-height: min(calc(100svh - var(--header-h) - 80px), 720px);
+    }
+    .hero__media {
+      order: 2;
+      justify-self: end;
+      width: min(100%, 460px);
+    }
+    .hero__media :global(.hero__img) {
+      height: auto;
+      aspect-ratio: 4 / 5;
+      object-position: 30% 50%;
+      border-radius: 28px;
+    }
+    .hero__circle {
+      width: 78%;
+      right: -16%;
+      top: -10%;
+    }
+    .hero__content {
+      order: 1;
+    }
+    .hero__lead {
+      margin-top: 30px;
+      font-size: 1.1875rem;
+    }
+    .hero__ctas {
+      margin-top: 32px;
+    }
+    .hero__note {
+      margin-top: 14px;
+    }
+  }
+</style>

@@ -1,0 +1,246 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { SITE, hasWhatsApp, hasPhone, whatsappUrl } from '../config/site';
+
+interface Props {
+  home?: boolean;
+}
+const { home = true } = Astro.props;
+const base = home ? '' : '/';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <Logo href={home ? '#top' : '/'} variant="footer" />
+        <p>Programa online de transformación física para mujeres +30.</p>
+        <div class="site-footer__social">
+          <a class="icon-btn" href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram de Pomposo y Peligroso">
+            <Icon name="instagram" size={22} />
+          </a>
+          {
+            hasWhatsApp && (
+              <a
+                class="icon-btn"
+                href={whatsappUrl()}
+                target="_blank"
+                rel="noopener"
+                aria-label="Escríbenos por WhatsApp"
+                data-contact="whatsapp"
+                data-location="footer-social"
+              >
+                <Icon name="whatsapp" size={22} />
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <nav class="site-footer__col" aria-labelledby="f-web">
+        <h2 id="f-web">Web</h2>
+        <ul role="list">
+          <li><a href={`${base}#como-funciona`}>Cómo funciona</a></li>
+          <li><a href={`${base}#resultados`}>Resultados</a></li>
+          <li><a href={`${base}#preguntas`}>Preguntas</a></li>
+          <li><a href={`${base}#formulario`}>Quiero mi plaza</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__col">
+        <h2 id="f-contacto">Contacto</h2>
+        <ul role="list" aria-labelledby="f-contacto">
+          {
+            hasPhone && (
+              <li>
+                <a href={SITE.phoneHref} data-contact="phone" data-location="footer">
+                  {SITE.phoneDisplay}
+                </a>
+              </li>
+            )
+          }
+          {
+            hasWhatsApp && (
+              <li>
+                <a href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="footer">
+                  WhatsApp
+                </a>
+              </li>
+            )
+          }
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a href={SITE.instagram} target="_blank" rel="noopener">Instagram {SITE.instagramHandle}</a></li>
+        </ul>
+      </div>
+
+      <nav class="site-footer__col" aria-labelledby="f-legal">
+        <h2 id="f-legal">Legal</h2>
+        <ul role="list">
+          <li><a href="/aviso-legal">Aviso legal</a></li>
+          <li><a href="/privacidad">Política de privacidad</a></li>
+          <li><a href="/cookies">Política de cookies</a></li>
+          <li><button type="button" class="site-footer__cookies" data-open-cookies>Configurar cookies</button></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>
+        © <span data-year>{year}</span> Pomposo y Peligroso · {SITE.legal.company} · CIF {SITE.legal.cif} · Gavà, Barcelona
+      </p>
+      <p class="site-footer__disclaimer">Los resultados dependen de cada persona. Este programa no sustituye el consejo médico.</p>
+      <a class="site-footer__top" href="#top">Volver arriba <Icon name="arrow-up" size={18} /></a>
+    </div>
+  </div>
+  <p class="site-footer__giant" aria-hidden="true">Pomposo y Peligroso</p>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--on-dark);
+    padding-top: clamp(64px, 8vw, 96px);
+    font-size: var(--fs-small);
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: 40px;
+  }
+  .site-footer__brand p {
+    margin-top: 16px;
+    max-width: 30ch;
+    color: var(--on-dark);
+  }
+  .site-footer__social {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgb(233 224 255 / 0.28);
+    border-radius: 50%;
+    color: var(--white);
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .icon-btn:hover {
+    background: rgb(233 224 255 / 0.1);
+    border-color: var(--lilac);
+  }
+  .site-footer__col h2 {
+    font-family: var(--font-text);
+    font-stretch: normal;
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lilac);
+    margin-bottom: 10px;
+  }
+  .site-footer__col ul {
+    display: grid;
+    gap: 2px;
+  }
+  .site-footer__col a,
+  .site-footer__cookies {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--white);
+    text-decoration: none;
+    text-align: left;
+    overflow-wrap: anywhere;
+    transition: color 0.2s ease;
+  }
+  .site-footer__col a:hover,
+  .site-footer__cookies:hover {
+    color: var(--lilac);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .site-footer__bottom {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid rgb(233 224 255 / 0.16);
+    display: grid;
+    gap: 10px;
+    color: var(--on-dark);
+  }
+  .site-footer__disclaimer {
+    font-size: var(--fs-micro);
+  }
+  .site-footer__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    width: fit-content;
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .site-footer__top:hover {
+    color: var(--lilac);
+  }
+  .site-footer__giant {
+    margin: 24px 0 0;
+    padding: 0 8px calc(var(--mobile-safe-bottom, 0px) + 4px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: 12.4vw;
+    line-height: 0.8;
+    letter-spacing: -0.01em;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--white);
+    opacity: 0.08;
+    user-select: none;
+  }
+  @media (max-width: 767px) {
+    .site-footer {
+      /* Hueco para que la barra fija móvil no tape el final del footer */
+      padding-bottom: calc(var(--mobilebar-h) + env(safe-area-inset-bottom, 0px));
+    }
+  }
+  @media (min-width: 640px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .site-footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .site-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+      gap: 32px;
+    }
+    .site-footer__brand {
+      grid-column: auto;
+    }
+    .site-footer__bottom {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+    .site-footer__disclaimer {
+      grid-column: 1;
+    }
+    .site-footer__top {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+</style>

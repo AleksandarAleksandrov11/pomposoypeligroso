@@ -1,0 +1,82 @@
+---
+import Pic from './Pic.astro';
+import img from '../assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg';
+---
+
+<section class="section bg-lilac coach" aria-labelledby="coach-title">
+  <div class="container coach__grid">
+    <div class="coach__media" data-reveal>
+      <Pic
+        src={img}
+        widths={[480, 768, 1080]}
+        sizes="(min-width: 960px) 460px, calc(100vw - 40px)"
+        alt="Entrenador de The Monkeys corrigiendo la sentadilla de una alumna en la playa"
+        class="coach__img"
+      />
+    </div>
+    <div class="coach__text">
+      <h2 id="coach-title" data-reveal>Quién está <span class="script">detrás.</span></h2>
+      <p class="coach__lead" data-reveal>
+        Somos el equipo de The Monkeys, un centro de entrenamiento en Gavà. Trabajamos con pocas alumnas a la vez para
+        poder dedicar tiempo de verdad a cada una.
+      </p>
+      <ul class="coach__facts" role="list" data-reveal>
+        <li><strong>+30</strong> alumnas acompañadas</li>
+        <li><strong>Fuerza</strong> y nutrición</li>
+        <li><strong>Seguimiento</strong> individual</li>
+      </ul>
+      <div class="coach__cta" data-reveal>
+        <a class="btn btn--block-mobile" href="#formulario" data-cta="equipo">Quiero mi plaza</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .coach__grid {
+    display: grid;
+    gap: 36px;
+  }
+  .coach__media :global(.coach__img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 70%;
+    border-radius: var(--radius);
+  }
+  .coach__lead {
+    margin-top: 18px;
+    max-width: 34rem;
+  }
+  .coach__facts {
+    display: grid;
+    gap: 0;
+    margin: 28px 0 0;
+    padding: 0;
+    border-top: 1px solid #ddd2f3;
+  }
+  .coach__facts li {
+    padding: 14px 0;
+    border-bottom: 1px solid #ddd2f3;
+    color: var(--muted);
+  }
+  .coach__facts strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .coach__cta {
+    margin-top: 32px;
+  }
+  @media (max-width: 959px) {
+    .coach__media :global(.coach__img) {
+      aspect-ratio: 1 / 1;
+    }
+  }
+  @media (min-width: 960px) {
+    .coach__grid {
+      grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+      align-items: center;
+      gap: clamp(48px, 7vw, 112px);
+    }
+  }
+</style>

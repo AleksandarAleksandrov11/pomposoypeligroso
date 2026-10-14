@@ -1,0 +1,83 @@
+---
+const items = [
+  '12 semanas',
+  '3 o 4 días por semana',
+  'Sesiones de 45 minutos',
+  'Sin dietas restrictivas',
+  'Seguimiento cada semana',
+  'Contacto directo con tu entrenadora',
+  '100 % online',
+  '+30 alumnas acompañadas',
+];
+---
+
+<section class="marquee" aria-label="El programa en datos">
+  <div class="marquee__track">
+    <ul class="marquee__list" role="list">
+      {items.map((t) => <li>{t}</li>)}
+    </ul>
+    <ul class="marquee__list" role="list" aria-hidden="true">
+      {items.map((t) => <li>{t}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    border-block: 1px solid var(--line);
+    background: var(--white);
+    padding-block: 18px;
+  }
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 48s linear infinite;
+  }
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+  .marquee__list {
+    display: flex;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .marquee__list li {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .marquee__list li::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    margin-inline: 22px;
+    border-radius: 50%;
+    background: var(--lilac);
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      width: auto;
+    }
+    .marquee__list {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 8px;
+      padding-inline: var(--gutter);
+    }
+    .marquee__list[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

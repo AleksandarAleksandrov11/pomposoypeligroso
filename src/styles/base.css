@@ -1,0 +1,334 @@
+/* Reset mínimo */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  overflow-x: clip;
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+}
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+}
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+a {
+  color: inherit;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+[hidden] {
+  display: none !important;
+}
+
+/* Foco visible y accesible en toda la web */
+:focus-visible {
+  outline: 3px solid var(--purple);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.on-dark :focus-visible,
+.on-dark:focus-visible {
+  outline-color: var(--white);
+}
+
+/* Tipografía */
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 75%;
+  letter-spacing: -0.005em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--fs-h1);
+}
+h2 {
+  font-size: var(--fs-h2);
+}
+h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* Acento manuscrito en rosa: solo 1 a 3 palabras por titular */
+.script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-stretch: normal;
+  font-size: 1.22em;
+  line-height: 0.8;
+  letter-spacing: 0;
+  color: var(--pink-strong);
+  white-space: nowrap;
+  padding-inline-end: 0.06em;
+}
+.on-dark .script {
+  color: var(--pink);
+}
+
+/* Layout */
+.container {
+  width: 100%;
+  max-width: calc(var(--max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section {
+  padding-block: var(--section-y);
+  scroll-margin-top: var(--header-h);
+}
+.bg-blush {
+  background: var(--blush);
+}
+.bg-lilac {
+  background: var(--lilac-50);
+}
+.bg-dark {
+  background: var(--purple-dark);
+  color: var(--white);
+}
+.section-head {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+.section-head p {
+  margin-top: 16px;
+  color: var(--muted);
+}
+.on-dark .section-head p {
+  color: var(--on-dark);
+}
+.section-cta {
+  margin-top: clamp(40px, 6vw, 56px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+/* Etiqueta lila estilo Instagram (máximo 2 en toda la web) */
+.pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--lilac);
+  color: var(--ink);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Botones */
+.btn {
+  --btn-bg: var(--purple);
+  --btn-bg-hover: var(--purple-dark);
+  --btn-fg: var(--white);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 30px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s var(--ease),
+    transform 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover {
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -8px rgb(75 42 145 / 0.55);
+}
+.btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.btn svg {
+  flex: none;
+}
+.btn--light {
+  --btn-bg: var(--white);
+  --btn-bg-hover: var(--lilac-100);
+  --btn-fg: var(--purple-dark);
+}
+.btn--block {
+  width: 100%;
+}
+@media (max-width: 599px) {
+  .btn--block-mobile {
+    width: 100%;
+  }
+}
+@media (min-width: 600px) {
+  .btn {
+    min-width: 240px;
+  }
+}
+
+/* Enlace secundario de texto */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 8px;
+  color: var(--purple);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+  transition: color 0.2s var(--ease);
+}
+.link:hover {
+  color: var(--purple-dark);
+}
+.on-dark .link {
+  color: var(--white);
+}
+
+.micro {
+  font-size: var(--fs-micro);
+  color: var(--muted);
+  line-height: 1.45;
+}
+.on-dark .micro {
+  color: var(--on-dark);
+}
+
+/* Numeración tipográfica 01, 02, 03 */
+.num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+  color: var(--purple);
+  line-height: 1;
+}
+
+/* Accesibilidad */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 0.2s var(--ease);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline-color: var(--lilac);
+}
+
+/* Aparición suave al hacer scroll. El contenido es visible por defecto:
+   ui.ts solo añade .reveal a lo que está fuera de pantalla (y nunca con reduced motion). */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.35s ease-out,
+    transform 0.35s ease-out;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

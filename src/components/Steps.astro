@@ -1,0 +1,131 @@
+---
+import Pic from './Pic.astro';
+import img from '../assets/img/entrenadora-guia-puente-de-gluteo.jpg';
+const steps = [
+  { t: 'Rellenas el formulario.', d: '4 preguntas, 30 segundos.' },
+  { t: 'Hablamos por videollamada.', d: 'Vemos tu situación, tus objetivos y si el programa encaja contigo.' },
+  { t: 'Empiezas tus 12 semanas.', d: 'Con tu plan de entreno, tu nutrición y tu entrenadora pendiente de ti.' },
+];
+---
+
+<section class="section steps" id="como-funciona" aria-labelledby="steps-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="steps-title">Así <span class="script">funciona.</span></h2>
+    </div>
+    <div class="steps__grid">
+      <ol class="steps__list" role="list">
+        {
+          steps.map((s, i) => (
+            <li class="steps__item" data-reveal>
+              <span class="steps__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3>{s.t}</h3>
+                <p>{s.d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="steps__media" data-reveal>
+        <Pic
+          src={img}
+          widths={[480, 768, 1080, 1600]}
+          sizes="(min-width: 1184px) 1120px, calc(100vw - 40px)"
+          alt="Entrenadora guiando a una alumna que hace un puente de glúteo con banda elástica"
+          class="steps__img"
+        />
+      </div>
+    </div>
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="como-funciona">Quiero mi plaza</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps__grid {
+    display: grid;
+    gap: 40px;
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+  .steps__list {
+    display: grid;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+  }
+  .steps__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  /* Línea lila que une un paso con el siguiente */
+  .steps__item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 56px;
+    bottom: -30px;
+    width: 2px;
+    background: var(--lilac);
+  }
+  .steps__num {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--lilac);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: 1.375rem;
+  }
+  .steps__item h3 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
+  .steps__item p {
+    color: var(--muted);
+  }
+  .steps__media :global(.steps__img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  @media (min-width: 900px) {
+    .steps__list {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .steps__item {
+      grid-template-columns: 1fr;
+      align-content: start;
+      gap: 0;
+    }
+    .steps__item:not(:last-child)::after {
+      left: 64px;
+      right: -32px;
+      top: 27px;
+      bottom: auto;
+      width: auto;
+      height: 2px;
+    }
+    .steps__item h3 {
+      margin-top: 22px;
+    }
+    .steps__media :global(.steps__img) {
+      aspect-ratio: 21 / 8;
+      object-position: 50% 62%;
+    }
+  }
+</style>

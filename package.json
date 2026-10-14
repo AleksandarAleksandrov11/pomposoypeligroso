@@ -1,0 +1,21 @@
+{
+  "name": "pomposo-y-peligroso-landing",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing de captación para Meta Ads de Pomposo y Peligroso",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:copy": "node scripts/check-copy.mjs",
+    "test:apps-script": "node --test apps-script/test/"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "astro": "^7.3.8",
+    "sharp": "^0.35.5"
+  }
+}

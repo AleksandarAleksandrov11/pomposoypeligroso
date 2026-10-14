@@ -1,0 +1,82 @@
+---
+import Icon from './Icon.astro';
+import { hasWhatsApp, whatsappUrl } from '../config/site';
+---
+
+{
+  hasWhatsApp && (
+    <a
+      class="wa-fab"
+      href={whatsappUrl()}
+      target="_blank"
+      rel="noopener"
+      aria-label="Escríbenos por WhatsApp"
+      data-contact="whatsapp"
+      data-location="fab"
+      data-wa-fab
+    >
+      <Icon name="whatsapp" size={28} />
+      <span class="wa-fab__tip" aria-hidden="true">Escríbenos</span>
+    </a>
+  )
+}
+
+<style>
+  .wa-fab {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .wa-fab {
+      position: fixed;
+      right: 24px;
+      bottom: calc(24px + var(--banner-h, 0px));
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--purple);
+      color: var(--white);
+      box-shadow: 0 8px 20px -10px rgb(30 21 48 / 0.6);
+      transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        visibility 0.2s,
+        bottom 0.2s ease;
+    }
+    .wa-fab:hover {
+      background: var(--purple-dark);
+      transform: translateY(-1px);
+    }
+    .wa-fab:global(.is-hidden) {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+    }
+    .wa-fab__tip {
+      position: absolute;
+      right: calc(100% + 12px);
+      top: 50%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: var(--fs-small);
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translate(6px, -50%);
+      pointer-events: none;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+    .wa-fab:hover .wa-fab__tip,
+    .wa-fab:focus-visible .wa-fab__tip {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+  }
+</style>

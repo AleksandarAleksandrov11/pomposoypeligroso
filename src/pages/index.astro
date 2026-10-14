@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import Pains from '../components/Pains.astro';
+import Accountability from '../components/Accountability.astro';
+import Includes from '../components/Includes.astro';
+import Compare from '../components/Compare.astro';
+import Steps from '../components/Steps.astro';
+import Results from '../components/Results.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Coach from '../components/Coach.astro';
+import ForYou from '../components/ForYou.astro';
+import LeadForm from '../components/LeadForm.astro';
+import Faq from '../components/Faq.astro';
+import Closing from '../components/Closing.astro';
+import MobileBar from '../components/MobileBar.astro';
+import heroV from '../assets/img/hero-mujer-sentadilla-goblet-vertical.jpg';
+import heroH from '../assets/img/hero-mujer-sentadilla-goblet-horizontal.jpg';
+import { buildSources, HERO } from '../lib/images';
+import { SITE } from '../config/site';
+
+// Precarga del hero (mismas URLs que genera <Pic>), una por recorte.
+const heroMobile = await buildSources(heroH, HERO.widths);
+const heroDesktop = await buildSources(heroV, HERO.widths);
+
+const site = Astro.site ?? new URL('http://localhost:4321');
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  url: new URL('/', site).href,
+  logo: new URL('/icon-512.png', site).href,
+  email: SITE.email,
+  sameAs: [SITE.instagram],
+  parentOrganization: { '@type': 'Organization', name: SITE.legal.company },
+};
+---
+
+<Base home path="/" skipTo={{ href: '#formulario', label: 'Saltar al formulario' }}>
+  <Fragment slot="head">
+    <link rel="preload" as="image" type="image/avif" media={HERO.media} imagesrcset={heroMobile.avif.srcSet.attribute} imagesizes={HERO.sizesMobile} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/avif" media={HERO.notMedia} imagesrcset={heroDesktop.avif.srcSet.attribute} imagesizes={HERO.sizesDesktop} fetchpriority="high" />
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+  </Fragment>
+  <Hero />
+  <Marquee />
+  <Pains />
+  <Accountability />
+  <Includes />
+  <Compare />
+  <Steps />
+  <Results />
+  <Testimonials />
+  <Coach />
+  <ForYou />
+  <LeadForm />
+  <Faq />
+  <Closing />
+  <MobileBar slot="after-footer" />
+</Base>

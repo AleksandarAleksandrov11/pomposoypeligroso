@@ -1,0 +1,87 @@
+---
+import Logo from './Logo.astro';
+
+interface Props {
+  /** En la home los enlaces son anclas; en el resto de páginas apuntan a la home. */
+  home?: boolean;
+}
+const { home = true } = Astro.props;
+const base = home ? '' : '/';
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <Logo href={home ? '#top' : '/'} />
+    <nav class="site-header__nav" aria-label="Secciones">
+      <a href={`${base}#como-funciona`}>Cómo funciona</a>
+      <a href={`${base}#resultados`}>Resultados</a>
+      <a href={`${base}#preguntas`}>Preguntas</a>
+    </nav>
+    <a class="btn site-header__cta" href={`${base}#formulario`} data-cta="header">Quiero mi plaza</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: rgb(255 255 255 / 0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  :global(.is-scrolled) .site-header,
+  .site-header:global(.is-scrolled) {
+    border-bottom-color: var(--line);
+  }
+  .site-header__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .site-header__nav {
+    display: none;
+  }
+  .site-header__cta {
+    min-height: 40px;
+    min-width: 0;
+    padding: 0 18px;
+    font-size: 0.9375rem;
+  }
+  /* Área táctil de 44 px aunque el botón mida 40 */
+  .site-header__cta::before {
+    content: '';
+    position: absolute;
+    inset: -2px 0;
+  }
+  @media (min-width: 960px) {
+    .site-header__nav {
+      display: flex;
+      gap: 28px;
+      margin-left: auto;
+      margin-right: 28px;
+    }
+    .site-header__nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--muted);
+      font-size: var(--fs-small);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .site-header__nav a:hover {
+      color: var(--purple);
+    }
+    .site-header__cta {
+      min-height: 44px;
+      padding: 0 22px;
+    }
+  }
+</style>

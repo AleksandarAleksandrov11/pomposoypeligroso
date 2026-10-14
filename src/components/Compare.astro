@@ -1,0 +1,124 @@
+---
+import Icon from './Icon.astro';
+const rows: [string, string][] = [
+  ['Rutina genérica descargada', 'Plan hecho para ti'],
+  ['Dieta de pasar hambre', 'Raciones flexibles, sin prohibiciones'],
+  ['Nadie revisa si lo cumples', 'Revisión cada semana'],
+  ['Dudas sin resolver', 'Chat directo con tu entrenadora'],
+  ['Lo dejas cuando baja la motivación', 'Alguien te sostiene cuando flojeas'],
+];
+---
+
+<section class="section bg-lilac compare" aria-labelledby="compare-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="compare-title">Lo de siempre <span class="script">vs Pomposo.</span></h2>
+    </div>
+    <div class="compare__grid">
+      <div class="compare__card compare__card--old" data-reveal>
+        <h3>Lo de siempre</h3>
+        <ul role="list">
+          {
+            rows.map(([old]) => (
+              <li>
+                <Icon name="cross" size={20} class="compare__icon" />
+                <span>{old}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="compare__card compare__card--new" data-reveal>
+        <h3>Pomposo y Peligroso</h3>
+        <ul role="list">
+          {
+            rows.map(([, nuevo]) => (
+              <li>
+                <Icon name="check" size={20} class="compare__icon" />
+                <span>{nuevo}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="comparativa">Quiero mi plaza</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .compare__grid {
+    display: grid;
+    gap: 14px;
+    max-width: 960px;
+    margin: clamp(32px, 5vw, 56px) auto 0;
+  }
+  .compare__card {
+    padding: 26px 24px;
+    border-radius: var(--radius);
+  }
+  .compare__card h3 {
+    font-size: 1.375rem;
+    margin-bottom: 14px;
+  }
+  .compare__card ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+  }
+  .compare__card li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    line-height: 1.4;
+  }
+  .compare__card li:first-child {
+    border-top: 0;
+  }
+  .compare__card :global(.compare__icon) {
+    flex: none;
+    margin-top: 1px;
+  }
+  .compare__card--old {
+    background: var(--white);
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .compare__card--old h3 {
+    color: var(--muted);
+  }
+  .compare__card--old :global(.compare__icon) {
+    color: #a39bb5;
+  }
+  .compare__card--new {
+    background: var(--lilac);
+    color: var(--ink);
+  }
+  .compare__card--new li {
+    font-weight: 600;
+    border-top-color: rgb(30 21 48 / 0.12);
+  }
+  .compare__card--new :global(.compare__icon) {
+    color: var(--purple-dark);
+  }
+  @media (min-width: 760px) {
+    .compare__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .compare__card {
+      padding: 32px 32px 28px;
+    }
+    .compare__card li {
+      min-height: 56px;
+      align-items: center;
+    }
+    .compare__card :global(.compare__icon) {
+      margin-top: 0;
+    }
+  }
+</style>

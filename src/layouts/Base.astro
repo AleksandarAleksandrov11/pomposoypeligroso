@@ -1,0 +1,100 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import { SITE } from '../config/site';
+import MonoSprite from '../components/MonoSprite.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import CookieModal from '../components/CookieModal.astro';
+import Pixel from '../components/Pixel.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Ruta canónica (sin dominio), ej. '/' o '/privacidad'. */
+  path?: string;
+  noindex?: boolean;
+  home?: boolean;
+  /** Texto y destino del enlace "saltar". */
+  skipTo?: { href: string; label: string };
+}
+
+const {
+  title = 'Pomposo y Peligroso · Programa online para mujeres +30',
+  description = 'Programa online de 12 semanas para mujeres +30: fuerza 3 días por semana, nutrición sin dietas restrictivas y seguimiento semanal con tu entrenadora.',
+  path = '/',
+  noindex = false,
+  home = false,
+  skipTo = { href: '#contenido', label: 'Saltar al contenido' },
+} = Astro.props;
+
+const site = Astro.site ?? new URL('http://localhost:4321');
+const canonical = new URL(path, site).href.replace(/\/$/, path === '/' ? '/' : '');
+const ogImage = new URL('/og.jpg', site).href;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#B9A4F2" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
+    <link rel="preload" href="/fonts/bricolage-grotesque-800-condensed.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/allura-400.woff2" as="font" type="font/woff2" crossorigin />
+    <slot name="head" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pomposo y Peligroso: un glúteo pomposo y peligroso. Programa online para mujeres +30." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/*
+      HUECO PARA OTROS PÍXELES (TikTok, Google Ads, GA4...).
+      No pegues aquí sus snippets directamente: tienen que cargarse solo con consentimiento.
+      Añade su cargador en src/scripts/consent.ts, dentro de applyConsent(), igual que se
+      hace con loadMetaPixel(). Así respetan el mismo banner y el mismo modal de cookies.
+    */}
+  </head>
+  <body id="top">
+    <a class="skip-link" href={skipTo.href}>{skipTo.label}</a>
+    <MonoSprite />
+    <Header home={home} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer home={home} />
+    <slot name="after-footer" />
+    <WhatsAppFab />
+    <CookieBanner />
+    <CookieModal />
+    <Pixel />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

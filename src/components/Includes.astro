@@ -1,0 +1,83 @@
+---
+const items = [
+  {
+    t: 'Entrenamiento a tu medida.',
+    d: 'Fuerza 3 o 4 días por semana, unos 45 minutos. Adaptado a tu nivel, tu horario y el material que tengas.',
+  },
+  {
+    t: 'Nutrición sin dietas.',
+    d: 'Sistema de raciones y equivalencias para comer lo que te gusta y seguir avanzando. Aprendes a comer, no a sufrir.',
+  },
+  {
+    t: 'Seguimiento cada semana.',
+    d: 'Peso, medidas, fotos, entrenos y cómo te has sentido. Con esos datos ajustamos tu plan.',
+  },
+  {
+    t: 'Contigo todo el proceso.',
+    d: 'Chat directo con tu entrenadora para cualquier duda y videollamadas para marcar los siguientes objetivos.',
+  },
+];
+---
+
+<section class="section includes" aria-labelledby="includes-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="includes-title">Qué <span class="script">incluye.</span></h2>
+    </div>
+    <ol class="includes__grid" role="list">
+      {
+        items.map((it, i) => (
+          <li class="includes__card" data-reveal>
+            <span class="num includes__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3>{it.t}</h3>
+            <p>{it.d}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="incluye">Quiero mi plaza</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .includes__grid {
+    display: grid;
+    gap: 14px;
+    margin: clamp(32px, 5vw, 56px) 0 0;
+    padding: 0;
+  }
+  .includes__card {
+    padding: 26px 24px 28px;
+    border-radius: var(--radius);
+    background: var(--lilac-50);
+  }
+  .includes__num {
+    display: block;
+    font-size: 2.25rem;
+    margin-bottom: 18px;
+  }
+  .includes__card h3 {
+    margin-bottom: 10px;
+  }
+  .includes__card p {
+    color: var(--muted);
+  }
+  @media (min-width: 640px) {
+    .includes__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+  }
+  @media (min-width: 1100px) {
+    .includes__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .includes__card {
+      padding: 30px 26px 34px;
+    }
+  }
+</style>

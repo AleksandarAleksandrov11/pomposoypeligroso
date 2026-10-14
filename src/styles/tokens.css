@@ -1,0 +1,100 @@
+/* Fuentes autoalojadas, subset latino. Las de display y script se precargan en Base.astro. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/bricolage-grotesque-800-condensed.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Allura';
+  src: url('/fonts/allura-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+/* Fallbacks con métricas ajustadas para que el cambio de fuente no mueva el layout */
+@font-face {
+  font-family: 'Display Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arial');
+  font-weight: 800;
+  size-adjust: 68.4%;
+  ascent-override: 136%;
+  descent-override: 39%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Text Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 106.7%;
+  ascent-override: 90.8%;
+  descent-override: 22.6%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Color. Lila base del brief (#B9A4F2): pendiente de confirmar con el archivo original del logo. */
+  --white: #ffffff;
+  --blush: #fff4f8;
+  --lilac-50: #f5f0ff;
+  --lilac-100: #ebe3ff;
+  --lilac: #b9a4f2;
+  --purple: #6f42c9;
+  --purple-dark: #4b2a91;
+  --pink: #f28db8;
+  --pink-strong: #d63f84;
+  --error: #c2306f;
+  --ink: #1e1530;
+  --muted: #6b6280;
+  --line: #ece6f5;
+  --on-dark: #e9e0ff;
+  --whatsapp: #25d366;
+
+  /* Tipografía */
+  --font-display: 'Bricolage Grotesque', 'Display Fallback', 'Arial Narrow', sans-serif;
+  --font-text: 'Inter', 'Text Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-script: 'Allura', 'Brush Script MT', cursive;
+
+  --fs-h1: clamp(2.5rem, 1.6rem + 4.2vw, 5rem);
+  --fs-h2: clamp(1.875rem, 1.3rem + 2.6vw, 3.25rem);
+  --fs-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --fs-body: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  --fs-small: 0.9375rem;
+  --fs-micro: 0.8125rem;
+  --lh-body: 1.55;
+
+  /* Layout */
+  --max: 1120px;
+  --max-text: 640px;
+  --gutter: 20px;
+  --section-y: clamp(4.5rem, 2.6rem + 6vw, 7.5rem);
+  --header-h: 60px;
+  --radius: 20px;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+  --mobilebar-h: 76px;
+
+  /* Movimiento */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+    --header-h: 72px;
+  }
+}

@@ -1,0 +1,86 @@
+---
+/**
+ * Banner de cookies conforme a la guía de la AEPD:
+ * Aceptar, Rechazar y Configurar con la misma prominencia. No bloquea el contenido.
+ * Oculto por defecto: solo lo muestra el JS si no hay una elección válida guardada.
+ */
+---
+
+<div class="cookie-banner" role="region" aria-label="Aviso de cookies" data-cookie-banner hidden>
+  <p class="cookie-banner__text">
+    Usamos cookies propias necesarias y, si aceptas, el píxel de Meta para medir nuestros anuncios.
+    <a href="/cookies">Más información</a>
+  </p>
+  <div class="cookie-banner__actions">
+    <button type="button" class="cookie-btn" data-consent-action="accept">Aceptar</button>
+    <button type="button" class="cookie-btn" data-consent-action="reject">Rechazar</button>
+    <button type="button" class="cookie-btn" data-open-cookies>Configurar</button>
+  </div>
+</div>
+
+<style>
+  /* Móvil: arriba, bajo el header, para no tapar nunca el CTA del hero ni la barra fija */
+  .cookie-banner {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: calc(var(--header-h) + 8px);
+    z-index: 90;
+    display: grid;
+    gap: 12px;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--white);
+    box-shadow: 0 12px 32px -18px rgb(30 21 48 / 0.45);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .cookie-banner__text a {
+    color: var(--purple);
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+  .cookie-banner__actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .cookie-btn {
+    min-height: 44px;
+    padding: 0 10px;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .cookie-btn:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+  @media (min-width: 768px) {
+    .cookie-banner {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 14px 16px 14px 22px;
+      top: auto;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+    }
+    .cookie-banner__actions {
+      grid-template-columns: repeat(3, auto);
+    }
+    .cookie-btn {
+      padding: 0 18px;
+    }
+  }
+</style>
