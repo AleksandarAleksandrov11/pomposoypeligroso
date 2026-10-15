@@ -117,6 +117,7 @@ const rows: [string, string][] = [
   .compare__card--new {
     position: relative;
     background: var(--purple-dark);
+    border: 1px solid var(--purple-dark);
     color: var(--white);
     box-shadow: 0 30px 60px -30px rgb(75 42 145 / 0.8);
   }
@@ -193,15 +194,13 @@ const rows: [string, string][] = [
 
   @media (min-width: 760px) {
     .compare__grid {
+      /* Dos tarjetas iguales (mismo ancho y alto) y el VS justo en medio, montado lo mismo sobre cada una */
       grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
+      gap: 28px;
+      align-items: stretch;
     }
     .compare__card {
       padding: 32px 32px 26px;
-    }
-    .compare__card--new {
-      scale: 1.03;
     }
     .compare__vs {
       position: absolute;

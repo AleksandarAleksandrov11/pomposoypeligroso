@@ -6,11 +6,12 @@ Revisadas una a una a resolución completa: son fotografías reales (series de l
 
 ## Fondos y fotos de sección
 
+El fondo de "Así funciona" es una foto del centro (ver `source/brand/README.md`).
+
 | Archivo en `src/assets/img/` | Uso | Foto original | Autor |
 |---|---|---|---|
 | `hero-mujer-sentadilla-barra-vertical.jpg` (recorte) | Hero en móvil y tablet | https://www.pexels.com/photo/young-woman-performing-barbell-squats-in-gym-39635351/ | Murat IŞIK (https://www.pexels.com/@bymuratisikofficial/) |
 | `hero-mujer-sentadilla-barra-horizontal.jpg` (recorte) | Hero en escritorio y imagen para redes (`public/og.jpg`) | https://www.pexels.com/photo/woman-lifting-barbell-371049/ | Li Sun (https://www.pexels.com/@823sl/) |
-| `fondo-pasos-sentadilla-frontal.jpg` y `-vertical.jpg` (recortes) | Fondo de "Así funciona" | https://www.pexels.com/photo/woman-lifting-barbell-1552249/ | Leon Mart (https://www.pexels.com/@leonmart/) |
 | `fondo-cierre-mujeres-sentadilla.jpg` y `-vertical.jpg` (recortes) | Fondo del cierre | https://www.pexels.com/photo/group-of-women-doing-exercise-inside-the-building-3775566/ | Andrea Piacquadio (https://www.pexels.com/@olly/) |
 | `entrenadora-corrige-postura-alumna.jpg` | "No te falta motivación" | https://www.pexels.com/photo/female-trainer-assisting-client-in-fitness-studio-37963580/ | Bulat843 (https://www.pexels.com/@bulat843-1243575272/) |
 

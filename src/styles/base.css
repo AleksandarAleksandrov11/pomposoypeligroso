@@ -128,6 +128,9 @@ p {
 .on-dark .script {
   color: var(--pink);
 }
+.script--low {
+  margin-top: 0.08em;
+}
 .t-center .script,
 .section-head .script {
   margin-inline: auto;
