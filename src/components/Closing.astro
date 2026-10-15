@@ -1,7 +1,7 @@
 ---
 import Pic from './Pic.astro';
-import imgH from '../assets/img/mujer-zancada-gimnasio-luminoso.jpg';
-import imgV from '../assets/img/mujer-zancada-gimnasio-luminoso-vertical.jpg';
+import imgH from '../assets/img/fondo-cierre-mujeres-sentadilla.jpg';
+import imgV from '../assets/img/fondo-cierre-mujeres-sentadilla-vertical.jpg';
 ---
 
 <section class="closing on-dark" aria-labelledby="closing-title">
@@ -9,14 +9,15 @@ import imgV from '../assets/img/mujer-zancada-gimnasio-luminoso-vertical.jpg';
     <Pic
       src={imgH}
       art={[{ src: imgV, media: '(max-width: 767px)', widths: [480, 768, 1000], sizes: '100vw' }]}
-      widths={[768, 1280, 1920]}
+      widths={[960, 1440, 1920, 2400]}
       sizes="100vw"
+      quality={{ avif: 46, webp: 62 }}
       alt=""
       class="closing__img"
     />
   </div>
   <div class="container closing__content">
-    <h2 id="closing-title" data-reveal>Tu glúteo no se va a poner pomposo <span class="script">solo.</span></h2>
+    <h2 id="closing-title" class="t-center" data-reveal>Tu glúteo no se va a poner pomposo <span class="script">solo.</span></h2>
     <div class="closing__cta" data-reveal>
       <a class="btn btn--light btn--block-mobile" href="#formulario" data-cta="cierre">Quiero mi plaza</a>
       <p class="closing__note">Plazas limitadas para poder acompañar bien a cada alumna.</p>
@@ -29,7 +30,11 @@ import imgV from '../assets/img/mujer-zancada-gimnasio-luminoso-vertical.jpg';
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding-block: clamp(96px, 14vw, 180px);
+    display: flex;
+    align-items: center;
+    min-height: min(80svh, 760px);
+    padding-block: clamp(88px, 12vw, 150px);
+    background: var(--ink);
     color: var(--white);
     text-align: center;
   }
@@ -45,25 +50,31 @@ import imgV from '../assets/img/mujer-zancada-gimnasio-luminoso-vertical.jpg';
   }
   .closing__bg :global(.closing__img) {
     object-fit: cover;
-    object-position: 50% 40%;
+    object-position: 50% 50%;
   }
   .closing::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: rgb(75 42 145 / 0.8);
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 50%, rgb(30 21 48 / 0.62), rgb(30 21 48 / 0.3) 100%),
+      linear-gradient(180deg, rgb(75 42 145 / 0.35), rgb(30 21 48 / 0.55));
   }
   .closing__content h2 {
-    max-width: 820px;
+    max-width: 11em;
     margin-inline: auto;
-    font-size: clamp(2.25rem, 1.4rem + 4vw, 4.25rem);
+    font-size: clamp(2.75rem, 1.6rem + 5.2vw, 6rem);
+  }
+  .closing__content .script {
+    font-size: 1.45em;
+    margin-top: -0.16em;
   }
   .closing__cta {
     display: grid;
     justify-items: center;
     gap: 16px;
-    margin-top: 36px;
+    margin-top: 32px;
   }
   .closing__note {
     color: var(--on-dark);

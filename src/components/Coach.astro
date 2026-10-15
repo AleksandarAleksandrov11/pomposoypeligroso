@@ -1,29 +1,39 @@
 ---
 import Pic from './Pic.astro';
-import img from '../assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg';
+import imgPlank from '../assets/img/equipo-the-monkeys-corrige-plancha.jpg';
+import imgBeach from '../assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg';
+import imgTeam from '../assets/img/equipo-the-monkeys-sudaderas.jpg';
+
+const stats = [
+  { n: '+30', t: 'alumnas acompañadas' },
+  { n: '12', t: 'semanas contigo' },
+  { n: '100\u00a0%', t: 'online' },
+];
 ---
 
 <section class="section bg-lilac coach" aria-labelledby="coach-title">
   <div class="container coach__grid">
-    <div class="coach__media" data-reveal>
-      <Pic
-        src={img}
-        widths={[480, 768, 1080]}
-        sizes="(min-width: 960px) 460px, calc(100vw - 40px)"
-        alt="Entrenador de The Monkeys corrigiendo la sentadilla de una alumna en la playa"
-        class="coach__img"
-      />
+    <div class="coach__collage" data-reveal>
+      <Pic src={imgPlank} widths={[400, 640, 900]} sizes="(min-width: 960px) 300px, 58vw" alt="Entrenador de The Monkeys corrigiendo la plancha de una alumna" class="coach__img coach__img--a" />
+      <Pic src={imgBeach} widths={[320, 480, 720]} sizes="(min-width: 960px) 230px, 44vw" alt="Entrenador guiando una sentadilla en la playa" class="coach__img coach__img--b" />
+      <Pic src={imgTeam} widths={[400, 640]} sizes="(min-width: 960px) 260px, 50vw" alt="Dos entrenadores de The Monkeys con la sudadera del centro, de espaldas" class="coach__img coach__img--c" />
+      <span class="coach__sticker" aria-hidden="true">The Monkeys<br />Gavà</span>
     </div>
+
     <div class="coach__text">
-      <h2 id="coach-title" data-reveal>Quién está <span class="script">detrás.</span></h2>
+      <h2 id="coach-title" data-reveal>Detrás de cada glúteo pomposo <span class="script">hay un equipo.</span></h2>
       <p class="coach__lead" data-reveal>
-        Somos el equipo de The Monkeys, un centro de entrenamiento en Gavà. Trabajamos con pocas alumnas a la vez para
-        poder dedicar tiempo de verdad a cada una.
+        Somos The Monkeys, un centro de entrenamiento en Gavà. Trabajamos con pocas alumnas a la vez para dedicarte tiempo de verdad.
       </p>
-      <ul class="coach__facts" role="list" data-reveal>
-        <li><strong>+30</strong> alumnas acompañadas</li>
-        <li><strong>Fuerza</strong> y nutrición</li>
-        <li><strong>Seguimiento</strong> individual</li>
+      <ul class="coach__stats" role="list" data-reveal>
+        {
+          stats.map((s) => (
+            <li>
+              <span class="coach__num">{s.n}</span>
+              <span class="coach__label">{s.t}</span>
+            </li>
+          ))
+        }
       </ul>
       <div class="coach__cta" data-reveal>
         <a class="btn btn--block-mobile" href="#formulario" data-cta="equipo">Quiero mi plaza</a>
@@ -35,51 +45,120 @@ import img from '../assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg';
 <style>
   .coach__grid {
     display: grid;
-    gap: 36px;
+    gap: 44px;
   }
-  .coach__media :global(.coach__img) {
+
+  /* Collage de 3 fotos */
+  .coach__collage {
+    position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: 50% 70%;
-    border-radius: var(--radius);
+    max-width: 520px;
+    margin-inline: auto;
+    aspect-ratio: 1 / 1.04;
   }
+  .coach__collage :global(picture) {
+    position: absolute;
+  }
+  .coach__collage :global(picture:nth-of-type(1)) {
+    left: 0;
+    top: 0;
+    width: 58%;
+  }
+  .coach__collage :global(picture:nth-of-type(2)) {
+    right: 0;
+    top: 14%;
+    width: 44%;
+    z-index: 2;
+  }
+  .coach__collage :global(picture:nth-of-type(3)) {
+    left: 16%;
+    bottom: 0;
+    width: 50%;
+    z-index: 3;
+  }
+  .coach__collage :global(.coach__img) {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    background: var(--lilac-100);
+  }
+  .coach__collage :global(.coach__img--a) {
+    aspect-ratio: 4 / 5;
+    object-position: 60% 50%;
+  }
+  .coach__collage :global(.coach__img--b) {
+    aspect-ratio: 4 / 5;
+    border: 5px solid var(--lilac-50);
+    border-radius: 24px;
+  }
+  .coach__collage :global(.coach__img--c) {
+    aspect-ratio: 3 / 2;
+    border: 5px solid var(--lilac-50);
+    border-radius: 24px;
+  }
+  .coach__sticker {
+    position: absolute;
+    right: 5%;
+    top: 60%;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: var(--pink);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+    transform: rotate(-10deg);
+  }
+
   .coach__lead {
-    margin-top: 18px;
+    margin-top: 20px;
     max-width: 34rem;
   }
-  .coach__facts {
+  .coach__stats {
     display: grid;
-    gap: 0;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 12px clamp(20px, 4vw, 40px);
     margin: 28px 0 0;
     padding: 0;
-    border-top: 1px solid #ddd2f3;
   }
-  .coach__facts li {
-    padding: 14px 0;
-    border-bottom: 1px solid #ddd2f3;
+  .coach__stats li {
+    display: grid;
+    gap: 2px;
+  }
+  .coach__num {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+    line-height: 1;
+    color: var(--purple);
+  }
+  .coach__label {
+    font-size: var(--fs-small);
     color: var(--muted);
-  }
-  .coach__facts strong {
-    color: var(--ink);
-    font-weight: 600;
+    line-height: 1.3;
   }
   .coach__cta {
     margin-top: 32px;
   }
-  @media (max-width: 959px) {
-    .coach__media {
-      max-width: 560px;
-    }
-    .coach__media :global(.coach__img) {
-      aspect-ratio: 1 / 1;
+  @media (max-width: 420px) {
+    .coach__sticker {
+      width: 76px;
+      height: 76px;
+      font-size: 0.75rem;
     }
   }
   @media (min-width: 960px) {
     .coach__grid {
-      grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 500px) minmax(0, 1fr);
       align-items: center;
-      gap: clamp(48px, 7vw, 112px);
+      gap: clamp(56px, 7vw, 112px);
     }
   }
 </style>

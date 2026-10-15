@@ -15,7 +15,7 @@ const steps = [
 <Base title={`Gracias · ${SITE.name}`} path="/gracias" noindex headerCta={false} description="Hemos recibido tus datos. Te escribimos muy pronto por WhatsApp.">
   <section class="thanks container">
     <svg class="thanks__mono" viewBox="0 0 1584 1584" aria-hidden="true" focusable="false"><use href="#pyp-mono"></use></svg>
-    <h1 data-thanks-title>Ya está.</h1>
+    <h1 class="t-center" data-thanks-title>Ya está.</h1>
     <p class="thanks__lead">
       Te escribimos por WhatsApp muy pronto para agendar tu videollamada.
       {
@@ -41,7 +41,7 @@ const steps = [
       </a>
     </div>
 
-    <h2 class="thanks__subtitle">Lo que pasa <span class="script">ahora.</span></h2>
+    <h2 class="thanks__subtitle t-center">Lo que pasa <span class="script">ahora.</span></h2>
     <ol class="thanks__steps" role="list">
       {
         steps.map((s, i) => (
@@ -144,9 +144,7 @@ const steps = [
     border-radius: 50%;
     background: var(--lilac);
     font-family: var(--font-display);
-    font-weight: 800;
-    font-stretch: 75%;
-    font-size: 1.25rem;
+    font-size: 1.375rem;
   }
   .thanks__steps h3 {
     font-size: 1.375rem;

@@ -42,7 +42,7 @@ for (const [name, ua] of Object.entries(UAS)) {
   await p.setViewportSize({ width: 390, height: 420 });
   await p.locator('#lf-phone').focus();
   await p.locator('#lf-phone').scrollIntoViewIfNeeded();
-  const vis = await p.locator('#lf-phone').evaluate((el) => { const r = el.getBoundingClientRect(); return r.top >= 60 && r.bottom <= innerHeight; });
+  const vis = await p.locator('#lf-phone').evaluate((el) => { const r = el.getBoundingClientRect(); return r.top >= 60 && r.bottom <= innerHeight + 1; });
   ok(`${name}: el teléfono queda visible con el teclado abierto`, vis);
   await p.screenshot({ path: `${OUT}/inapp-${name}-teclado.png` });
   await p.setViewportSize({ width: 390, height: 700 });

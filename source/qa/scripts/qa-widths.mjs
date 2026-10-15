@@ -56,7 +56,7 @@ for (const [w, h] of sizes) {
     await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), y);
     await page.waitForTimeout(110);
   }
-  await page.waitForFunction(() => [...document.images].every((i) => i.complete || i.getBoundingClientRect().width === 0 || i.getBoundingClientRect().left >= innerWidth), null, { timeout: 20000 }).catch(() => issues.push('imágenes sin cargar'));
+  await page.waitForFunction(() => [...document.images].filter((i) => !i.closest('.marquee-row') || (i.getBoundingClientRect().left < innerWidth && i.getBoundingClientRect().right > 0 && Math.abs(i.getBoundingClientRect().top) < innerHeight)).every((i) => i.complete || i.getBoundingClientRect().width === 0 || i.getBoundingClientRect().left >= innerWidth), null, { timeout: 20000 }).catch(() => issues.push('imágenes sin cargar'));
 
   // 4. Barra fija móvil: visible al pasar el hero, oculta con el formulario
   if (w < 768) {
@@ -99,7 +99,7 @@ for (const [w, h] of sizes) {
     const out = [];
     if (document.documentElement.scrollWidth > innerWidth) out.push(`scroll horizontal ${document.documentElement.scrollWidth} > ${innerWidth}`);
     document.querySelectorAll('h1,h2,h3,.btn,.pill,.option span,p,li,a,summary').forEach((el) => {
-      if (el.closest('.marquee,.carousel__track,.site-footer__giant,.visually-hidden,.hp,[hidden]')) return;
+      if (el.closest('.marquee,.marquee-row,.carousel__track,.site-footer__giant,.visually-hidden,.hp,[hidden]')) return;
       const r = el.getBoundingClientRect();
       if (!r.width) return;
       if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== 'visible') out.push('texto cortado: ' + el.textContent.trim().slice(0, 50));

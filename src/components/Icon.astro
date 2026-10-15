@@ -16,7 +16,12 @@ export type IconName =
   | 'arrow-up'
   | 'arrow-right'
   | 'quote'
-  | 'close';
+  | 'close'
+  | 'calendar'
+  | 'chat'
+  | 'video'
+  | 'pause'
+  | 'play';
 
 interface Props {
   name: IconName;
@@ -39,6 +44,11 @@ const strokePaths: Record<string, string> = {
   'arrow-up': 'M12 19V5M6 11l6-6 6 6',
   'arrow-right': 'M5 12h14M13 6l6 6-6 6',
   close: 'M6 6l12 12M18 6L6 18',
+  calendar: 'M4.75 6.25h14.5v13H4.75zM4.75 10.25h14.5M8.5 4v4.5M15.5 4v4.5M9 14.75l2 2 4-4',
+  chat: 'M4.75 5.25h14.5v10.5h-8.5l-4.25 3.5v-3.5H4.75z',
+  video: 'M3.75 7.25h11.5v9.5H3.75zM15.25 10.75l5-3v8.5l-5-3',
+  pause: 'M9 6v12M15 6v12',
+  play: 'M8 5.5v13l10.5-6.5z',
 };
 ---
 

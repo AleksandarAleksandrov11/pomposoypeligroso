@@ -80,16 +80,17 @@ button {
   outline-color: var(--white);
 }
 
-/* Tipografía */
+/* Tipografía: titulares en Anton mayúsculas + una línea manuscrita (Allura) debajo */
 h1,
 h2,
 h3,
 .display {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 75%;
-  letter-spacing: -0.005em;
-  line-height: 1.02;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  /* Anton lleva las tildes a 1,11 em de la base: con menos de 1.12 chocan con la línea de arriba */
+  line-height: 1.12;
   text-wrap: balance;
 }
 h1 {
@@ -100,26 +101,40 @@ h2 {
 }
 h3 {
   font-size: var(--fs-h3);
-  line-height: 1.1;
+  letter-spacing: 0.015em;
 }
 p {
   text-wrap: pretty;
 }
 
-/* Acento manuscrito en rosa: solo 1 a 3 palabras por titular */
+/* Línea manuscrita del titular: siempre sola, debajo de las mayúsculas, un poco girada.
+   Máximo 3 o 4 palabras. */
 .script {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: -0.1em;
+  padding: 0 0.14em 0.06em 0.06em;
   font-family: var(--font-script);
   font-weight: 400;
-  font-stretch: normal;
-  font-size: 1.22em;
-  line-height: 0.8;
+  font-size: 1.04em;
+  line-height: 0.95;
   letter-spacing: 0;
+  text-transform: none;
   color: var(--pink-strong);
-  white-space: nowrap;
-  padding-inline-end: 0.06em;
+  transform: rotate(-4deg);
+  transform-origin: 0 50%;
 }
 .on-dark .script {
   color: var(--pink);
+}
+.t-center .script,
+.section-head .script {
+  margin-inline: auto;
+  transform-origin: 50% 50%;
+}
+.t-center {
+  text-align: center;
 }
 
 /* Layout */
@@ -225,6 +240,16 @@ p {
   --btn-bg-hover: var(--lilac-100);
   --btn-fg: var(--purple-dark);
 }
+/* Secundario sobre fondo oscuro o foto */
+.btn--outline-light {
+  --btn-bg: transparent;
+  --btn-bg-hover: rgb(255 255 255 / 0.12);
+  --btn-fg: var(--white);
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.75);
+}
+.btn--outline-light:hover {
+  box-shadow: inset 0 0 0 1.5px var(--white);
+}
 .btn--block {
   width: 100%;
 }
@@ -271,8 +296,7 @@ p {
 /* Numeración tipográfica 01, 02, 03 */
 .num {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 75%;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   color: var(--purple);
   line-height: 1;

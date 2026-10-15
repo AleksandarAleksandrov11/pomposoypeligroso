@@ -1,22 +1,19 @@
 ---
 import Icon from './Icon.astro';
 import { hasWhatsApp, whatsappUrl } from '../config/site';
+// Mientras no haya número de WhatsApp en site.ts, el botón lleva al formulario.
 ---
 
 <aside class="mobilebar" aria-label="Acceso rápido" data-mobilebar inert>
   <a class="btn mobilebar__cta" href="#formulario" data-cta="barra-movil">Quiero mi plaza</a>
   {
-    hasWhatsApp && (
-      <a
-        class="mobilebar__wa"
-        href={whatsappUrl()}
-        target="_blank"
-        rel="noopener"
-        aria-label="Escríbenos por WhatsApp"
-        data-contact="whatsapp"
-        data-location="barra-movil"
-      >
-        <Icon name="whatsapp" size={24} />
+    hasWhatsApp ? (
+      <a class="mobilebar__wa" href={whatsappUrl()} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-contact="whatsapp" data-location="barra-movil">
+        <Icon name="whatsapp" size={28} />
+      </a>
+    ) : (
+      <a class="mobilebar__wa" href="#formulario" aria-label="WhatsApp: déjanos tu número en el formulario y te escribimos" data-wa-pending>
+        <Icon name="whatsapp" size={28} />
       </a>
     )
   }
@@ -33,7 +30,7 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
     align-items: center;
     gap: 10px;
     padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
-    background: rgb(255 255 255 / 0.94);
+    background: rgb(255 255 255 / 0.95);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border-top: 1px solid var(--line);
@@ -55,15 +52,16 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
     display: grid;
     place-items: center;
     flex: none;
-    width: 48px;
-    height: 48px;
-    border: 1.5px solid var(--line);
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: var(--white);
-    color: var(--purple);
+    background: var(--whatsapp);
+    color: var(--white);
+    box-shadow: 0 6px 14px -8px rgb(22 163 74 / 0.9);
+    transition: transform 0.2s var(--ease);
   }
-  .mobilebar__wa:hover {
-    background: var(--lilac-50);
+  .mobilebar__wa:active {
+    transform: scale(0.96);
   }
   @media (min-width: 768px) {
     .mobilebar {

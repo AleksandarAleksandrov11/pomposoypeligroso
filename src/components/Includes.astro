@@ -1,34 +1,22 @@
 ---
 const items = [
-  {
-    t: 'Entrenamiento a tu medida.',
-    d: 'Fuerza 3 o 4 días por semana, unos 45 minutos. Adaptado a tu nivel, tu horario y el material que tengas.',
-  },
-  {
-    t: 'Nutrición sin dietas.',
-    d: 'Sistema de raciones y equivalencias para comer lo que te gusta y seguir avanzando. Aprendes a comer, no a sufrir.',
-  },
-  {
-    t: 'Seguimiento cada semana.',
-    d: 'Peso, medidas, fotos, entrenos y cómo te has sentido. Con esos datos ajustamos tu plan.',
-  },
-  {
-    t: 'Contigo todo el proceso.',
-    d: 'Chat directo con tu entrenadora para cualquier duda y videollamadas para marcar los siguientes objetivos.',
-  },
+  { t: 'Entrenamiento a tu medida', d: 'Fuerza 3 o 4 días por semana, 45 minutos. Según tu nivel, tu horario y tu material.' },
+  { t: 'Nutrición sin dietas', d: 'Raciones y equivalencias para comer lo que te gusta y seguir avanzando.' },
+  { t: 'Seguimiento cada semana', d: 'Peso, medidas, fotos y sensaciones. Con eso ajustamos tu plan.' },
+  { t: 'Contigo todo el proceso', d: 'Chat directo con tu entrenadora y videollamadas para marcar objetivos.' },
 ];
 ---
 
 <section class="section includes" aria-labelledby="includes-title">
   <div class="container">
     <div class="section-head" data-reveal>
-      <h2 id="includes-title">Qué <span class="script">incluye.</span></h2>
+      <h2 id="includes-title">Qué incluye <span class="script">tus 12 semanas.</span></h2>
     </div>
     <ol class="includes__grid" role="list">
       {
         items.map((it, i) => (
           <li class="includes__card" data-reveal>
-            <span class="num includes__num" aria-hidden="true">
+            <span class="includes__num" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
             <h3>{it.t}</h3>
@@ -47,18 +35,32 @@ const items = [
   .includes__grid {
     display: grid;
     gap: 14px;
-    margin: clamp(32px, 5vw, 56px) 0 0;
+    margin: clamp(36px, 5vw, 60px) 0 0;
     padding: 0;
   }
   .includes__card {
+    position: relative;
+    overflow: hidden;
     padding: 26px 24px 28px;
     border-radius: var(--radius);
     background: var(--lilac-50);
+    transition:
+      transform 0.3s var(--ease),
+      background-color 0.3s ease;
   }
+  .includes__card:hover {
+    transform: translateY(-4px);
+    background: var(--lilac-100);
+  }
+  /* Número grande perfilado */
   .includes__num {
     display: block;
-    font-size: 2.25rem;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--purple);
   }
   .includes__card h3 {
     margin-bottom: 10px;
@@ -78,6 +80,9 @@ const items = [
     }
     .includes__card {
       padding: 30px 26px 34px;
+    }
+    .includes__num {
+      font-size: 4.75rem;
     }
   }
 </style>

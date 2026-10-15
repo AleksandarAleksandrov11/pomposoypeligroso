@@ -1,105 +1,254 @@
 ---
 import Pic from './Pic.astro';
+import Icon from './Icon.astro';
 import img from '../assets/img/entrenadora-corrige-postura-alumna.jpg';
+
+const features = [
+  { icon: 'calendar', t: 'Revisión cada semana' },
+  { icon: 'chat', t: 'Chat directo con tu entrenadora' },
+  { icon: 'video', t: 'Videollamadas de seguimiento' },
+] as const;
 ---
 
 <section class="section bg-dark on-dark acc" aria-labelledby="acc-title">
   <div class="container acc__grid">
     <div class="acc__text">
-      <h2 id="acc-title" data-reveal>No te falta motivación. <span class="script">Te falta compañía.</span></h2>
-      <p class="acc__lead" data-reveal>
-        La motivación se va. Por eso no te damos una rutina y desaparecemos. Cada semana revisamos contigo tu progreso, vemos
-        qué ha fallado y ajustamos el plan.
-      </p>
-      <p class="acc__lead" data-reveal>
-        Rindes cuentas a una profesional que está pendiente de ti. Eso es el <span class="script acc__word">accountability</span>, y es lo que marca la
-        diferencia.
-      </p>
-      <ul class="acc__facts" role="list" data-reveal>
-        <li>Revisión semanal</li>
-        <li>Chat directo con tu entrenadora</li>
-        <li>Videollamadas de seguimiento</li>
+      <h2 id="acc-title" data-reveal>No te falta motivación <span class="script">te falta compañía.</span></h2>
+      <ul class="acc__features" role="list" data-reveal>
+        {
+          features.map((f) => (
+            <li>
+              <span class="acc__icon" aria-hidden="true">
+                <Icon name={f.icon} size={24} />
+              </span>
+              {f.t}
+            </li>
+          ))
+        }
       </ul>
       <div class="acc__cta" data-reveal>
         <a class="btn btn--light btn--block-mobile" href="#formulario" data-cta="acompanamiento">Quiero que me acompañéis</a>
       </div>
     </div>
-    <div class="acc__media" data-reveal>
+
+    <div class="acc__visual" data-reveal>
       <Pic
         src={img}
         widths={[480, 768, 1080]}
-        sizes="(min-width: 960px) 440px, calc(100vw - 40px)"
+        sizes="(min-width: 960px) 420px, (min-width: 600px) 480px, calc(100vw - 40px)"
         alt="Entrenadora corrigiendo la postura de una alumna en el gimnasio"
         class="acc__img"
       />
+      <!-- Ilustración de cómo es el seguimiento por chat (no es una conversación real) -->
+      <div class="chat" aria-hidden="true">
+        <div class="chat__head">
+          <svg class="chat__avatar" viewBox="0 0 1584 1584" focusable="false"><use href="#pyp-mono"></use></svg>
+          <div>
+            <p class="chat__name">Tu entrenadora</p>
+            <p class="chat__status">Revisión semanal</p>
+          </div>
+        </div>
+        <div class="chat__body">
+          <p class="bubble bubble--in">¿Qué tal la semana? Pásame peso, medidas y fotos.</p>
+          <p class="bubble bubble--out">Hecho. He entrenado los 3 días.</p>
+          <p class="bubble bubble--in">Genial. Esta semana subimos peso en el hip thrust.</p>
+          <p class="bubble bubble--out bubble--typing"><span></span><span></span><span></span></p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
+  .acc {
+    overflow: hidden;
+  }
   .acc__grid {
     display: grid;
-    gap: 40px;
+    gap: 48px;
   }
-  .acc__lead {
-    margin-top: 18px;
-    color: var(--on-dark);
-    max-width: 36rem;
-  }
-  .acc__word {
-    font-size: 1.6em;
-    padding-inline: 0.04em 0.1em;
-  }
-  .acc__facts {
+  .acc__features {
     display: grid;
     gap: 12px;
-    margin: 28px 0 0;
+    margin: clamp(28px, 4vw, 40px) 0 0;
     padding: 0;
   }
-  .acc__facts li {
+  .acc__features li {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(233 224 255 / 0.14);
+    font-size: 1.0625rem;
     font-weight: 600;
     color: var(--white);
   }
-  .acc__facts li::before {
-    content: '';
-    width: 8px;
-    height: 8px;
+  .acc__icon {
+    display: grid;
+    place-items: center;
     flex: none;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     background: var(--pink);
+    color: var(--ink);
   }
   .acc__cta {
-    margin-top: 36px;
+    margin-top: clamp(28px, 4vw, 40px);
   }
-  .acc__media :global(.acc__img) {
+
+  /* Foto + chat flotante */
+  .acc__visual {
+    position: relative;
     width: 100%;
+    max-width: 480px;
+    margin-inline: auto;
+    padding-bottom: 120px;
+  }
+  .acc__visual :global(.acc__img) {
+    width: 82%;
+    margin-left: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    border-radius: var(--radius);
+    object-position: 50% 30%;
+    border-radius: 24px;
   }
-  @media (max-width: 959px) {
-    .acc__media {
-      max-width: 520px;
+  .chat {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: min(310px, 84%);
+    border-radius: 22px;
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
+    overflow: hidden;
+  }
+  .chat__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .chat__avatar {
+    width: 36px;
+    height: 36px;
+    flex: none;
+  }
+  .chat__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .chat__status {
+    font-size: var(--fs-micro);
+    color: var(--muted);
+    line-height: 1.2;
+  }
+  .chat__body {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    background: var(--lilac-50);
+  }
+  .bubble {
+    max-width: 86%;
+    padding: 9px 13px;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .bubble--in {
+    justify-self: start;
+    background: var(--white);
+    border-bottom-left-radius: 5px;
+  }
+  .bubble--out {
+    justify-self: end;
+    background: var(--purple);
+    color: var(--white);
+    border-bottom-right-radius: 5px;
+  }
+  .bubble--typing {
+    display: flex;
+    gap: 4px;
+    padding: 12px 14px;
+  }
+  .bubble--typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.85);
+    animation: typing 1.2s ease-in-out infinite;
+  }
+  .bubble--typing span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .bubble--typing span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  @keyframes typing {
+    0%,
+    60%,
+    100% {
+      transform: none;
+      opacity: 0.5;
     }
-    .acc__media :global(.acc__img) {
-      aspect-ratio: 1 / 1;
-      object-position: 50% 30%;
+    30% {
+      transform: translateY(-3px);
+      opacity: 1;
     }
   }
+  /* Si la sección entra al hacer scroll, los mensajes aparecen uno a uno */
+  .acc__visual:global(.reveal) .bubble {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  .acc__visual:global(.reveal.is-visible) .bubble {
+    animation: bubble-in 0.45s var(--ease) forwards;
+  }
+  .acc__visual:global(.reveal.is-visible) .bubble:nth-child(1) {
+    animation-delay: 0.35s;
+  }
+  .acc__visual:global(.reveal.is-visible) .bubble:nth-child(2) {
+    animation-delay: 1.1s;
+  }
+  .acc__visual:global(.reveal.is-visible) .bubble:nth-child(3) {
+    animation-delay: 1.85s;
+  }
+  .acc__visual:global(.reveal.is-visible) .bubble:nth-child(4) {
+    animation-delay: 2.6s;
+  }
+  @keyframes bubble-in {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @media (min-width: 960px) {
     .acc__grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 470px);
       align-items: center;
       gap: clamp(48px, 7vw, 112px);
     }
-    .acc__facts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 22px;
-      font-size: var(--fs-small);
+    .acc__features {
+      max-width: 460px;
+    }
+    .acc__visual {
+      max-width: none;
+      padding-bottom: 90px;
+    }
+    .chat {
+      left: -20px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bubble--typing span {
+      animation: none;
     }
   }
 </style>

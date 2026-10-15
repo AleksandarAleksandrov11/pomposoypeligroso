@@ -8,7 +8,7 @@ const ok = (name, cond, extra = '') => { results.push(`${cond ? 'PASS' : 'FAIL'}
 const FAKE_FBEVENTS = `(function(){var f=window.fbq;window.__fbq=window.__fbq||[];var q=(f&&f.queue)||[];f.callMethod=function(){window.__fbq.push(JSON.parse(JSON.stringify(Array.from(arguments))))};q.forEach(function(a){window.__fbq.push(JSON.parse(JSON.stringify(Array.from(a))))});f.queue=[];})();`;
 
 async function newCtx(browser, { mode = 'ok', realPixel = false, mobile = true } = {}) {
-  const ctx = await browser.newContext(mobile ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : { viewport: { width: 1440, height: 900 } });
+  const ctx = await browser.newContext(mobile ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' } : { viewport: { width: 1440, height: 900 } });
   const state = { fbRequests: [], posts: [], console: [], csp: [] };
   ctx.on('request', (r) => { if (/facebook\.(net|com)/.test(r.url())) state.fbRequests.push(r.url()); });
   if (!realPixel) {

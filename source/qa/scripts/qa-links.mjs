@@ -28,7 +28,8 @@ for (const path of pages) {
   }
   ok(`enlaces internos y formatos en ${path}`, bad.length === 0, bad.join(', '));
   // Texto visible prohibido
-  const text = await p.evaluate(() => document.body.innerText);
+  // Texto visible tal como está escrito (sin text-transform: los titulares van en mayúsculas por CSS)
+  const text = await p.evaluate(() => { document.querySelectorAll('*').forEach((e) => e.style.setProperty('text-transform', 'none', 'important')); return document.body.innerText; });
   const hits = ['—', '–', 'Lorem', 'TODO', 'undefined', 'null', 'NaN', 'PENDIENTE', 'XXX'].filter((w) => text.includes(w));
   ok(`texto visible limpio en ${path}`, hits.length === 0, hits.join(', '));
   // Accesibilidad (axe), con el banner y el modal visibles también

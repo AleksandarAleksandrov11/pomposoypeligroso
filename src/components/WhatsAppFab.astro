@@ -1,25 +1,31 @@
 ---
 import Icon from './Icon.astro';
 import { hasWhatsApp, whatsappUrl } from '../config/site';
+// Botón flotante de escritorio. Mientras no haya número de WhatsApp en site.ts, lleva al formulario
+// (y solo se muestra en la home).
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
 ---
 
 {
-  hasWhatsApp && (
+  hasWhatsApp ? (
     <aside aria-label="Contacto rápido">
-      <a
-        class="wa-fab"
-        href={whatsappUrl()}
-        target="_blank"
-        rel="noopener"
-        aria-label="Escríbenos por WhatsApp"
-        data-contact="whatsapp"
-        data-location="fab"
-        data-wa-fab
-      >
-        <Icon name="whatsapp" size={28} />
+      <a class="wa-fab" href={whatsappUrl()} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-contact="whatsapp" data-location="fab" data-wa-fab>
+        <Icon name="whatsapp" size={30} />
         <span class="wa-fab__tip" aria-hidden="true">Escríbenos</span>
       </a>
     </aside>
+  ) : (
+    home && (
+      <aside aria-label="Contacto rápido">
+        <a class="wa-fab" href="#formulario" aria-label="WhatsApp: déjanos tu número en el formulario y te escribimos" data-wa-fab data-wa-pending>
+          <Icon name="whatsapp" size={30} />
+          <span class="wa-fab__tip" aria-hidden="true">Te escribimos</span>
+        </a>
+      </aside>
+    )
   )
 }
 
@@ -31,26 +37,30 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
     .wa-fab {
       position: fixed;
       right: 24px;
-      bottom: calc(24px + var(--banner-h, 0px));
+      bottom: 24px;
       z-index: 60;
       display: grid;
       place-items: center;
-      width: 56px;
-      height: 56px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: var(--purple);
+      background: var(--whatsapp);
       color: var(--white);
-      box-shadow: 0 8px 20px -10px rgb(30 21 48 / 0.6);
+      box-shadow: 0 10px 24px -10px rgb(30 21 48 / 0.6);
       transition:
-        background-color 0.2s ease,
         transform 0.2s ease,
         opacity 0.2s ease,
         visibility 0.2s,
         bottom 0.2s ease;
     }
     .wa-fab:hover {
-      background: var(--purple-dark);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+    }
+    /* En escritorio el aviso de cookies va abajo: el botón sube mientras se ve */
+    @media (min-width: 960px) {
+      .wa-fab {
+        bottom: calc(24px + var(--banner-h, 0px));
+      }
     }
     .wa-fab:global(.is-hidden) {
       opacity: 0;
