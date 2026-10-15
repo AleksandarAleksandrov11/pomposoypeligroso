@@ -23,6 +23,8 @@ import { SITE } from '../config/site';
 // Precarga del hero (mismas URLs que genera <Pic>), una por recorte.
 const heroMobile = await buildSources(heroH, HERO.widths);
 const heroDesktop = await buildSources(heroV, HERO.widths);
+// href de respaldo (solo lo usan navegadores sin soporte de imagesrcset): la versión de 768 px
+const fallbackHref = (s: typeof heroMobile) => s.avif.srcSet.values.find((v) => v.descriptor === '768w')?.url ?? s.avif.src;
 
 const site = Astro.site ?? new URL('http://localhost:4321');
 const orgJsonLd = {
@@ -39,8 +41,8 @@ const orgJsonLd = {
 
 <Base home path="/" skipTo={{ href: '#formulario', label: 'Saltar al formulario' }}>
   <Fragment slot="head">
-    <link rel="preload" as="image" type="image/avif" media={HERO.media} imagesrcset={heroMobile.avif.srcSet.attribute} imagesizes={HERO.sizesMobile} fetchpriority="high" />
-    <link rel="preload" as="image" type="image/avif" media={HERO.notMedia} imagesrcset={heroDesktop.avif.srcSet.attribute} imagesizes={HERO.sizesDesktop} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/avif" media={HERO.media} href={fallbackHref(heroMobile)} imagesrcset={heroMobile.avif.srcSet.attribute} imagesizes={HERO.sizesMobile} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/avif" media={HERO.notMedia} href={fallbackHref(heroDesktop)} imagesrcset={heroDesktop.avif.srcSet.attribute} imagesizes={HERO.sizesDesktop} fetchpriority="high" />
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
   </Fragment>
   <Hero />

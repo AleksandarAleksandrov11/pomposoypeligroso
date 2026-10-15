@@ -1,4 +1,5 @@
 // @ts-check
+import process from 'node:process';
 import { defineConfig } from 'astro/config';
 import { SITE } from './src/config/site.ts';
 

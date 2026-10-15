@@ -3,7 +3,7 @@ import Icon from './Icon.astro';
 import { hasWhatsApp, whatsappUrl } from '../config/site';
 ---
 
-<div class="mobilebar" data-mobilebar inert>
+<aside class="mobilebar" aria-label="Acceso rápido" data-mobilebar inert>
   <a class="btn mobilebar__cta" href="#formulario" data-cta="barra-movil">Quiero mi plaza</a>
   {
     hasWhatsApp && (
@@ -20,7 +20,7 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
       </a>
     )
   }
-</div>
+</aside>
 
 <style>
   .mobilebar {

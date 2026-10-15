@@ -1,6 +1,6 @@
 ---
 import Legal from '../layouts/Legal.astro';
-import { SITE, hasPhone } from '../config/site';
+import { SITE, hasPhone, phoneText } from '../config/site';
 const L = SITE.legal;
 ---
 
@@ -26,7 +26,7 @@ const L = SITE.legal;
         <>
           <dt>Teléfono</dt>
           <dd>
-            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>
+            <a href={SITE.phoneHref}>{phoneText}</a>
           </dd>
         </>
       )

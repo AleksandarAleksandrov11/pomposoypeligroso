@@ -5,19 +5,21 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
 
 {
   hasWhatsApp && (
-    <a
-      class="wa-fab"
-      href={whatsappUrl()}
-      target="_blank"
-      rel="noopener"
-      aria-label="Escríbenos por WhatsApp"
-      data-contact="whatsapp"
-      data-location="fab"
-      data-wa-fab
-    >
-      <Icon name="whatsapp" size={28} />
-      <span class="wa-fab__tip" aria-hidden="true">Escríbenos</span>
-    </a>
+    <aside aria-label="Contacto rápido">
+      <a
+        class="wa-fab"
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener"
+        aria-label="Escríbenos por WhatsApp"
+        data-contact="whatsapp"
+        data-location="fab"
+        data-wa-fab
+      >
+        <Icon name="whatsapp" size={28} />
+        <span class="wa-fab__tip" aria-hidden="true">Escríbenos</span>
+      </a>
+    </aside>
   )
 }
 

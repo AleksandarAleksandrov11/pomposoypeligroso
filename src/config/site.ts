@@ -30,7 +30,7 @@ export const SITE = {
     /** Datos del Registro Mercantil de Barcelona (tomo, folio, hoja). PENDIENTE. */
     registry: '',
     /** Fecha de la última revisión de los textos legales. */
-    updatedAt: '14 de octubre de 2026',
+    updatedAt: '15 de octubre de 2026',
   },
   /** Mostrar antes/después y caso de Noelia. Activar solo con autorizaciones firmadas. */
   showTransformations: false,
@@ -43,6 +43,9 @@ export const hasWhatsApp = /^\d{8,15}$/.test(SITE.whatsappNumber);
 
 /** true si el teléfono ya es real. */
 export const hasPhone = !SITE.phoneHref.includes('X');
+
+/** Teléfono para mostrar, con espacios de no separación para que no se parta en dos líneas. */
+export const phoneText = SITE.phoneDisplay.replace(/ /g, '\u00A0');
 
 /** Enlace de WhatsApp con el mensaje codificado. */
 export function whatsappUrl(message: string = SITE.whatsappMessage): string {

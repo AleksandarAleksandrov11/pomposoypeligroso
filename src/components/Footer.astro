@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { SITE, hasWhatsApp, hasPhone, whatsappUrl } from '../config/site';
+import { SITE, hasWhatsApp, hasPhone, whatsappUrl, phoneText } from '../config/site';
 
 interface Props {
   home?: boolean;
@@ -56,7 +56,7 @@ const year = new Date().getFullYear();
             hasPhone && (
               <li>
                 <a href={SITE.phoneHref} data-contact="phone" data-location="footer">
-                  {SITE.phoneDisplay}
+                  {phoneText}
                 </a>
               </li>
             )
@@ -94,7 +94,7 @@ const year = new Date().getFullYear();
       <a class="site-footer__top" href="#top">Volver arriba <Icon name="arrow-up" size={18} /></a>
     </div>
   </div>
-  <p class="site-footer__giant" aria-hidden="true">Pomposo y Peligroso</p>
+  <div class="site-footer__giant" aria-hidden="true" data-text="Pomposo y Peligroso"></div>
 </footer>
 
 <style>
@@ -161,7 +161,7 @@ const year = new Date().getFullYear();
     color: var(--white);
     text-decoration: none;
     text-align: left;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     transition: color 0.2s ease;
   }
   .site-footer__col a:hover,
@@ -194,6 +194,10 @@ const year = new Date().getFullYear();
   .site-footer__top:hover {
     color: var(--lilac);
   }
+  /* Marca gigante decorativa (en ::before para que no cuente como texto) */
+  .site-footer__giant::before {
+    content: attr(data-text);
+  }
   .site-footer__giant {
     margin: 24px 0 0;
     padding: 0 8px calc(var(--mobile-safe-bottom, 0px) + 4px);
@@ -223,14 +227,21 @@ const year = new Date().getFullYear();
       grid-column: 1 / -1;
     }
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 900px) {
     .site-footer__grid {
-      grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+      grid-template-columns: 0.8fr 1.2fr 1fr;
+    }
+  }
+  @media (min-width: 1180px) {
+    .site-footer__grid {
+      grid-template-columns: 1.3fr 0.8fr 1.3fr 1fr;
       gap: 32px;
     }
     .site-footer__brand {
       grid-column: auto;
     }
+  }
+  @media (min-width: 1024px) {
     .site-footer__bottom {
       grid-template-columns: 1fr auto;
       align-items: center;

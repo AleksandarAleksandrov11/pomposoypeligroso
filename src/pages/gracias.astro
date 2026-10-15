@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { SITE, hasWhatsApp, hasPhone, whatsappUrl } from '../config/site';
+import { SITE, hasWhatsApp, hasPhone, whatsappUrl, phoneText } from '../config/site';
 
 // Esta página NO dispara ningún evento de conversión (el Lead se envía al confirmar el Apps Script).
-const contactNumber = hasPhone ? SITE.phoneDisplay : hasWhatsApp ? `+${SITE.whatsappNumber}` : '';
+const contactNumber = hasPhone ? phoneText : hasWhatsApp ? `+${SITE.whatsappNumber}` : '';
 const steps = [
   { t: 'Te escribimos.', d: 'Por WhatsApp, muy pronto, para conocerte un poco.' },
   { t: 'Videollamada.', d: 'Vemos tu situación, tus objetivos y si el programa encaja contigo.' },

@@ -177,13 +177,7 @@ const prefixes: [string, string][] = [
         <div class="lead-form__noscript">
           <p>Para rellenar el formulario necesitas tener JavaScript activado.</p>
           <p>
-            También puedes escribirnos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{
-              hasWhatsApp && (
-                <>
-                  {' '}o por <a href={whatsappUrl()}>WhatsApp</a>
-                </>
-              )
-            }.
+            También puedes escribirnos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{hasWhatsApp ? <> o por <a href={whatsappUrl()}>WhatsApp</a>.</> : '.'}
           </p>
         </div>
       </noscript>

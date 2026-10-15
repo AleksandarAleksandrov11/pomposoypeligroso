@@ -1,6 +1,6 @@
 ---
 import Legal from '../layouts/Legal.astro';
-import { SITE, hasPhone } from '../config/site';
+import { SITE, hasPhone, phoneText } from '../config/site';
 const L = SITE.legal;
 const site = Astro.site ?? new URL('http://localhost:4321');
 const domain = site.hostname;
@@ -28,7 +28,7 @@ const domain = site.hostname;
         <>
           <dt>Teléfono</dt>
           <dd>
-            <a href={SITE.phoneHref}>{SITE.phoneDisplay}</a>
+            <a href={SITE.phoneHref}>{phoneText}</a>
           </dd>
         </>
       )

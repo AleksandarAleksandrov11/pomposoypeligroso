@@ -104,6 +104,12 @@ import { HERO } from '../lib/images';
       text-align: center;
     }
   }
+  /* Pantallas muy bajas (iPhone SE de 1.ª generación): imagen más corta para que el CTA siga a la vista */
+  @media (max-width: 599px) and (max-height: 620px) {
+    .hero__media :global(.hero__img) {
+      height: clamp(110px, calc(100svh - 470px), 170px);
+    }
+  }
   @media (min-width: 600px) and (max-width: 959px) {
     .hero__media :global(.hero__img) {
       height: clamp(260px, calc(100svh - 500px), 460px);

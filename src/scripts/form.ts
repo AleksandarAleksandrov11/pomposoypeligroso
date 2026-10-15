@@ -27,7 +27,7 @@ type Payload = Record<string, string | number>;
 /* ---------- Utilidades puras (también se prueban en Node) ---------- */
 
 export function uuidv4(): string {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));
   b[6] = (b[6] & 0x0f) | 0x40;
   b[8] = (b[8] & 0x3f) | 0x80;
@@ -238,7 +238,8 @@ export function initForm() {
     if (count) count.textContent = String(current);
     if (back) back.hidden = current === 1;
     const title = steps[current - 1]?.querySelector<HTMLElement>('[data-step-title]');
-    if (live && title) live.textContent = `Paso ${current} de ${TOTAL}. ${title.textContent?.trim() ?? ''}`;
+    // Solo se anuncia al cambiar de paso (no al cargar la página)
+    if (live && title && opts.focus !== false) live.textContent = `Paso ${current} de ${TOTAL}. ${title.textContent?.trim() ?? ''}`;
     if (opts.focus !== false && title) {
       title.focus({ preventScroll: true });
       scrollIntoViewIfNeeded();

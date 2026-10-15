@@ -131,7 +131,10 @@ p {
 }
 .section {
   padding-block: var(--section-y);
-  scroll-margin-top: var(--header-h);
+}
+/* Al saltar al formulario, el título queda justo bajo el header (sin el aire superior de la sección) */
+#formulario {
+  scroll-margin-top: calc(16px - var(--section-y));
 }
 .bg-blush {
   background: var(--blush);
