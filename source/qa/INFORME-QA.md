@@ -1,6 +1,6 @@
 # Informe de QA · 15/10/2026 (rediseño)
 
-Todo se ha probado sobre el build de producción (`npm run build` + servidor estático con URLs limpias). Para ver los botones de WhatsApp y el teléfono se ha usado además un build de QA con valores de prueba (píxel `123456789012345`, WhatsApp `34600000000`, endpoint simulado). Las capturas están en `capturas/` con el ancho en el nombre.
+Todo se ha probado sobre el build de producción (`npm run build` + servidor estático con URLs limpias). Para ver los botones de WhatsApp y el teléfono se ha usado además un build de QA con valores de prueba (píxel `123456789012345`, WhatsApp `34600000000`, endpoint simulado). Las capturas de `capturas/` son del build de producción real (sin WhatsApp configurado) y llevan el ancho en el nombre.
 
 ## Lighthouse (12.8, Chromium headless, 4G simulado en móvil)
 
@@ -33,11 +33,11 @@ En cada uno se comprueba de forma automática y luego a ojo:
 - El ancla al formulario deja el título justo bajo el header.
 - Todas las imágenes cargan.
 
-Resultado: 24/24 sin problemas. Correcciones hechas durante el QA del rediseño: el banner de cookies tapaba el CTA del hero en tablet y portátiles de 768 px de alto (ahora va arriba en tablet y el hero le reserva el hueco en escritorio, y el titular se reduce en pantallas bajas), las tildes de Anton chocaban con la línea de arriba en titulares de dos líneas (interlineado 1,12), el fondo de "Así funciona" casi no se veía (velo más ligero), el botón "Configurar" del banner rozaba el borde a 320 px y la línea manuscrita no se centraba en gracias y 404.
+Resultado: 24/24 sin problemas. Correcciones hechas durante el QA del rediseño: el banner de cookies tapaba el CTA del hero en tablet y portátiles de 768 px de alto (ahora va arriba en tablet y el hero le reserva el hueco en escritorio, y el titular se reduce en pantallas bajas), las tildes de Anton chocaban con la línea de arriba en titulares de dos líneas (interlineado 1,12), el fondo de "Así funciona" casi no se veía (foto cambiada por una del centro, más luminosa, con su velo), el botón "Configurar" del banner rozaba el borde a 320 px y la línea manuscrita no se centraba en gracias y 404.
 
 ## Pruebas funcionales (todas PASS)
 
-Formulario y píxel (`scripts/qa-pixel-form.mjs`, 60 comprobaciones):
+Formulario y píxel (`scripts/qa-pixel-form.mjs`, 61 comprobaciones):
 
 - Sin aceptar cookies: cero peticiones a Meta, el lead se envía con `consent_marketing = no` y los UTMs de la sesión.
 - Aceptando: carga de `fbevents.js` solo tras aceptar; secuencia `consent grant → init → PageView → ViewContent → FormStart → FormStep ×4 → Lead` y `Contact` al pulsar WhatsApp.
@@ -69,7 +69,7 @@ Enlaces, HTML y accesibilidad (`scripts/qa-links.mjs`):
 
 `npx astro check`: 0 errores, 0 avisos.
 
-Movimiento: con "reducir movimiento" activado las filas de fotos y testimonios se quedan quietas y se deslizan con el dedo, los mensajes del chat y los checks de la comparativa aparecen sin animación y el botón de pausa desaparece. Sin JavaScript todo el contenido se ve (las animaciones solo se activan si la sección entra en pantalla con JS).
+Movimiento: con "reducir movimiento" activado las filas de fotos y testimonios se quedan quietas y se deslizan con el dedo, y los mensajes del chat y los checks de la comparativa aparecen sin animación. A petición de la marca no hay botón de pausa: las filas se paran al pasar el ratón o el foco y con "reducir movimiento" (WCAG 2.2.2 pide además un control de pausa visible; si se quiere cumplir al pie de la letra, habría que recuperarlo). Sin JavaScript todo el contenido se ve (las animaciones solo se activan si la sección entra en pantalla con JS).
 
 Apps Script (`npm run test:apps-script`): 17/17 pruebas en Node con los servicios de Google simulados (validación, saneado, duplicados, honeypot, sospechosos, email, fórmulas del Resumen y `setup()` idempotente).
 

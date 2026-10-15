@@ -1,6 +1,6 @@
 /**
  * Comportamiento de interfaz: header, apariciones al hacer scroll, barra fija móvil,
- * botón flotante de WhatsApp, pausa de las filas en movimiento y clics de contacto.
+ * botón flotante de WhatsApp y clics de contacto.
  */
 import { track } from './pixel';
 
@@ -97,19 +97,6 @@ function initFab() {
   new IntersectionObserver(([e]) => fab.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
 }
 
-/** Botón para pausar las filas en movimiento de "Resultados" (WCAG 2.2.2). */
-function initMarqueeToggle() {
-  document.querySelectorAll<HTMLButtonElement>('[data-marquee-toggle]').forEach((btn) => {
-    const section = btn.closest<HTMLElement>('[data-marquees]');
-    const label = btn.querySelector('[data-marquee-toggle-label]');
-    if (!section || !label) return;
-    btn.addEventListener('click', () => {
-      const paused = section.classList.toggle('is-paused');
-      label.textContent = paused ? 'Reanudar el movimiento' : 'Pausar el movimiento';
-    });
-  });
-}
-
 /** Evento Contact al pulsar WhatsApp o teléfono. */
 function initContactTracking() {
   document.addEventListener('click', (e) => {
@@ -131,7 +118,6 @@ export function initUI() {
   initReveal();
   initMobileBar();
   initFab();
-  initMarqueeToggle();
   initContactTracking();
   initYear();
 }

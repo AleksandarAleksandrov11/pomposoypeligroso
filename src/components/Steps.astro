@@ -1,22 +1,21 @@
 ---
 import Pic from './Pic.astro';
-import bgH from '../assets/img/fondo-pasos-sentadilla-frontal.jpg';
-import bgV from '../assets/img/fondo-pasos-sentadilla-frontal-vertical.jpg';
+import bg from '../assets/img/fondo-pasos-entrenamiento-grupo-the-monkeys.jpg';
+// Título de cada paso en dos líneas
 const steps = [
-  { t: 'Rellenas el formulario', d: '4 preguntas, 30 segundos.' },
-  { t: 'Hablamos por videollamada', d: 'Vemos tu caso y si el programa encaja contigo.' },
-  { t: 'Empiezas tus 12 semanas', d: 'Con tu plan y tu entrenadora pendiente de ti.' },
+  { t: ['Rellenas el', 'formulario'], d: '4 preguntas, 30 segundos.' },
+  { t: ['Hablamos por', 'videollamada'], d: 'Vemos tu caso y si el programa encaja contigo.' },
+  { t: ['Empiezas tus', '12 semanas'], d: 'Con tu plan y tu entrenadora pendiente de ti.' },
 ];
 ---
 
 <section class="steps on-dark" id="como-funciona" aria-labelledby="steps-title">
   <div class="steps__bg" aria-hidden="true">
     <Pic
-      src={bgH}
-      art={[{ src: bgV, media: '(max-width: 767px)', widths: [480, 768, 1000], sizes: '100vw' }]}
-      widths={[960, 1440, 1920]}
-      sizes="100vw"
-      quality={{ avif: 46, webp: 62 }}
+      src={bg}
+      widths={[640, 960, 1250]}
+      sizes="(max-width: 767px) 240vw, 100vw"
+      quality={{ avif: 50, webp: 66 }}
       alt=""
       class="steps__img"
     />
@@ -32,7 +31,11 @@ const steps = [
             <span class="steps__num" aria-hidden="true">
               {i + 1}
             </span>
-            <h3>{s.t}</h3>
+            <h3>
+              {s.t[0]}
+              <br />
+              {s.t[1]}
+            </h3>
             <p>{s.d}</p>
           </li>
         ))
@@ -65,21 +68,15 @@ const steps = [
   }
   .steps__bg :global(.steps__img) {
     object-fit: cover;
-    object-position: 50% 45%;
+    object-position: 50% 60%;
   }
   .steps::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    background:
-      linear-gradient(180deg, rgb(30 21 48 / 0.7) 0%, rgb(30 21 48 / 0.35) 45%, rgb(75 42 145 / 0.7) 100%),
-      rgb(75 42 145 / 0.18);
-  }
-  @media (max-width: 859px) {
-    .steps::after {
-      background: linear-gradient(180deg, rgb(30 21 48 / 0.78) 0%, rgb(30 21 48 / 0.62) 50%, rgb(75 42 145 / 0.78) 100%);
-    }
+    /* La foto es muy luminosa: velo suficiente para que el texto blanco se lea encima */
+    background: linear-gradient(180deg, rgb(30 21 48 / 0.76) 0%, rgb(30 21 48 / 0.64) 50%, rgb(75 42 145 / 0.8) 100%);
   }
   .steps__list {
     display: grid;

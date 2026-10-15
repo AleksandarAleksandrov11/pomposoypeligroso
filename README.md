@@ -47,8 +47,8 @@ Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se oculta
 ### Diseño
 
 - **Titulares:** mayúsculas en Anton y, debajo, una línea corta en manuscrita (Allura, rosa, un poco girada). En el código: `<h2>Texto en mayúsculas <span class="script">línea manuscrita.</span></h2>`. La línea manuscrita va siempre sola y con 2 a 4 palabras.
-- **Fondos con foto:** hero, "Así funciona" y cierre. Llevan un velo oscuro para que el texto se lea; si cambias la foto, revisa que el texto siga leyéndose bien.
-- **Movimiento:** el carrusel de fotos va hacia la izquierda y el de testimonios hacia la derecha, en bucle. Se paran al pasar el ratón, con el botón "Pausar el movimiento" y del todo si el sistema tiene activado "reducir movimiento" (entonces se deslizan con el dedo).
+- **Fondos con foto:** hero, "Así funciona" (grupo de The Monkeys entrenando junto al mar) y cierre. Llevan un velo oscuro para que el texto se lea; si cambias la foto, revisa que el texto siga leyéndose bien.
+- **Movimiento:** el carrusel de fotos va hacia la izquierda y el de testimonios hacia la derecha, en bucle. Se paran al pasar el ratón y del todo si el sistema tiene activado "reducir movimiento" (entonces se deslizan con el dedo).
 
 ## Meta Pixel
 

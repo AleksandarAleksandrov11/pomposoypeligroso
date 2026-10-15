@@ -22,7 +22,7 @@ const quotes: Testimonial[] = realTestimonials ? testimonials : SHOW_TESTIMONIAL
 const isPlaceholder = !realTestimonials;
 ---
 
-<section class="section bg-blush results" id="resultados" aria-labelledby="results-title" data-marquees>
+<section class="section bg-blush results" id="resultados" aria-labelledby="results-title">
   <div class="container">
     <div class="section-head" data-reveal>
       <h2 id="results-title">Mujeres normales <span class="script">cambios reales.</span></h2>
@@ -86,11 +86,6 @@ const isPlaceholder = !realTestimonials;
     {(featuredOk || transformationCards.length >= 4) && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
     <div class="section-cta" data-reveal>
       <a class="btn btn--block-mobile" href="#formulario" data-cta="resultados">Quiero ser la siguiente</a>
-      <button type="button" class="marquee-toggle" data-marquee-toggle>
-        <Icon name="pause" size={18} class="marquee-toggle__pause" />
-        <Icon name="play" size={18} class="marquee-toggle__play" />
-        <span data-marquee-toggle-label>Pausar el movimiento</span>
-      </button>
     </div>
   </div>
 </section>
@@ -135,8 +130,7 @@ const isPlaceholder = !realTestimonials;
     animation-duration: 80s;
   }
   .marquee-row:hover .marquee-row__track,
-  .marquee-row:focus-within .marquee-row__track,
-  .results:global(.is-paused) .marquee-row__track {
+  .marquee-row:focus-within .marquee-row__track {
     animation-play-state: paused;
   }
   .marquee-row__list {
@@ -225,33 +219,6 @@ const isPlaceholder = !realTestimonials;
     margin-top: 16px;
     text-align: center;
   }
-  .marquee-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 0 14px;
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--muted);
-    font-size: var(--fs-small);
-    font-weight: 600;
-  }
-  .marquee-toggle:hover {
-    color: var(--purple);
-  }
-  .marquee-toggle :global(.marquee-toggle__play),
-  .results:global(.is-paused) .marquee-toggle :global(.marquee-toggle__pause) {
-    display: none;
-  }
-  .results:global(.is-paused) .marquee-toggle :global(.marquee-toggle__play) {
-    display: block;
-  }
-  :global(html:not(.js)) .marquee-toggle {
-    display: none;
-  }
-
   @media (min-width: 768px) {
     .photo-card {
       width: 280px;
@@ -286,8 +253,7 @@ const isPlaceholder = !realTestimonials;
     .marquee-row__track {
       animation: none;
     }
-    .marquee-row__list[aria-hidden='true'],
-    .marquee-toggle {
+    .marquee-row__list[aria-hidden='true'] {
       display: none;
     }
   }
