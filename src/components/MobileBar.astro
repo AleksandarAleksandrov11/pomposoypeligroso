@@ -1,0 +1,73 @@
+---
+import Icon from './Icon.astro';
+import { hasWhatsApp, whatsappUrl } from '../config/site';
+---
+
+<aside class="mobilebar" aria-label="Acceso rápido" data-mobilebar inert>
+  <a class="btn mobilebar__cta" href="#formulario" data-cta="barra-movil">Quiero mi plaza</a>
+  {
+    hasWhatsApp && (
+      <a
+        class="mobilebar__wa"
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener"
+        aria-label="Escríbenos por WhatsApp"
+        data-contact="whatsapp"
+        data-location="barra-movil"
+      >
+        <Icon name="whatsapp" size={24} />
+      </a>
+    )
+  }
+</aside>
+
+<style>
+  .mobilebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgb(255 255 255 / 0.94);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%);
+    visibility: hidden;
+    transition:
+      transform 0.25s var(--ease),
+      visibility 0.25s;
+  }
+  .mobilebar:global(.is-visible) {
+    transform: none;
+    visibility: visible;
+  }
+  .mobilebar__cta {
+    flex: 1;
+    min-width: 0;
+  }
+  .mobilebar__wa {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid var(--line);
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--purple);
+  }
+  .mobilebar__wa:hover {
+    background: var(--lilac-50);
+  }
+  @media (min-width: 768px) {
+    .mobilebar {
+      display: none;
+    }
+  }
+</style>

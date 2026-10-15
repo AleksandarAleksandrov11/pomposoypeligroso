@@ -1,0 +1,208 @@
+---
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { SITE } from '../config/site';
+import { featured, transformations } from '../data/transformations';
+import img1 from '../assets/img/alumnas-entrenando-fuerza-the-monkeys.jpg';
+import img2 from '../assets/img/dos-mujeres-press-mancuernas-the-monkeys.jpg';
+import img3 from '../assets/img/mujeres-zancadas-aire-libre-the-monkeys.jpg';
+import img4 from '../assets/img/mujer-barra-dominadas-the-monkeys.jpg';
+
+const show = SITE.showTransformations;
+const featuredOk = show && !!featured.image;
+const cards = show ? transformations.filter((t) => t.image) : [];
+
+// Con el interruptor apagado: fotos de entrenamiento reales del centro (no antes/después).
+const training = [
+  { src: img1, alt: 'Mujeres entrenando fuerza con discos en el centro The Monkeys' },
+  { src: img2, alt: 'Dos mujeres haciendo press de hombro con mancuernas' },
+  { src: img3, alt: 'Grupo de mujeres haciendo zancadas al aire libre junto al mar' },
+  { src: img4, alt: 'Mujer colgada de la barra de dominadas en el gimnasio' },
+];
+---
+
+<section class="section bg-blush results" id="resultados" aria-labelledby="results-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="results-title">Mujeres normales. <span class="script">Cambios reales.</span></h2>
+      <p>+30 alumnas han pasado ya por el programa.</p>
+    </div>
+
+    {
+      featuredOk && (
+        <article class="results__featured" data-reveal>
+          <Pic src={featured.image!} widths={[480, 768, 1080]} sizes="(min-width: 900px) 520px, calc(100vw - 40px)" alt={featured.alt ?? featured.name} class="results__featured-img" />
+          <div>
+            <h3>{featured.name}</h3>
+            <p>{featured.line}</p>
+          </div>
+        </article>
+      )
+    }
+
+    {
+      cards.length > 0 ? (
+        <div class="carousel" data-carousel data-reveal>
+          <ul class="carousel__track" role="list" data-carousel-track aria-label="Transformaciones de alumnas">
+            {cards.map((t) => (
+              <li class="results__card">
+                <Pic src={t.image!} widths={[400, 640, 800]} sizes="(min-width: 900px) 340px, 78vw" alt={t.alt ?? `Antes y después de ${t.name}`} class="results__img" />
+                <p class="results__name">{t.name}</p>
+                {t.line && <p class="results__line">{t.line}</p>}
+              </li>
+            ))}
+          </ul>
+          <div class="carousel__nav">
+            <button type="button" class="carousel__btn" aria-label="Anterior" data-carousel-prev>
+              <Icon name="chevron-left" size={22} />
+            </button>
+            <button type="button" class="carousel__btn" aria-label="Siguiente" data-carousel-next>
+              <Icon name="chevron-right" size={22} />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div class="carousel" data-carousel data-reveal>
+          <ul class="carousel__track" role="list" data-carousel-track aria-label="Fotos de entrenamiento">
+            {training.map((t) => (
+              <li class="results__card results__card--photo">
+                <Pic src={t.src} widths={[400, 640, 800]} sizes="(min-width: 1100px) 262px, (min-width: 700px) 40vw, 72vw" alt={t.alt} class="results__img" />
+              </li>
+            ))}
+          </ul>
+          <div class="carousel__nav">
+            <button type="button" class="carousel__btn" aria-label="Foto anterior" data-carousel-prev>
+              <Icon name="chevron-left" size={22} />
+            </button>
+            <button type="button" class="carousel__btn" aria-label="Foto siguiente" data-carousel-next>
+              <Icon name="chevron-right" size={22} />
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    {(featuredOk || cards.length > 0) && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
+
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="resultados">Quiero ser la siguiente</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .results__featured {
+    display: grid;
+    gap: 24px;
+    align-items: center;
+    max-width: 960px;
+    margin: clamp(32px, 5vw, 56px) auto 0;
+    padding: 20px;
+    border-radius: var(--radius);
+    background: var(--white);
+  }
+  .results__featured :global(.results__featured-img) {
+    width: 100%;
+    border-radius: var(--radius-sm);
+  }
+  .results__featured h3 {
+    margin-bottom: 10px;
+  }
+  .carousel {
+    position: relative;
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+  .carousel__track {
+    display: flex;
+    gap: 14px;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+  .results__card {
+    flex: 0 0 72%;
+    scroll-snap-align: start;
+  }
+  .results__card :global(.results__img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: var(--lilac-50);
+  }
+  .results__name {
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  .results__line {
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+  .carousel__nav {
+    display: none;
+  }
+  .results__disclaimer {
+    margin-top: 16px;
+    text-align: center;
+  }
+  @media (min-width: 700px) {
+    .results__card {
+      flex-basis: 40%;
+    }
+  }
+  @media (min-width: 900px) {
+    .results__featured {
+      grid-template-columns: 1fr 1fr;
+      padding: 28px;
+      gap: 40px;
+    }
+    .carousel__nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .carousel:global(.is-static) .carousel__nav {
+      display: none;
+    }
+    .carousel__btn {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--ink);
+      transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+    }
+    .carousel__btn:hover:not(:disabled) {
+      background: var(--lilac-50);
+    }
+    .carousel__btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+  @media (min-width: 1100px) {
+    .carousel__track {
+      margin: 0;
+      padding: 0 0 6px;
+      scroll-padding-inline: 0;
+      gap: 18px;
+    }
+    .results__card {
+      flex-basis: calc((100% - 54px) / 4);
+    }
+  }
+</style>

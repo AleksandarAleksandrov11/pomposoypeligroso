@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+import { faqs } from '../data/faq';
+import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
+---
+
+<section class="section faq" id="preguntas" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="faq-title">Lo que <span class="script">nos preguntáis.</span></h2>
+    </div>
+    <div class="faq__list" data-reveal>
+      {
+        faqs.map((f) => (
+          <details class="faq__item">
+            <summary>
+              <span>{f.q}</span>
+              <span class="faq__icon" aria-hidden="true">
+                <Icon name="plus" size={18} />
+              </span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="faq">Quiero mi plaza</a>
+      {
+        hasWhatsApp ? (
+          <a class="link" href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="faq">
+            ¿Otra duda? Escríbenos por WhatsApp
+          </a>
+        ) : (
+          <a class="link" href={`mailto:${SITE.email}`}>
+            ¿Otra duda? Escríbenos
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__list {
+    max-width: 760px;
+    margin: clamp(32px, 5vw, 56px) auto 0;
+    border-top: 1px solid var(--line);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 14px 0;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    list-style: none;
+    border-radius: 8px;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--purple);
+    transition:
+      transform 0.25s var(--ease),
+      background-color 0.2s ease;
+  }
+  .faq__item summary:hover .faq__icon {
+    background: var(--lilac-50);
+  }
+  .faq__item[open] .faq__icon {
+    transform: rotate(45deg);
+    background: var(--lilac-50);
+  }
+  .faq__item p {
+    padding: 0 52px 20px 0;
+    color: var(--muted);
+  }
+</style>

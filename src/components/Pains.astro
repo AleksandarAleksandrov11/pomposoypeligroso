@@ -1,0 +1,86 @@
+---
+const pains = [
+  'Has probado mil dietas y siempre vuelves al punto de partida.',
+  'Empiezas el lunes con ganas y el jueves ya lo has dejado.',
+  'Vas al gimnasio, pero tu glúteo sigue igual que hace un año.',
+];
+---
+
+<section class="section bg-blush pains" aria-labelledby="pains-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="pains-title">¿Te <span class="script">suena?</span></h2>
+    </div>
+    <ol class="pains__list" role="list">
+      {
+        pains.map((p, i) => (
+          <li class="pains__item" data-reveal>
+            <span class="num pains__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <p>{p}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="pains__close display" data-reveal>
+      No es tu culpa. Te faltaba un plan <span class="script">y alguien que te pida cuentas.</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .pains__list {
+    display: grid;
+    gap: 14px;
+    margin: clamp(32px, 5vw, 56px) auto 0;
+    padding: 0;
+    max-width: 1000px;
+  }
+  .pains__item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 22px;
+    border-radius: var(--radius);
+    background: var(--white);
+    border: 1px solid #f6e3ec;
+  }
+  .pains__num {
+    flex: none;
+    font-size: 2.75rem;
+    color: var(--lilac);
+    min-width: 2ch;
+  }
+  .pains__item p {
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .pains__close {
+    max-width: 820px;
+    margin: clamp(40px, 6vw, 72px) auto 0;
+    text-align: center;
+    font-size: clamp(1.75rem, 1.25rem + 2.2vw, 2.75rem);
+    line-height: 1.08;
+  }
+  .pains__close .script {
+    display: block;
+    margin-top: 0.12em;
+    white-space: normal;
+  }
+  @media (min-width: 860px) {
+    .pains__list {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .pains__item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 30px 28px 32px;
+    }
+    .pains__num {
+      font-size: 3.5rem;
+    }
+  }
+</style>

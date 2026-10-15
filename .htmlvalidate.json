@@ -1,0 +1,16 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "no-redundant-role": "off",
+    "prefer-native-element": ["error", { "exclude": ["list"] }],
+    "valid-autocomplete": "off",
+    "no-inline-style": "off",
+    "long-title": "off",
+    "attribute-boolean-style": "off",
+    "void-style": "off",
+    "no-trailing-whitespace": "off",
+    "attr-quotes": "off",
+    "no-raw-characters": "off",
+    "doctype-style": "off"
+  }
+}

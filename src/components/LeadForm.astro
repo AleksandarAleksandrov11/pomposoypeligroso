@@ -1,0 +1,639 @@
+---
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
+import img from '../assets/img/entrenadora-y-alumna-sonriendo-gimnasio.jpg';
+
+const ages = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
+const experience = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
+const prefixes: [string, string][] = [
+  ['+34', 'España'],
+  ['+351', 'Portugal'],
+  ['+33', 'Francia'],
+  ['+39', 'Italia'],
+  ['+49', 'Alemania'],
+  ['+44', 'Reino Unido'],
+  ['+1', 'EE. UU. y Canadá'],
+  ['+52', 'México'],
+  ['+54', 'Argentina'],
+  ['+57', 'Colombia'],
+  ['+56', 'Chile'],
+  ['+58', 'Venezuela'],
+  ['+593', 'Ecuador'],
+  ['+51', 'Perú'],
+];
+---
+
+<section class="section bg-lilac form-section" id="formulario" aria-labelledby="form-title">
+  <div class="container form-section__grid">
+    <div class="form-section__intro">
+      <h2 id="form-title">Cuéntanos <span class="script">sobre ti.</span></h2>
+      <p class="form-section__sub">4 preguntas, 30 segundos. Te escribimos por WhatsApp para contarte cómo funciona.</p>
+      <div class="form-section__media">
+        <Pic
+          src={img}
+          widths={[480, 768]}
+          sizes="420px"
+          alt="Entrenadora y alumna sonriendo durante una sesión en el gimnasio"
+          class="form-section__img"
+        />
+      </div>
+    </div>
+
+    <div class="lead-card">
+      <form class="lead-form" data-lead-form novalidate action="#formulario" method="post" aria-labelledby="form-title">
+        <div class="lead-form__top">
+          <button type="button" class="lead-form__back" data-back hidden>
+            <Icon name="chevron-left" size={18} /> Atrás
+          </button>
+          <p class="lead-form__count" aria-hidden="true"><span data-step-count>1</span>/4</p>
+        </div>
+        <div class="lead-form__progress" aria-hidden="true"><span data-progress></span></div>
+        <p class="visually-hidden" aria-live="polite" data-live></p>
+
+        <div class="lead-form__steps">
+          <fieldset class="step is-active" data-step="1">
+            <legend><span class="step__title" tabindex="-1" data-step-title>¿Cuántos años tienes?</span></legend>
+            <div class="options">
+              {
+                ages.map((a) => (
+                  <label class="option">
+                    <input type="radio" name="age_range" value={a} required />
+                    <span>{a}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="step" data-step="2" inert aria-hidden="true">
+            <legend><span class="step__title" tabindex="-1" data-step-title>¿Cuánto tiempo llevas entrenando?</span></legend>
+            <div class="options">
+              {
+                experience.map((a) => (
+                  <label class="option">
+                    <input type="radio" name="experience" value={a} required />
+                    <span>{a}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="step" data-step="3" inert aria-hidden="true">
+            <label for="lf-name" class="step__title" tabindex="-1" data-step-title>¿Cómo te llamas?</label>
+            <input
+              class="field"
+              id="lf-name"
+              name="name"
+              type="text"
+              autocomplete="given-name"
+              autocapitalize="words"
+              spellcheck="false"
+              minlength="2"
+              maxlength="60"
+              required
+              enterkeyhint="next"
+              placeholder="Tu nombre"
+              aria-describedby="lf-name-error"
+            />
+            <p class="field-error" id="lf-name-error" hidden>Escribe tu nombre (mínimo 2 letras).</p>
+            <button type="button" class="btn btn--block step__next" data-next-name>Siguiente</button>
+          </div>
+
+          <div class="step" data-step="4" inert aria-hidden="true">
+            <label for="lf-phone" class="step__title" tabindex="-1" data-step-title>¿A qué número te escribimos por WhatsApp?</label>
+            <div class="phone-row">
+              <div class="prefix">
+                <span class="prefix__value" aria-hidden="true" data-prefix-value>+34</span>
+                <Icon name="chevron-right" size={16} class="prefix__chev" />
+                <label for="lf-prefix" class="visually-hidden">Prefijo del país</label>
+                <select id="lf-prefix" name="prefix" class="prefix__select" autocomplete="tel-country-code">
+                  {
+                    prefixes.map(([v, c]) => (
+                      <option value={v} selected={v === '+34'}>
+                        {v} {c}
+                      </option>
+                    ))
+                  }
+                  <option value="otro">Otro prefijo</option>
+                </select>
+              </div>
+              <label for="lf-prefix-other" class="visually-hidden">Escribe el prefijo</label>
+              <input class="field prefix-other" id="lf-prefix-other" name="prefix_other" type="text" inputmode="tel" placeholder="+00" maxlength="5" hidden />
+              <input
+                class="field phone-input"
+                id="lf-phone"
+                name="phone"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel-national"
+                required
+                placeholder="612 345 678"
+                aria-describedby="lf-phone-error"
+              />
+            </div>
+            <p class="field-error" id="lf-phone-error" hidden>Escribe un número válido.</p>
+
+            <label class="consent">
+              <input type="checkbox" id="lf-privacy" name="privacy" required aria-describedby="lf-privacy-error" />
+              <span class="consent__box" aria-hidden="true"><Icon name="check" size={16} /></span>
+              <span class="consent__text">
+                He leído la <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a> y acepto que Pomposo y
+                Peligroso me contacte por WhatsApp o llamada sobre el programa.
+              </span>
+            </label>
+            <p class="field-error" id="lf-privacy-error" hidden>Necesitamos tu permiso para poder escribirte.</p>
+
+            <button type="submit" class="btn btn--block step__submit" data-submit>
+              <span class="spinner" aria-hidden="true"></span>
+              <span data-submit-label>Quiero mi plaza</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="lf-website">No rellenes este campo</label>
+          <input id="lf-website" type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="lead-form__error" role="alert" tabindex="-1" data-form-error hidden>
+          <p>Algo ha fallado. {hasWhatsApp ? 'Escríbenos por WhatsApp y te atendemos ahora.' : `Escríbenos a ${SITE.email} y te atendemos enseguida.`}</p>
+          {
+            hasWhatsApp ? (
+              <a class="btn btn--block" href={whatsappUrl()} target="_blank" rel="noopener" data-error-whatsapp data-contact="whatsapp" data-location="form-error">
+                <Icon name="whatsapp" size={22} /> Escribir por WhatsApp
+              </a>
+            ) : (
+              <a class="btn btn--block" href={`mailto:${SITE.email}?subject=${encodeURIComponent('Quiero información sobre Pomposo y Peligroso')}`}>
+                <Icon name="mail" size={22} /> Escribir un email
+              </a>
+            )
+          }
+        </div>
+      </form>
+
+      <noscript>
+        <div class="lead-form__noscript">
+          <p>Para rellenar el formulario necesitas tener JavaScript activado.</p>
+          <p>
+            También puedes escribirnos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{hasWhatsApp ? <> o por <a href={whatsappUrl()}>WhatsApp</a>.</> : '.'}
+          </p>
+        </div>
+      </noscript>
+    </div>
+
+    <p class="form-section__help micro">
+      ¿Algún problema? Escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{
+        hasWhatsApp && (
+          <>
+            {' '}o por{' '}
+            <a href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="form-help">
+              WhatsApp
+            </a>
+          </>
+        )
+      }
+    </p>
+  </div>
+</section>
+
+<script>
+  import { initForm } from '../scripts/form';
+  initForm();
+</script>
+
+<style>
+  .form-section__grid {
+    display: grid;
+    gap: 28px;
+  }
+  .form-section__intro {
+    text-align: center;
+  }
+  .form-section__sub {
+    margin: 14px auto 0;
+    max-width: 30rem;
+    color: var(--muted);
+  }
+  .form-section__media {
+    display: none;
+  }
+  .form-section__help {
+    text-align: center;
+  }
+  .form-section__help a {
+    color: var(--purple);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  /* Tarjeta */
+  .lead-card {
+    width: 100%;
+    max-width: 520px;
+    margin-inline: auto;
+    padding: 22px 20px 24px;
+    border-radius: 24px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 40px -30px rgb(75 42 145 / 0.45);
+    scroll-margin-top: calc(var(--header-h) + 12px);
+  }
+  :global(html:not(.js)) .lead-form {
+    display: none;
+  }
+  .lead-form__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+  }
+  .lead-form__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+    margin-left: -8px;
+    padding: 0 10px 0 4px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .lead-form__back:hover {
+    color: var(--purple);
+  }
+  .lead-form__count {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .lead-form__progress {
+    height: 4px;
+    margin: 6px 0 22px;
+    border-radius: 4px;
+    background: var(--lilac-100);
+    overflow: hidden;
+  }
+  .lead-form__progress span {
+    display: block;
+    height: 100%;
+    background: var(--purple);
+    border-radius: inherit;
+    transform-origin: left;
+    transform: scaleX(0.25);
+    transition: transform 0.3s var(--ease);
+  }
+
+  /* Pasos apilados en la misma celda: la tarjeta mantiene la altura del paso más alto */
+  .lead-form__steps {
+    display: grid;
+  }
+  .step {
+    grid-area: 1 / 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    /* La que sale se oculta al terminar la animación; la que entra es visible al instante (para poder recibir el foco) */
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+  .step.is-active {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s;
+  }
+  .step:not(.is-active) {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(12px);
+    pointer-events: none;
+  }
+  .step legend {
+    padding: 0;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+  .step__title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: clamp(1.625rem, 1.3rem + 1.2vw, 2rem);
+    line-height: 1.08;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  label.step__title {
+    margin-bottom: 18px;
+  }
+  .step__title:focus {
+    outline: none;
+  }
+  .step__title:focus-visible {
+    outline: 3px solid var(--purple);
+    outline-offset: 4px;
+  }
+
+  /* Opciones tocables (radios reales) */
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .option input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .option span {
+    display: flex;
+    align-items: center;
+    min-height: 54px;
+    padding: 12px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    background: var(--white);
+    font-weight: 600;
+    line-height: 1.25;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .option:hover span {
+    border-color: var(--lilac);
+    background: var(--lilac-50);
+  }
+  .option input:checked + span {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: var(--white);
+  }
+  .option input:focus-visible + span {
+    outline: 3px solid var(--purple);
+    outline-offset: 2px;
+  }
+
+  /* Campos */
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 56px;
+    padding: 0 16px;
+    border: 1.5px solid #d9d0ea;
+    border-radius: 14px;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 1.0625rem;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .field::placeholder {
+    color: #8e86a3;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgb(111 66 201 / 0.2);
+  }
+  .field[aria-invalid='true'] {
+    border-color: var(--error);
+  }
+  .field-error {
+    margin-top: 8px;
+    color: var(--error);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .step__next {
+    margin-top: 18px;
+  }
+
+  .phone-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .prefix {
+    position: relative;
+    flex: 0 0 96px;
+    min-height: 56px;
+    border: 1.5px solid #d9d0ea;
+    border-radius: 14px;
+    background: var(--white);
+  }
+  .prefix:focus-within {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgb(111 66 201 / 0.2);
+  }
+  .prefix__value {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    pointer-events: none;
+  }
+  .prefix :global(.prefix__chev) {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .prefix__select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .prefix-other {
+    flex: 0 0 84px;
+    padding: 0 12px;
+  }
+  .phone-input {
+    flex: 1 1 140px;
+    min-width: 0;
+  }
+  .phone-row:global(.has-other) .phone-input {
+    flex-basis: 100%;
+  }
+
+  .consent {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .consent input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .consent__box {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid #b7acd0;
+    border-radius: 7px;
+    background: var(--white);
+    color: transparent;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .consent input:checked + .consent__box {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: var(--white);
+  }
+  .consent input:focus-visible + .consent__box {
+    outline: 3px solid var(--purple);
+    outline-offset: 2px;
+  }
+  .consent a {
+    color: var(--purple);
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+  .step__submit {
+    margin-top: 20px;
+  }
+  .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgb(255 255 255 / 0.4);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .step__submit:global(.is-loading) .spinner {
+    display: inline-block;
+  }
+  .step__submit:disabled {
+    cursor: progress;
+    opacity: 0.9;
+    transform: none;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .lead-form__error {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--blush);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .lead-form__error:focus {
+    outline: none;
+  }
+  .lead-form__noscript {
+    display: grid;
+    gap: 10px;
+  }
+  .lead-form__noscript a {
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  @media (min-width: 400px) {
+    .lead-card {
+      padding: 26px 28px 28px;
+    }
+  }
+  @media (min-width: 960px) {
+    .form-section__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+      grid-template-areas:
+        'intro card'
+        'intro help';
+      align-items: center;
+      column-gap: clamp(48px, 7vw, 112px);
+      row-gap: 18px;
+    }
+    .form-section__intro {
+      grid-area: intro;
+      text-align: left;
+    }
+    .form-section__sub {
+      margin-left: 0;
+    }
+    .form-section__media {
+      display: block;
+      margin-top: 36px;
+      max-width: 420px;
+    }
+    .form-section__media :global(.form-section__img) {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: 50% 30%;
+      border-radius: var(--radius);
+    }
+    .lead-card {
+      grid-area: card;
+      max-width: none;
+      padding: 32px 36px 36px;
+    }
+    .form-section__help {
+      grid-area: help;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .step:not(.is-active) {
+      transform: none;
+    }
+  }
+</style>

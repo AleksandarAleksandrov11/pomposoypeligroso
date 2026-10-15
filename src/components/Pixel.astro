@@ -1,0 +1,40 @@
+---
+/**
+ * META PIXEL
+ * ----------
+ * El píxel NO se escribe en el HTML. Lo inyecta src/scripts/pixel.ts (loadMetaPixel)
+ * solo cuando se cumplen las dos condiciones:
+ *   1. SITE.metaPixelId tiene valor (src/config/site.ts).
+ *   2. La usuaria ha aceptado las cookies de marketing (banner o modal).
+ *
+ * Snippet base oficial de Meta, por referencia (es lo que inyecta pixel.ts):
+ *
+ *   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+ *   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+ *   n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+ *   t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+ *   document,'script','https://connect.facebook.net/en_US/fbevents.js');
+ *   fbq('consent', 'grant');
+ *   fbq('init', 'TU_PIXEL_ID');
+ *   fbq('track', 'PageView');
+ *
+ * Si la usuaria retira el consentimiento: fbq('consent', 'revoke').
+ *
+ * <noscript>: Meta propone una imagen de seguimiento para navegadores sin JavaScript.
+ * Sin JavaScript no se puede pedir consentimiento, así que esa imagen dispararía el píxel
+ * sin permiso (contrario a la guía de la AEPD). Por eso está desactivada con
+ * NOSCRIPT_PIXEL = false. Solo se pintaría si hay ID y alguien la activa a propósito.
+ */
+import { SITE } from '../config/site';
+
+const NOSCRIPT_PIXEL = false;
+const id = SITE.metaPixelId;
+---
+
+{
+  NOSCRIPT_PIXEL && id && (
+    <noscript>
+      <img height="1" width="1" style="display:none" alt="" src={`https://www.facebook.com/tr?id=${id}&ev=PageView&noscript=1`} />
+    </noscript>
+  )
+}

@@ -1,0 +1,168 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog class="cookie-modal" aria-labelledby="cookie-modal-title" data-cookie-modal>
+  <form method="dialog" class="cookie-modal__inner" data-cookie-form>
+    <div class="cookie-modal__head">
+      <h2 id="cookie-modal-title">Configurar cookies</h2>
+      <button type="button" class="cookie-modal__close" aria-label="Cerrar" data-cookie-close>
+        <Icon name="close" size={22} />
+      </button>
+    </div>
+    <p class="cookie-modal__intro">
+      Elige qué cookies aceptas. Puedes cambiarlo cuando quieras desde "Configurar cookies" en el pie de la web.
+    </p>
+
+    <div class="cookie-cat">
+      <div class="cookie-cat__row">
+        <label for="cookie-necessary" class="cookie-cat__title">Necesarias</label>
+        <span class="switch">
+          <input type="checkbox" id="cookie-necessary" checked disabled aria-describedby="cookie-necessary-desc" />
+          <span class="switch__track" aria-hidden="true"></span>
+        </span>
+      </div>
+      <p id="cookie-necessary-desc">Siempre activas. Guardan tu elección de cookies y hacen que la web funcione.</p>
+    </div>
+
+    <div class="cookie-cat">
+      <div class="cookie-cat__row">
+        <label for="cookie-marketing" class="cookie-cat__title">Marketing · Píxel de Meta</label>
+        <span class="switch">
+          <input type="checkbox" id="cookie-marketing" name="marketing" aria-describedby="cookie-marketing-desc" data-cookie-marketing />
+          <span class="switch__track" aria-hidden="true"></span>
+        </span>
+      </div>
+      <p id="cookie-marketing-desc">
+        Nos dicen qué anuncios de Instagram y Facebook funcionan para mostrarte menos publicidad que no te interesa.
+      </p>
+    </div>
+
+    <div class="cookie-modal__actions">
+      <button type="submit" class="btn btn--block" data-cookie-save>Guardar preferencias</button>
+      <a href="/cookies" class="link">Política de cookies</a>
+    </div>
+  </form>
+</dialog>
+
+<style>
+  .cookie-modal {
+    width: min(520px, calc(100% - 24px));
+    max-height: calc(100dvh - 24px);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: 0 24px 60px -24px rgb(30 21 48 / 0.5);
+    overflow: auto;
+  }
+  .cookie-modal::backdrop {
+    background: rgb(30 21 48 / 0.55);
+  }
+  .cookie-modal__inner {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+  }
+  .cookie-modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .cookie-modal__head h2 {
+    font-size: 1.75rem;
+  }
+  .cookie-modal__close {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+  }
+  .cookie-modal__close:hover {
+    background: var(--lilac-50);
+  }
+  .cookie-modal__intro,
+  .cookie-cat p {
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+  .cookie-cat {
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .cookie-cat__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+  .cookie-cat__title {
+    font-weight: 600;
+  }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
+    flex: none;
+  }
+  .switch input {
+    position: absolute;
+    inset: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .switch input:disabled {
+    cursor: not-allowed;
+  }
+  .switch__track {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #cfc7dd;
+    transition: background-color 0.2s ease;
+  }
+  .switch__track::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 1px 3px rgb(30 21 48 / 0.3);
+    transition: transform 0.2s var(--ease);
+  }
+  .switch input:checked + .switch__track {
+    background: var(--purple);
+  }
+  .switch input:checked + .switch__track::after {
+    transform: translateX(20px);
+  }
+  .switch input:disabled + .switch__track {
+    opacity: 0.55;
+  }
+  .switch input:focus-visible + .switch__track {
+    outline: 3px solid var(--purple);
+    outline-offset: 3px;
+  }
+  .cookie-modal__actions {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+  }
+</style>

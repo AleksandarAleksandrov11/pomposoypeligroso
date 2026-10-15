@@ -1,0 +1,107 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { SITE } from '../config/site';
+---
+
+<Legal title="Política de cookies" description="Qué cookies usa la web de Pomposo y Peligroso y cómo gestionarlas." path="/cookies">
+  <h2>1. Qué son las cookies</h2>
+  <p>
+    Las cookies y tecnologías parecidas (como el almacenamiento local del navegador) son pequeños archivos que una web
+    guarda en tu dispositivo para recordar información entre páginas o visitas.
+  </p>
+
+  <h2>2. Qué cookies usamos</h2>
+  <p>
+    Usamos solo las imprescindibles para que la web funcione y, <strong>únicamente si las aceptas</strong>, las del píxel de
+    Meta para medir nuestros anuncios. Hasta que no aceptas, no se carga nada de Meta.
+  </p>
+  <div class="table-wrap table-wrap--stack">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Proveedor</th>
+          <th scope="col">Finalidad</th>
+          <th scope="col">Duración</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Nombre">pyp_consent</td>
+          <td data-label="Proveedor">Propia (almacenamiento local)</td>
+          <td data-label="Finalidad">Necesaria. Guarda tu elección sobre las cookies.</td>
+          <td data-label="Duración">12 meses</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">pyp_first_touch, pyp_last_touch</td>
+          <td data-label="Proveedor">Propia (almacenamiento local o de sesión)</td>
+          <td data-label="Finalidad">
+            Recuerdan de qué anuncio o enlace llegaste, para adjuntarlo a tu solicitud si rellenas el formulario. Si no aceptas
+            el marketing, solo duran mientras tienes la web abierta.
+          </td>
+          <td data-label="Duración">Sesión, o 30 días si aceptas marketing</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">pyp_form_progress y similares</td>
+          <td data-label="Proveedor">Propia (almacenamiento de sesión)</td>
+          <td data-label="Finalidad">Necesaria. Recuerdan el paso del formulario si recargas la página.</td>
+          <td data-label="Duración">Sesión</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">_fbp</td>
+          <td data-label="Proveedor">Meta Platforms</td>
+          <td data-label="Finalidad">Marketing. Identifica el navegador para medir los anuncios de Instagram y Facebook.</td>
+          <td data-label="Duración">3 meses</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">_fbc</td>
+          <td data-label="Proveedor">Meta Platforms</td>
+          <td data-label="Finalidad">Marketing. Guarda el identificador del clic cuando llegas desde un anuncio.</td>
+          <td data-label="Duración">3 meses</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">fr</td>
+          <td data-label="Proveedor">Meta Platforms (facebook.com)</td>
+          <td data-label="Finalidad">Marketing. Publicidad y medición de anuncios.</td>
+          <td data-label="Duración">3 meses</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>3. Cómo gestionarlas</h2>
+  <p>
+    Puedes aceptar, rechazar o cambiar tu elección cuando quieras desde el botón de abajo o desde "Configurar cookies" en el
+    pie de cualquier página. Si retiras el consentimiento, dejamos de cargar el píxel y borramos las cookies de Meta de
+    nuestro dominio.
+  </p>
+  <p>
+    <button type="button" class="btn" data-open-cookies>Configurar cookies</button>
+  </p>
+
+  <h2>4. Cómo borrarlas desde tu navegador</h2>
+  <ul>
+    <li>
+      <a href="https://support.google.com/chrome/answer/95647?hl=es" target="_blank" rel="noopener">Google Chrome</a>
+    </li>
+    <li>
+      <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari en Mac</a> y
+      <a href="https://support.apple.com/es-es/105082" target="_blank" rel="noopener">Safari en iPhone</a>
+    </li>
+    <li>
+      <a href="https://support.mozilla.org/es/kb/Borrar%20cookies" target="_blank" rel="noopener">Mozilla Firefox</a>
+    </li>
+    <li>
+      <a href="https://support.microsoft.com/es-es/microsoft-edge/eliminar-las-cookies-en-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Microsoft Edge</a>
+    </li>
+  </ul>
+  <p>
+    En el navegador de Instagram o Facebook, las cookies se gestionan desde los ajustes de la propia aplicación.
+  </p>
+
+  <h2>5. Más información</h2>
+  <p>
+    Para cualquier duda, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. Consulta también nuestra
+    <a href="/privacidad">Política de privacidad</a>.
+  </p>
+</Legal>
