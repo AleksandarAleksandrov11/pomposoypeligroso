@@ -1,6 +1,6 @@
 /**
  * Comportamiento de interfaz: header, apariciones al hacer scroll, barra fija móvil,
- * botón flotante de WhatsApp y clics de contacto.
+ * botón flotante de WhatsApp, precarga de fotos en segundo plano y clics de contacto.
  */
 import { track } from './pixel';
 
@@ -97,6 +97,28 @@ function initFab() {
   new IntersectionObserver(([e]) => fab.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
 }
 
+/**
+ * Precarga en segundo plano: cuando la página ya ha cargado y el navegador está libre, descarga el resto
+ * de fotos (las que tienen loading="lazy") para que al hacer scroll aparezcan al instante.
+ * No lo hace con "ahorro de datos" ni con conexiones 2G.
+ */
+function warmUpImages() {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  if (conn?.saveData || /(^|-)2g$/.test(conn?.effectiveType ?? '')) return;
+  const run = () => {
+    document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
+      img.loading = 'eager';
+    });
+  };
+  const whenIdle = () => {
+    // Safari no tiene requestIdleCallback
+    if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(run, { timeout: 2500 });
+    else setTimeout(run, 1200);
+  };
+  if (document.readyState === 'complete') whenIdle();
+  else window.addEventListener('load', whenIdle, { once: true });
+}
+
 /** Evento Contact al pulsar WhatsApp o teléfono. */
 function initContactTracking() {
   document.addEventListener('click', (e) => {
@@ -118,6 +140,7 @@ export function initUI() {
   initReveal();
   initMobileBar();
   initFab();
+  warmUpImages();
   initContactTracking();
   initYear();
 }

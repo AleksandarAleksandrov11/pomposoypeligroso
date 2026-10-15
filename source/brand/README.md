@@ -5,7 +5,7 @@ Fuente: web oficial de la empresa que hay detrás del programa, https://themonke
 | Archivo | URL original | Uso en la landing |
 |---|---|---|
 | `tmc-logo-4.png` | https://themonkeyscommunity.com/cdn/shop/files/tmc-logo-4.png | Base del mono vectorizado (`public/logo-mark.svg`) |
-| `src/assets/img/fondo-pasos-entrenamiento-grupo-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-59.jpg | Fondo de "Así funciona" |
+| `src/assets/img/fondo-pasos-entrenamiento-grupo-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-59.jpg | Fondo de "Así funciona" (ligeramente desenfocada: va detrás del texto y así pesa un tercio) |
 | `src/assets/img/equipo-the-monkeys-corrige-plancha.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P2197684.jpg | Collage del equipo |
 | `src/assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg` | https://themonkeyscommunity.com/cdn/shop/articles/P4153134.jpg | Collage del equipo |
 | `src/assets/img/equipo-the-monkeys-sudaderas.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-21.jpg | Collage del equipo |

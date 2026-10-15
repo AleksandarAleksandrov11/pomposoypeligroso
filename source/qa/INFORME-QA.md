@@ -4,20 +4,24 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 
 ## Lighthouse (12.8, Chromium headless, 4G simulado en móvil)
 
-| Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | LCP | CLS | TBT | Peso |
+| Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | FCP | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|---|
-| `/` | Móvil | 99 | 100 | 100 | 100 | 2,0 s | 0,003 | 10 a 40 ms | 133 KB |
-| `/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,001 | 0 ms | 128 KB |
-| `/gracias` | Móvil | 100 | 100 | 100 | 66 * | 1,4 s | 0 | 0 ms | 77 KB |
-| `/gracias` | Escritorio | 100 | 100 | 100 | 66 * | 0,3 s | 0 | 0 ms | 77 KB |
-| `/privacidad` | Móvil | 100 | 100 | 100 | 66 * | 1,4 s | 0 | 0 ms | 79 KB |
-| `/privacidad` | Escritorio | 100 | 100 | 100 | 66 * | 0,3 s | 0 | 0 ms | 79 KB |
+| `/` | Móvil | 99 | 100 | 100 | 100 | 1,1 s | 2,0 s | 0 | 0 a 10 ms |
+| `/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,4 s | 0,001 | 0 ms |
+| `/gracias` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
+| `/gracias` | Escritorio | 100 | 100 | 100 | 66 * | | 0,3 s | 0 | 0 ms |
+| `/privacidad` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
+| `/privacidad` | Escritorio | 100 | 100 | 100 | 66 * | | 0,3 s | 0 | 0 ms |
 
 \* SEO 66 solo por el `noindex`, que el brief pide para gracias y legales. Es intencionado.
 
-El hero ahora es una foto a pantalla completa (antes era una foto pequeña al lado del texto), por eso el LCP en móvil pasa de 1,6 s a 2,0 s. Con el servidor de desarrollo encendido en la misma máquina una pasada dio 84 por ruido de CPU; con la máquina libre, tres pasadas seguidas dieron 99.
+Optimización de carga:
 
-Presupuestos: JS propio 7,2 KB comprimido (máx. 25 KB). CSS 9,8 KB comprimido, inline (máx. 30 KB). Home en primera carga 128 a 133 KB (máx. 500 KB). Hero móvil AVIF 13 a 41 KB (máx. 90 KB), hero escritorio 12 a 36 KB (máx. 160 KB), resto de imágenes por debajo de 80 KB y con carga diferida.
+- Fotos solo en WebP (lo leen todos los navegadores actuales y se decodifica más rápido que AVIF), con varios tamaños por foto y calidad ajustada a cada uso: 60 en el hero y 45 a 52 en los fondos (van bajo un velo oscuro), 66 en el resto. El fondo de "Así funciona" se ha desenfocado un poco: pasa de 153 KB a 53 KB.
+- La foto del hero y las cuatro fuentes se precargan. HTML y CSS van en una sola petición (25 KB comprimido). JS propio 7,4 KB comprimido.
+- El resto de fotos tienen carga diferida y, en cuanto la página termina de cargar y el navegador está libre, se descargan en segundo plano: a los 5 segundos están todas (comprobado), así que al hacer scroll aparecen al instante. Con "ahorro de datos" o 2G no se hace y solo se carga lo que se ve.
+- En móvil la pintura real del hero ocurre a los 94 ms; los 2,0 s de LCP son la estimación de Lighthouse con 4G lento simulado (suma de los bytes de fuentes y foto del hero). Bajar más la calidad del hero no movía esa cifra, así que se ha dejado la calidad que se ve bien.
+- Peso en la primera carga (antes de la descarga en segundo plano): unos 140 KB en móvil. Con todas las fotos ya descargadas: 674 KB en móvil y 469 KB en escritorio.
 
 ## Anchos revisados (captura por captura)
 
@@ -37,7 +41,7 @@ Resultado: 24/24 sin problemas. Correcciones hechas durante el QA del rediseño:
 
 ## Pruebas funcionales (todas PASS)
 
-Formulario y píxel (`scripts/qa-pixel-form.mjs`, 61 comprobaciones):
+Formulario y píxel (`scripts/qa-pixel-form.mjs`, 61 comprobaciones; la tarjeta del formulario cambia de alto con cada pregunta, de 303 px en el nombre a 535 px en experiencia, a 390 px de ancho):
 
 - Sin aceptar cookies: cero peticiones a Meta, el lead se envía con `consent_marketing = no` y los UTMs de la sesión.
 - Aceptando: carga de `fbevents.js` solo tras aceptar; secuencia `consent grant → init → PageView → ViewContent → FormStart → FormStep ×4 → Lead` y `Contact` al pulsar WhatsApp.
