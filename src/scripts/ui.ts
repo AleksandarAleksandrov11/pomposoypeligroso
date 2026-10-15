@@ -1,6 +1,6 @@
 /**
  * Comportamiento de interfaz: header, apariciones al hacer scroll, barra fija móvil,
- * botón flotante de WhatsApp, carruseles, diálogos de testimonios y clics de contacto.
+ * botón flotante de WhatsApp, pausa de las filas en movimiento y clics de contacto.
  */
 import { track } from './pixel';
 
@@ -97,48 +97,16 @@ function initFab() {
   new IntersectionObserver(([e]) => fab.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
 }
 
-/** Carruseles con scroll-snap: flechas en escritorio, deslizar en móvil. */
-function initCarousels() {
-  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((wrap) => {
-    const track = wrap.querySelector<HTMLElement>('[data-carousel-track]');
-    const prev = wrap.querySelector<HTMLButtonElement>('[data-carousel-prev]');
-    const next = wrap.querySelector<HTMLButtonElement>('[data-carousel-next]');
-    if (!track || !prev || !next) return;
-    const step = () => {
-      const item = track.querySelector<HTMLElement>(':scope > *');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '0') || 0;
-      return item ? item.offsetWidth + gap : track.clientWidth * 0.8;
-    };
-    const update = () => {
-      const max = track.scrollWidth - track.clientWidth - 2;
-      prev.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft >= max;
-      wrap.classList.toggle('is-static', max <= 0);
-    };
-    prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: reducedMotion ? 'auto' : 'smooth' }));
-    next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: reducedMotion ? 'auto' : 'smooth' }));
-    track.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-  });
-}
-
-/** Testimonios: "Leer más" abre un <dialog> nativo. */
-function initDialogs() {
-  document.addEventListener('click', (e) => {
-    const target = e.target as Element | null;
-    const opener = target?.closest<HTMLElement>('[data-dialog-open]');
-    if (opener) {
-      const dlg = document.getElementById(opener.dataset.dialogOpen!) as HTMLDialogElement | null;
-      if (dlg && typeof dlg.showModal === 'function') {
-        e.preventDefault();
-        dlg.showModal();
-      }
-      return;
-    }
-    const closer = target?.closest<HTMLElement>('[data-dialog-close]');
-    if (closer) closer.closest('dialog')?.close();
-    if (target instanceof HTMLDialogElement && target.matches('[data-testimonial-dialog]')) target.close();
+/** Botón para pausar las filas en movimiento de "Resultados" (WCAG 2.2.2). */
+function initMarqueeToggle() {
+  document.querySelectorAll<HTMLButtonElement>('[data-marquee-toggle]').forEach((btn) => {
+    const section = btn.closest<HTMLElement>('[data-marquees]');
+    const label = btn.querySelector('[data-marquee-toggle-label]');
+    if (!section || !label) return;
+    btn.addEventListener('click', () => {
+      const paused = section.classList.toggle('is-paused');
+      label.textContent = paused ? 'Reanudar el movimiento' : 'Pausar el movimiento';
+    });
   });
 }
 
@@ -163,8 +131,7 @@ export function initUI() {
   initReveal();
   initMobileBar();
   initFab();
-  initCarousels();
-  initDialogs();
+  initMarqueeToggle();
   initContactTracking();
   initYear();
 }

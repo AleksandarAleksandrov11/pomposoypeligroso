@@ -20,11 +20,15 @@ export async function buildSources(img: ImageMetadata, ws: number[], quality = D
   return { avif, webp, width: largest, height, list };
 }
 
-/** Datos del hero, compartidos entre Hero.astro y el preload de index.astro. */
+/** Datos del hero, compartidos entre Hero.astro y el preload de index.astro.
+ *  Móvil y tablet: foto vertical que cubre de alto (por eso más de 100vw). Escritorio: horizontal a todo el ancho. */
 export const HERO = {
   media: '(max-width: 959px)',
   notMedia: '(min-width: 960px)',
-  widths: [480, 768, 1080],
-  sizesMobile: 'calc(100vw - 40px)',
-  sizesDesktop: '(min-width: 1180px) 460px, 40vw',
+  mobileWidths: [480, 720, 1080],
+  desktopWidths: [960, 1440, 1920, 2400],
+  sizesMobile: '140vw',
+  sizesDesktop: '100vw',
+  /** Va bajo un velo oscuro: admite algo menos de calidad sin que se note. */
+  quality: { avif: 44, webp: 62 },
 };

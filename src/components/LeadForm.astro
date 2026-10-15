@@ -1,8 +1,6 @@
 ---
-import Pic from './Pic.astro';
 import Icon from './Icon.astro';
 import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
-import img from '../assets/img/entrenadora-y-alumna-sonriendo-gimnasio.jpg';
 
 const ages = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
 const experience = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
@@ -25,19 +23,10 @@ const prefixes: [string, string][] = [
 ---
 
 <section class="section bg-lilac form-section" id="formulario" aria-labelledby="form-title">
-  <div class="container form-section__grid">
-    <div class="form-section__intro">
-      <h2 id="form-title">Cuéntanos <span class="script">sobre ti.</span></h2>
-      <p class="form-section__sub">4 preguntas, 30 segundos. Te escribimos por WhatsApp para contarte cómo funciona.</p>
-      <div class="form-section__media">
-        <Pic
-          src={img}
-          widths={[480, 768]}
-          sizes="420px"
-          alt="Entrenadora y alumna sonriendo durante una sesión en el gimnasio"
-          class="form-section__img"
-        />
-      </div>
+  <div class="container form-section__inner">
+    <div class="section-head form-section__intro">
+      <h2 id="form-title">Empieza aquí <span class="script">cuéntanos sobre ti.</span></h2>
+      <p class="form-section__sub">4 preguntas, 30 segundos. Te escribimos por WhatsApp.</p>
     </div>
 
     <div class="lead-card">
@@ -204,20 +193,42 @@ const prefixes: [string, string][] = [
 </script>
 
 <style>
-  .form-section__grid {
+  .form-section {
+    position: relative;
+    overflow: hidden;
+  }
+  /* Círculos de color muy suaves de fondo */
+  .form-section::before,
+  .form-section::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .form-section::before {
+    width: 520px;
+    height: 520px;
+    left: -260px;
+    top: 8%;
+    background: radial-gradient(circle, rgb(242 141 184 / 0.22), transparent 70%);
+  }
+  .form-section::after {
+    width: 600px;
+    height: 600px;
+    right: -300px;
+    bottom: -120px;
+    background: radial-gradient(circle, rgb(185 164 242 / 0.35), transparent 70%);
+  }
+  .form-section__inner {
+    position: relative;
+    z-index: 1;
     display: grid;
     gap: 28px;
   }
-  .form-section__intro {
-    text-align: center;
-  }
   .form-section__sub {
-    margin: 14px auto 0;
+    margin: 16px auto 0;
     max-width: 30rem;
-    color: var(--muted);
-  }
-  .form-section__media {
-    display: none;
   }
   .form-section__help {
     text-align: center;
@@ -231,13 +242,13 @@ const prefixes: [string, string][] = [
   /* Tarjeta */
   .lead-card {
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
     margin-inline: auto;
     padding: 22px 20px 24px;
-    border-radius: 24px;
+    border-radius: 28px;
     background: var(--white);
     border: 1px solid var(--line);
-    box-shadow: 0 18px 40px -30px rgb(75 42 145 / 0.45);
+    box-shadow: 0 30px 60px -36px rgb(75 42 145 / 0.5);
     scroll-margin-top: calc(var(--header-h) + 12px);
   }
   :global(html:not(.js)) .lead-form {
@@ -326,10 +337,11 @@ const prefixes: [string, string][] = [
   .step__title {
     display: block;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-stretch: 75%;
-    font-size: clamp(1.625rem, 1.3rem + 1.2vw, 2rem);
-    line-height: 1.08;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+    line-height: 1.12;
     text-wrap: balance;
     color: var(--ink);
   }
@@ -366,10 +378,10 @@ const prefixes: [string, string][] = [
   .option span {
     display: flex;
     align-items: center;
-    min-height: 54px;
-    padding: 12px 18px;
+    min-height: 58px;
+    padding: 12px 20px;
     border: 1.5px solid var(--line);
-    border-radius: 14px;
+    border-radius: 16px;
     background: var(--white);
     font-weight: 600;
     line-height: 1.25;
@@ -593,42 +605,13 @@ const prefixes: [string, string][] = [
       padding: 26px 28px 28px;
     }
   }
-  @media (min-width: 960px) {
-    .form-section__grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
-      grid-template-areas:
-        'intro card'
-        'intro help';
-      align-items: center;
-      column-gap: clamp(48px, 7vw, 112px);
-      row-gap: 18px;
-    }
-    .form-section__intro {
-      grid-area: intro;
-      text-align: left;
-    }
-    .form-section__sub {
-      margin-left: 0;
-    }
-    .form-section__media {
-      display: block;
-      margin-top: 36px;
-      max-width: 420px;
-    }
-    .form-section__media :global(.form-section__img) {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      object-position: 50% 30%;
-      border-radius: var(--radius);
-    }
+  @media (min-width: 768px) {
     .lead-card {
-      grid-area: card;
-      max-width: none;
-      padding: 32px 36px 36px;
+      padding: 36px 44px 40px;
     }
-    .form-section__help {
-      grid-area: help;
+    .option span {
+      min-height: 62px;
+      font-size: 1.125rem;
     }
   }
   @media (prefers-reduced-motion: reduce) {

@@ -71,6 +71,7 @@ export function initConsent() {
     } else {
       bannerObserver?.disconnect();
       root.style.removeProperty('--banner-h');
+      root.classList.remove('needs-consent');
     }
     document.dispatchEvent(new CustomEvent('pyp:banner', { detail: visible }));
   };

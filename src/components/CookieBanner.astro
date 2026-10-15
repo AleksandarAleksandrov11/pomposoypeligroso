@@ -19,7 +19,8 @@
 </section>
 
 <style>
-  /* Móvil: arriba, bajo el header, para no tapar nunca el CTA del hero ni la barra fija */
+  /* Móvil y tablet: arriba, bajo el header, para no tapar nunca el CTA del hero ni la barra fija.
+     Escritorio: abajo (el hero reserva ese hueco, ver Hero.astro y el script inline de Base.astro). */
   .cookie-banner {
     position: fixed;
     left: 10px;
@@ -65,22 +66,32 @@
     background: var(--ink);
     color: var(--white);
   }
+  @media (max-width: 359px) {
+    .cookie-btn {
+      padding: 0 4px;
+      font-size: 0.8125rem;
+    }
+  }
   @media (min-width: 768px) {
     .cookie-banner {
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 20px;
       padding: 14px 16px 14px 22px;
-      top: auto;
       left: 16px;
       right: 16px;
-      bottom: 16px;
     }
     .cookie-banner__actions {
       grid-template-columns: repeat(3, auto);
     }
     .cookie-btn {
       padding: 0 18px;
+    }
+  }
+  @media (min-width: 960px) {
+    .cookie-banner {
+      top: auto;
+      bottom: 16px;
     }
   }
 </style>

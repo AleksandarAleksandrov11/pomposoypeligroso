@@ -2,7 +2,7 @@
 
 Landing de captación para el programa online de 12 semanas de **Pomposo y Peligroso** (The Monkeys Centro de Entrenamiento S.L.). Objetivo único: que la usuaria rellene un formulario de 4 pasos para que el equipo la contacte por WhatsApp. La conversión (evento `Lead`) es el envío del formulario.
 
-- **Stack:** Astro 7 (salida 100 % estática), CSS propio con variables, JavaScript vanilla (7,5 KB comprimido), fuentes autoalojadas, imágenes AVIF/WebP con `astro:assets`.
+- **Stack:** Astro 7 (salida 100 % estática), CSS propio con variables, JavaScript vanilla (7,2 KB comprimido), fuentes autoalojadas (Anton para titulares, Allura para la línea manuscrita, Inter para el texto), imágenes AVIF/WebP con `astro:assets`.
 - **Despliegue:** Vercel (`vercel.json` incluido).
 - **Datos:** Google Sheets vía Google Apps Script (`apps-script/Code.gs`).
 
@@ -34,14 +34,21 @@ En `npm run dev` cada evento del píxel aparece en la consola del navegador como
 |---|---|
 | ID del píxel, endpoint del formulario, WhatsApp, teléfono, email, dominio, datos legales, interruptor de transformaciones | `src/config/site.ts` |
 | Preguntas frecuentes | `src/data/faq.ts` |
-| Testimonios (solo reales, con `source`) | `src/data/testimonials.ts` |
+| Fotos del carrusel de "Mujeres normales, cambios reales" | `src/data/gallery.ts` + `src/assets/img/galeria/` |
+| Testimonios (solo reales, con `source`) y huecos de diseño mientras no los haya | `src/data/testimonials.ts` |
 | Transformaciones antes/después (Noelia y resto) | `src/data/transformations.ts` + `SITE.showTransformations` |
 | Textos de cada sección | `src/components/*.astro` (un archivo por sección) |
 | Colores, tipografías y espaciados | `src/styles/tokens.css` |
 | Textos legales | `src/pages/aviso-legal.astro`, `privacidad.astro`, `cookies.astro` |
 | Fotos | `src/assets/img/` (se optimizan solas al hacer build) |
 
-Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se ocultan todos los botones de WhatsApp; si no hay ID de píxel, no se carga nada de Meta; si no hay endpoint, en desarrollo se simula el envío y en producción se muestra la alternativa de contacto (y el lead queda guardado en el navegador para reintentarlo).
+Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se ocultan los enlaces de WhatsApp del footer, las preguntas frecuentes y el formulario, y el botón verde de la barra fija del móvil y el flotante de escritorio llevan al formulario (en cuanto pongas el número, abren WhatsApp); si no hay ID de píxel, no se carga nada de Meta; si no hay endpoint, en desarrollo se simula el envío y en producción se muestra la alternativa de contacto (y el lead queda guardado en el navegador para reintentarlo).
+
+### Diseño
+
+- **Titulares:** mayúsculas en Anton y, debajo, una línea corta en manuscrita (Allura, rosa, un poco girada). En el código: `<h2>Texto en mayúsculas <span class="script">línea manuscrita.</span></h2>`. La línea manuscrita va siempre sola y con 2 a 4 palabras.
+- **Fondos con foto:** hero, "Así funciona" y cierre. Llevan un velo oscuro para que el texto se lea; si cambias la foto, revisa que el texto siga leyéndose bien.
+- **Movimiento:** el carrusel de fotos va hacia la izquierda y el de testimonios hacia la derecha, en bucle. Se paran al pasar el ratón, con el botón "Pausar el movimiento" y del todo si el sistema tiene activado "reducir movimiento" (entonces se deslizan con el dedo).
 
 ## Meta Pixel
 
@@ -78,7 +85,7 @@ No está implementada, pero cada lead ya guarda en el Sheet lo necesario: `event
 
 ## Cookies y consentimiento
 
-- Banner con Aceptar, Rechazar y Configurar con la misma prominencia (guía de la AEPD). En móvil se muestra arriba para no tapar el CTA del hero ni la barra fija.
+- Banner con Aceptar, Rechazar y Configurar con la misma prominencia (guía de la AEPD). En móvil y tablet se muestra arriba para no tapar el CTA del hero ni la barra fija; en escritorio va abajo y el hero le reserva el hueco desde el primer pintado (sin saltos de diseño).
 - La elección se guarda en `localStorage` (`pyp_consent`) con versión y fecha durante 12 meses. Para volver a preguntar a todo el mundo, sube `SITE.consentVersion`.
 - La atribución (UTMs, `fbclid`) se guarda en `sessionStorage` si no hay consentimiento de marketing y en `localStorage` 30 días si lo hay. Así los UTMs llegan con el lead aunque navegue por las páginas legales, sin guardar nada persistente sin permiso.
 
@@ -112,7 +119,7 @@ Opcional: pon un email en `NOTIFY_EMAIL` (al principio del script) para recibir 
 
 ## Calidad
 
-- Lighthouse móvil en la home: **100 / 100 / 100 / 100** (LCP 1,6 s, CLS 0). Detalle completo, anchos probados y limitaciones en `source/qa/INFORME-QA.md`; capturas en `source/qa/capturas/`.
+- Lighthouse en la home: móvil **99 / 100 / 100 / 100** (LCP 2,0 s, CLS 0,003), escritorio **100 / 100 / 100 / 100**. Detalle completo, anchos probados y limitaciones en `source/qa/INFORME-QA.md`; capturas en `source/qa/capturas/`.
 - Scripts de QA reutilizables en `source/qa/scripts/` (necesitan `npm i -D playwright @axe-core/playwright` y un build servido en local).
 
 ## Material de partida

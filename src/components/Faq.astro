@@ -7,7 +7,7 @@ import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
 <section class="section faq" id="preguntas" aria-labelledby="faq-title">
   <div class="container">
     <div class="section-head" data-reveal>
-      <h2 id="faq-title">Lo que <span class="script">nos preguntáis.</span></h2>
+      <h2 id="faq-title">Lo que nos preguntáis <span class="script">sin rodeos.</span></h2>
     </div>
     <div class="faq__list" data-reveal>
       {
@@ -55,8 +55,9 @@ import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    min-height: 64px;
-    padding: 14px 0;
+    min-height: 68px;
+    padding: 16px 0;
+    font-size: 1.0625rem;
     font-weight: 600;
     line-height: 1.35;
     cursor: pointer;
@@ -70,21 +71,22 @@ import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
     display: grid;
     place-items: center;
     flex: none;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--line);
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
+    background: var(--lilac-50);
     color: var(--purple);
     transition:
       transform 0.25s var(--ease),
       background-color 0.2s ease;
   }
   .faq__item summary:hover .faq__icon {
-    background: var(--lilac-50);
+    background: var(--lilac-100);
   }
   .faq__item[open] .faq__icon {
     transform: rotate(45deg);
-    background: var(--lilac-50);
+    background: var(--purple);
+    color: var(--white);
   }
   .faq__item p {
     padding: 0 52px 20px 0;

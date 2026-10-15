@@ -35,6 +35,10 @@ const {
 const site = Astro.site ?? new URL('http://localhost:4321');
 const canonical = new URL(path, site).href.replace(/\/$/, path === '/' ? '/' : '');
 const ogImage = new URL('/og.jpg', site).href;
+
+// Antes del primer pintado: clase js y, si no hay consentimiento válido guardado, needs-consent
+// (el hero reserva el hueco del aviso de cookies sin mover nada después). Misma regla que readConsent().
+const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(localStorage.getItem('pyp_consent')||'null');if(!c||c.v!==${SITE.consentVersion}||!c.date||Date.now()-new Date(c.date).getTime()>31536e6)d.classList.add('needs-consent')}catch(e){d.classList.add('needs-consent')}})(document.documentElement);`;
 ---
 
 <!doctype html>
@@ -49,9 +53,9 @@ const ogImage = new URL('/og.jpg', site).href;
     <meta name="theme-color" content="#B9A4F2" />
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline set:html={headScript} />
 
-    <link rel="preload" href="/fonts/bricolage-grotesque-800-condensed.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/allura-400.woff2" as="font" type="font/woff2" crossorigin />
     <slot name="head" />
 
@@ -91,7 +95,7 @@ const ogImage = new URL('/og.jpg', site).href;
     </main>
     <Footer home={home} />
     <slot name="after-footer" />
-    <WhatsAppFab />
+    <WhatsAppFab home={home} />
     <CookieBanner />
     <CookieModal />
     <Pixel />

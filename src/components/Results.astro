@@ -3,28 +3,29 @@ import Pic from './Pic.astro';
 import Icon from './Icon.astro';
 import { SITE } from '../config/site';
 import { featured, transformations } from '../data/transformations';
-import img1 from '../assets/img/alumnas-entrenando-fuerza-the-monkeys.jpg';
-import img2 from '../assets/img/dos-mujeres-press-mancuernas-the-monkeys.jpg';
-import img3 from '../assets/img/mujeres-zancadas-aire-libre-the-monkeys.jpg';
-import img4 from '../assets/img/mujer-barra-dominadas-the-monkeys.jpg';
+import { gallery } from '../data/gallery';
+import { testimonials, testimonialPlaceholders, SHOW_TESTIMONIAL_PLACEHOLDERS, type Testimonial } from '../data/testimonials';
 
 const show = SITE.showTransformations;
 const featuredOk = show && !!featured.image;
-const cards = show ? transformations.filter((t) => t.image) : [];
+const transformationCards = show ? transformations.filter((t) => t.image) : [];
 
-// Con el interruptor apagado: fotos de entrenamiento reales del centro (no antes/después).
-const training = [
-  { src: img1, alt: 'Mujeres entrenando fuerza con discos en el centro The Monkeys' },
-  { src: img2, alt: 'Dos mujeres haciendo press de hombro con mancuernas' },
-  { src: img3, alt: 'Grupo de mujeres haciendo zancadas al aire libre junto al mar' },
-  { src: img4, alt: 'Mujer colgada de la barra de dominadas en el gimnasio' },
-];
+// Fila de fotos: transformaciones autorizadas si las hay; si no, fotos de entrenamiento.
+const photos =
+  transformationCards.length >= 4
+    ? transformationCards.map((t) => ({ src: t.image!, alt: t.alt ?? `Antes y después de ${t.name}`, name: t.name }))
+    : gallery.map((g) => ({ ...g, name: '' }));
+
+// Fila de testimonios: reales (mínimo 2) o huecos de diseño claramente marcados.
+const realTestimonials = testimonials.length >= 2;
+const quotes: Testimonial[] = realTestimonials ? testimonials : SHOW_TESTIMONIAL_PLACEHOLDERS ? testimonialPlaceholders : [];
+const isPlaceholder = !realTestimonials;
 ---
 
-<section class="section bg-blush results" id="resultados" aria-labelledby="results-title">
+<section class="section bg-blush results" id="resultados" aria-labelledby="results-title" data-marquees>
   <div class="container">
     <div class="section-head" data-reveal>
-      <h2 id="results-title">Mujeres normales. <span class="script">Cambios reales.</span></h2>
+      <h2 id="results-title">Mujeres normales <span class="script">cambios reales.</span></h2>
       <p>+30 alumnas han pasado ya por el programa.</p>
     </div>
 
@@ -39,58 +40,65 @@ const training = [
         </article>
       )
     }
+  </div>
 
-    {
-      cards.length > 0 ? (
-        <div class="carousel" data-carousel data-reveal>
-          <ul class="carousel__track" role="list" data-carousel-track aria-label="Transformaciones de alumnas">
-            {cards.map((t) => (
-              <li class="results__card">
-                <Pic src={t.image!} widths={[400, 640, 800]} sizes="(min-width: 900px) 340px, 78vw" alt={t.alt ?? `Antes y después de ${t.name}`} class="results__img" />
-                <p class="results__name">{t.name}</p>
-                {t.line && <p class="results__line">{t.line}</p>}
+  <!-- Fila 1: fotos, se mueve hacia la izquierda -->
+  <div class="marquee-row marquee-row--photos" data-reveal>
+    <div class="marquee-row__track">
+      {
+        [0, 1].map((copy) => (
+          <ul class="marquee-row__list" role="list" aria-label={copy === 0 ? 'Fotos de entrenamiento' : undefined} aria-hidden={copy === 1 ? 'true' : undefined}>
+            {photos.map((p) => (
+              <li class="photo-card">
+                <Pic src={p.src} widths={[320, 480, 640]} sizes="(min-width: 768px) 280px, 220px" alt={copy === 0 ? p.alt : ''} class="photo-card__img" />
+                {p.name && <span class="photo-card__name">{p.name}</span>}
               </li>
             ))}
           </ul>
-          <div class="carousel__nav">
-            <button type="button" class="carousel__btn" aria-label="Anterior" data-carousel-prev>
-              <Icon name="chevron-left" size={22} />
-            </button>
-            <button type="button" class="carousel__btn" aria-label="Siguiente" data-carousel-next>
-              <Icon name="chevron-right" size={22} />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div class="carousel" data-carousel data-reveal>
-          <ul class="carousel__track" role="list" data-carousel-track aria-label="Fotos de entrenamiento">
-            {training.map((t) => (
-              <li class="results__card results__card--photo">
-                <Pic src={t.src} widths={[400, 640, 800]} sizes="(min-width: 1100px) 262px, (min-width: 700px) 40vw, 72vw" alt={t.alt} class="results__img" />
-              </li>
-            ))}
-          </ul>
-          <div class="carousel__nav">
-            <button type="button" class="carousel__btn" aria-label="Foto anterior" data-carousel-prev>
-              <Icon name="chevron-left" size={22} />
-            </button>
-            <button type="button" class="carousel__btn" aria-label="Foto siguiente" data-carousel-next>
-              <Icon name="chevron-right" size={22} />
-            </button>
-          </div>
-        </div>
-      )
-    }
+        ))
+      }
+    </div>
+  </div>
 
-    {(featuredOk || cards.length > 0) && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
+  {
+    quotes.length > 0 && (
+      <div class="marquee-row marquee-row--quotes" data-reveal>
+        <h3 class="visually-hidden">Lo que dicen ellas</h3>
+        <div class="marquee-row__track">
+          {[0, 1].map((copy) => (
+            <ul class="marquee-row__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
+              {quotes.map((t) => (
+                <li class:list={['quote-card', isPlaceholder && 'quote-card--placeholder']}>
+                  <Icon name="quote" size={28} class="quote-card__icon" />
+                  <p class="quote-card__text">{t.quote}</p>
+                  <p class="quote-card__name">{t.name}</p>
+                  <p class="quote-card__context">{t.context}</p>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
+  <div class="container">
+    {(featuredOk || transformationCards.length >= 4) && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
     <div class="section-cta" data-reveal>
       <a class="btn btn--block-mobile" href="#formulario" data-cta="resultados">Quiero ser la siguiente</a>
+      <button type="button" class="marquee-toggle" data-marquee-toggle>
+        <Icon name="pause" size={18} class="marquee-toggle__pause" />
+        <Icon name="play" size={18} class="marquee-toggle__play" />
+        <span data-marquee-toggle-label>Pausar el movimiento</span>
+      </button>
     </div>
   </div>
 </section>
 
 <style>
+  .results {
+    overflow: hidden;
+  }
   .results__featured {
     display: grid;
     gap: 24px;
@@ -108,54 +116,153 @@ const training = [
   .results__featured h3 {
     margin-bottom: 10px;
   }
-  .carousel {
-    position: relative;
-    margin-top: clamp(32px, 5vw, 56px);
+
+  /* Filas en bucle infinito: dos copias de la lista, la pista se desplaza el 50 % */
+  .marquee-row {
+    margin-top: clamp(36px, 5vw, 56px);
+    overflow: hidden;
   }
-  .carousel__track {
+  .marquee-row + .marquee-row {
+    margin-top: 18px;
+  }
+  .marquee-row__track {
     display: flex;
+    width: max-content;
+    animation: row-left 70s linear infinite;
+  }
+  .marquee-row--quotes .marquee-row__track {
+    animation-name: row-right;
+    animation-duration: 80s;
+  }
+  .marquee-row:hover .marquee-row__track,
+  .marquee-row:focus-within .marquee-row__track,
+  .results:global(.is-paused) .marquee-row__track {
+    animation-play-state: paused;
+  }
+  .marquee-row__list {
+    display: flex;
+    flex: none;
     gap: 14px;
-    margin: 0 calc(var(--gutter) * -1);
-    padding: 0 var(--gutter) 6px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--gutter);
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0 14px 0 0;
   }
-  .carousel__track::-webkit-scrollbar {
-    display: none;
+  @keyframes row-left {
+    to {
+      transform: translateX(-50%);
+    }
   }
-  .results__card {
-    flex: 0 0 72%;
-    scroll-snap-align: start;
+  @keyframes row-right {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: none;
+    }
   }
-  .results__card :global(.results__img) {
+
+  .photo-card {
+    position: relative;
+    flex: none;
+    width: 220px;
+  }
+  .photo-card :global(.photo-card__img) {
     width: 100%;
     aspect-ratio: 3 / 4;
     object-fit: cover;
-    border-radius: var(--radius);
+    border-radius: 18px;
     background: var(--lilac-50);
   }
-  .results__name {
-    margin-top: 12px;
+  .photo-card__name {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-size: var(--fs-small);
     font-weight: 600;
   }
-  .results__line {
+
+  .quote-card {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 290px;
+    padding: 22px 22px 20px;
+    border-radius: 18px;
+    background: var(--white);
+    box-shadow: 0 14px 30px -24px rgb(214 63 132 / 0.6);
+  }
+  .quote-card :global(.quote-card__icon) {
+    color: var(--pink);
+    margin-bottom: 10px;
+  }
+  .quote-card__text {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .quote-card__name {
+    margin-top: 16px;
+    font-weight: 600;
+  }
+  .quote-card__context {
     color: var(--muted);
     font-size: var(--fs-small);
   }
-  .carousel__nav {
-    display: none;
+  /* Hueco de diseño: se nota que falta el testimonio real */
+  .quote-card--placeholder {
+    background: rgb(255 255 255 / 0.65);
+    border: 1.5px dashed #e8b6cd;
+    box-shadow: none;
   }
+  .quote-card--placeholder .quote-card__text {
+    color: var(--muted);
+    font-style: italic;
+  }
+
   .results__disclaimer {
     margin-top: 16px;
     text-align: center;
   }
-  @media (min-width: 700px) {
-    .results__card {
-      flex-basis: 40%;
+  .marquee-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .marquee-toggle:hover {
+    color: var(--purple);
+  }
+  .marquee-toggle :global(.marquee-toggle__play),
+  .results:global(.is-paused) .marquee-toggle :global(.marquee-toggle__pause) {
+    display: none;
+  }
+  .results:global(.is-paused) .marquee-toggle :global(.marquee-toggle__play) {
+    display: block;
+  }
+  :global(html:not(.js)) .marquee-toggle {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .photo-card {
+      width: 280px;
+    }
+    .marquee-row__list {
+      gap: 18px;
+      padding-right: 18px;
+    }
+    .quote-card {
+      width: 340px;
+      padding: 26px 26px 22px;
     }
   }
   @media (min-width: 900px) {
@@ -164,45 +271,24 @@ const training = [
       padding: 28px;
       gap: 40px;
     }
-    .carousel__nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
+  }
+
+  /* Sin movimiento: filas estáticas que se deslizan con el dedo */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-row {
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-inline: var(--gutter);
     }
-    .carousel:global(.is-static) .carousel__nav {
+    .marquee-row::-webkit-scrollbar {
       display: none;
     }
-    .carousel__btn {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      background: var(--white);
-      color: var(--ink);
-      transition:
-        background-color 0.2s ease,
-        opacity 0.2s ease;
+    .marquee-row__track {
+      animation: none;
     }
-    .carousel__btn:hover:not(:disabled) {
-      background: var(--lilac-50);
-    }
-    .carousel__btn:disabled {
-      opacity: 0.35;
-      cursor: default;
-    }
-  }
-  @media (min-width: 1100px) {
-    .carousel__track {
-      margin: 0;
-      padding: 0 0 6px;
-      scroll-padding-inline: 0;
-      gap: 18px;
-    }
-    .results__card {
-      flex-basis: calc((100% - 54px) / 4);
+    .marquee-row__list[aria-hidden='true'],
+    .marquee-toggle {
+      display: none;
     }
   }
 </style>
