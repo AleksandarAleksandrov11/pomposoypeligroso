@@ -26,7 +26,7 @@ export const HERO = {
   notMedia: '(min-width: 960px)',
   mobileWidths: [480, 720, 900, 1080],
   desktopWidths: [960, 1440, 1920, 2400],
-  sizesMobile: '120vw',
+  sizesMobile: '110vw',
   sizesDesktop: '100vw',
   /** Va bajo un velo oscuro: admite algo menos de calidad sin que se note y pesa menos (carga antes). */
   quality: 60,

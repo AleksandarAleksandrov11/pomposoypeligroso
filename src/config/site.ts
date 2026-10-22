@@ -32,8 +32,8 @@ export const SITE = {
     /** Fecha de la última revisión de los textos legales. */
     updatedAt: '15 de octubre de 2026',
   },
-  /** Mostrar antes/después y caso de Noelia. Activar solo con autorizaciones firmadas. */
-  showTransformations: false,
+  /** Mostrar antes/después y caso de Noelia (material facilitado por la marca; ver PENDIENTES.md). */
+  showTransformations: true,
   /** Versión del consentimiento de cookies. Súbela si cambian las cookies para volver a preguntar. */
   consentVersion: 1,
 } as const;

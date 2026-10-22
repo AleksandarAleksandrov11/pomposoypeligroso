@@ -1,11 +1,11 @@
 ---
 import Pic from './Pic.astro';
 import Icon from './Icon.astro';
-import img from '../assets/img/entrenadora-corrige-postura-alumna.jpg';
+import img from '../assets/img/acompanamiento-flor.jpg';
 
 const features = [
   { icon: 'calendar', t: 'Revisión cada semana' },
-  { icon: 'chat', t: 'Chat directo con tu entrenadora' },
+  { icon: 'chat', t: 'Chat directo con tu coach' },
   { icon: 'video', t: 'Videollamadas de seguimiento' },
 ] as const;
 ---
@@ -36,7 +36,7 @@ const features = [
         src={img}
         widths={[480, 768, 1080]}
         sizes="(min-width: 960px) 420px, (min-width: 600px) 480px, calc(100vw - 40px)"
-        alt="Entrenadora corrigiendo la postura de una alumna en el gimnasio"
+        alt="Flor, coach de Pomposo y Peligroso, sonriendo en su casa con ropa de entrenar"
         class="acc__img"
       />
       <!-- Ilustración de cómo es el seguimiento por chat (no es una conversación real) -->
@@ -44,7 +44,7 @@ const features = [
         <div class="chat__head">
           <svg class="chat__avatar" viewBox="0 0 1584 1584" focusable="false"><use href="#pyp-mono"></use></svg>
           <div>
-            <p class="chat__name">Tu entrenadora</p>
+            <p class="chat__name">Tu coach</p>
             <p class="chat__status">Revisión semanal</p>
           </div>
         </div>
@@ -112,7 +112,7 @@ const features = [
     margin-left: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    object-position: 50% 30%;
+    object-position: 50% 25%;
     border-radius: 24px;
   }
   .chat {

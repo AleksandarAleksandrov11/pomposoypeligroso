@@ -1,4 +1,4 @@
-# Informe de QA · 15/10/2026 (rediseño)
+# Informe de QA · 22/10/2026 (material real)
 
 Todo se ha probado sobre el build de producción (`npm run build` + servidor estático con URLs limpias). Para ver los botones de WhatsApp y el teléfono se ha usado además un build de QA con valores de prueba (píxel `123456789012345`, WhatsApp `34600000000`, endpoint simulado). Las capturas de `capturas/` son del build de producción real (sin WhatsApp configurado) y llevan el ancho en el nombre.
 
@@ -6,8 +6,8 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 
 | Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | FCP | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|---|
-| `/` | Móvil | 99 | 100 | 100 | 100 | 1,1 s | 2,0 s | 0 | 0 a 10 ms |
-| `/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,4 s | 0,001 | 0 ms |
+| `/` | Móvil | 99 | 100 | 100 | 100 | 1,1 s | 2,2 a 2,3 s | 0 | 0 a 20 ms |
+| `/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,6 s | 0,001 | 0 ms |
 | `/gracias` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
 | `/gracias` | Escritorio | 100 | 100 | 100 | 66 * | | 0,3 s | 0 | 0 ms |
 | `/privacidad` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
@@ -16,6 +16,9 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 \* SEO 66 solo por el `noindex`, que el brief pide para gracias y legales. Es intencionado.
 
 Optimización de carga:
+
+- Ya no hay ninguna foto de stock: todas son de alumnas y del equipo. La foto del hero en móvil es un fotograma de vídeo 4K; se le ha quitado ruido para que pese 37 a 62 KB (LCP de 2,5 s a 2,2 s).
+- Vídeos ("Así entrenan ellas"): 6 clips de 6 s sin audio, MP4 H.264 (250 a 330 KB) y WebM VP9 de alternativa. Cero descargas al cargar la página: se piden cuando la sección está a 600 px y solo se reproducen mientras se ven (comprobado: 0 peticiones al cargar, 6 al llegar, los 6 reproduciéndose). Con "reducir movimiento" no se reproducen solos, llevan controles y no se descargan hasta darle al play.
 
 - Fotos solo en WebP (lo leen todos los navegadores actuales y se decodifica más rápido que AVIF), con varios tamaños por foto y calidad ajustada a cada uso: 60 en el hero y 45 a 52 en los fondos (van bajo un velo oscuro), 66 en el resto. El fondo de "Así funciona" se ha desenfocado un poco: pasa de 153 KB a 53 KB.
 - La foto del hero y las cuatro fuentes se precargan. HTML y CSS van en una sola petición (25 KB comprimido). JS propio 7,4 KB comprimido.
@@ -74,6 +77,8 @@ Enlaces, HTML y accesibilidad (`scripts/qa-links.mjs`):
 `npx astro check`: 0 errores, 0 avisos.
 
 Movimiento: con "reducir movimiento" activado las filas de fotos y testimonios se quedan quietas y se deslizan con el dedo, y los mensajes del chat y los checks de la comparativa aparecen sin animación. A petición de la marca no hay botón de pausa: las filas se paran al pasar el ratón o el foco y con "reducir movimiento" (WCAG 2.2.2 pide además un control de pausa visible; si se quiere cumplir al pie de la letra, habría que recuperarlo). Sin JavaScript todo el contenido se ve (las animaciones solo se activan si la sección entra en pantalla con JS).
+
+Material real: comprobado que las alumnas marcadas "no mostrar cara" solo salen de espaldas, que los antes/después tienen el orden correcto (fechas de la app y gráficas de peso) y que no queda ninguna imagen de Pexels ni de internet en `src/assets/img`.
 
 Apps Script (`npm run test:apps-script`): 17/17 pruebas en Node con los servicios de Google simulados (validación, saneado, duplicados, honeypot, sospechosos, email, fórmulas del Resumen y `setup()` idempotente).
 

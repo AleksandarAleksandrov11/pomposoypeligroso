@@ -3,76 +3,64 @@ import Pic from './Pic.astro';
 import Icon from './Icon.astro';
 import { SITE } from '../config/site';
 import { featured, transformations } from '../data/transformations';
-import { gallery } from '../data/gallery';
-import { testimonials, testimonialPlaceholders, SHOW_TESTIMONIAL_PLACEHOLDERS, type Testimonial } from '../data/testimonials';
+import { testimonials } from '../data/testimonials';
 
+// Antes/después solo con el interruptor encendido (autorización de las alumnas, ver PENDIENTES.md).
 const show = SITE.showTransformations;
-const featuredOk = show && !!featured.image;
-const transformationCards = show ? transformations.filter((t) => t.image) : [];
-
-// Fila de fotos: transformaciones autorizadas si las hay; si no, fotos de entrenamiento.
-const photos =
-  transformationCards.length >= 4
-    ? transformationCards.map((t) => ({ src: t.image!, alt: t.alt ?? `Antes y después de ${t.name}`, name: t.name }))
-    : gallery.map((g) => ({ ...g, name: '' }));
-
-// Fila de testimonios: reales (mínimo 2) o huecos de diseño claramente marcados.
-const realTestimonials = testimonials.length >= 2;
-const quotes: Testimonial[] = realTestimonials ? testimonials : SHOW_TESTIMONIAL_PLACEHOLDERS ? testimonialPlaceholders : [];
-const isPlaceholder = !realTestimonials;
 ---
 
 <section class="section bg-blush results" id="resultados" aria-labelledby="results-title">
   <div class="container">
     <div class="section-head" data-reveal>
       <h2 id="results-title">Mujeres normales <span class="script">cambios reales.</span></h2>
-      <p>+30 alumnas han pasado ya por el programa.</p>
+      <p>Alumnas reales del programa. Sin filtros.</p>
     </div>
 
     {
-      featuredOk && (
-        <article class="results__featured" data-reveal>
-          <Pic src={featured.image!} widths={[480, 768, 1080]} sizes="(min-width: 900px) 520px, calc(100vw - 40px)" alt={featured.alt ?? featured.name} class="results__featured-img" />
-          <div>
-            <h3>{featured.name}</h3>
-            <p>{featured.line}</p>
+      show && (
+        <article class="featured" data-reveal aria-labelledby="featured-name">
+          <div class="featured__media">
+            <Pic src={featured.image} widths={[480, 768, 1100]} sizes="(min-width: 960px) 560px, calc(100vw - 40px)" alt={featured.alt} class="featured__img" />
+            <span class="ba-label ba-label--before" aria-hidden="true">Antes</span>
+            <span class="ba-label ba-label--after" aria-hidden="true">Después</span>
+          </div>
+          <div class="featured__body">
+            <h3 id="featured-name">
+              El caso de {featured.name}
+            </h3>
+            <ul class="featured__stats" role="list">
+              {featured.stats.map((s) => (
+                <li>
+                  <span class="featured__num">{s.n}</span>
+                  <span class="featured__label">{s.t}</span>
+                </li>
+              ))}
+            </ul>
+            <blockquote class="featured__quote">
+              <p>{featured.quote}</p>
+            </blockquote>
           </div>
         </article>
       )
     }
   </div>
 
-  <!-- Fila 1: fotos, se mueve hacia la izquierda -->
-  <div class="marquee-row marquee-row--photos" data-reveal>
-    <div class="marquee-row__track">
-      {
-        [0, 1].map((copy) => (
-          <ul class="marquee-row__list" role="list" aria-label={copy === 0 ? 'Fotos de entrenamiento' : undefined} aria-hidden={copy === 1 ? 'true' : undefined}>
-            {photos.map((p) => (
-              <li class="photo-card">
-                <Pic src={p.src} widths={[320, 480, 640]} sizes="(min-width: 768px) 280px, 220px" alt={copy === 0 ? p.alt : ''} class="photo-card__img" />
-                {p.name && <span class="photo-card__name">{p.name}</span>}
-              </li>
-            ))}
-          </ul>
-        ))
-      }
-    </div>
-  </div>
-
   {
-    quotes.length > 0 && (
-      <div class="marquee-row marquee-row--quotes" data-reveal>
-        <h3 class="visually-hidden">Lo que dicen ellas</h3>
+    show && (
+      <div class="marquee-row marquee-row--photos" data-reveal>
+        <h3 class="visually-hidden">Más antes y después</h3>
         <div class="marquee-row__track">
           {[0, 1].map((copy) => (
             <ul class="marquee-row__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
-              {quotes.map((t) => (
-                <li class:list={['quote-card', isPlaceholder && 'quote-card--placeholder']}>
-                  <Icon name="quote" size={28} class="quote-card__icon" />
-                  <p class="quote-card__text">{t.quote}</p>
-                  <p class="quote-card__name">{t.name}</p>
-                  <p class="quote-card__context">{t.context}</p>
+              {transformations.map((t) => (
+                <li class="ba-card">
+                  <div class="ba-card__media">
+                    <Pic src={t.image} widths={[480, 720, 960]} sizes="(min-width: 768px) 420px, 300px" alt={copy === 0 ? t.alt : ''} class="ba-card__img" />
+                    <span class="ba-label ba-label--before" aria-hidden="true">Antes</span>
+                    <span class="ba-label ba-label--after" aria-hidden="true">Después</span>
+                  </div>
+                  <p class="ba-card__name">{t.name}</p>
+                  <p class="ba-card__line">{t.line}</p>
                 </li>
               ))}
             </ul>
@@ -82,8 +70,28 @@ const isPlaceholder = !realTestimonials;
     )
   }
 
+  <div class="marquee-row marquee-row--quotes" data-reveal>
+    <h3 class="visually-hidden">Lo que dicen ellas</h3>
+    <div class="marquee-row__track">
+      {
+        [0, 1].map((copy) => (
+          <ul class="marquee-row__list" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {testimonials.map((t) => (
+              <li class="quote-card">
+                <Icon name="quote" size={28} class="quote-card__icon" />
+                <p class="quote-card__text">{t.quote}</p>
+                <p class="quote-card__name">{t.name}</p>
+                <p class="quote-card__context">{t.context}</p>
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+
   <div class="container">
-    {(featuredOk || transformationCards.length >= 4) && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
+    {show && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
     <div class="section-cta" data-reveal>
       <a class="btn btn--block-mobile" href="#formulario" data-cta="resultados">Quiero ser la siguiente</a>
     </div>
@@ -94,22 +102,88 @@ const isPlaceholder = !realTestimonials;
   .results {
     overflow: hidden;
   }
-  .results__featured {
+
+  /* Caso destacado */
+  .featured {
     display: grid;
-    gap: 24px;
-    align-items: center;
-    max-width: 960px;
+    gap: 22px;
+    max-width: 1040px;
     margin: clamp(32px, 5vw, 56px) auto 0;
-    padding: 20px;
-    border-radius: var(--radius);
+    padding: 14px 14px 26px;
+    border-radius: 28px;
     background: var(--white);
+    box-shadow: 0 24px 50px -36px rgb(214 63 132 / 0.6);
   }
-  .results__featured :global(.results__featured-img) {
+  .featured__media {
+    position: relative;
+  }
+  .featured__media :global(.featured__img) {
     width: 100%;
-    border-radius: var(--radius-sm);
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 18px;
+    background: var(--lilac-50);
   }
-  .results__featured h3 {
-    margin-bottom: 10px;
+  .featured__body {
+    padding-inline: 10px;
+  }
+  .featured__body h3 {
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  }
+  .featured__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 18px 0 0;
+    padding: 0;
+  }
+  .featured__stats li {
+    display: grid;
+    gap: 2px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--blush);
+  }
+  .featured__num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.05;
+    color: var(--pink-strong);
+  }
+  .featured__label {
+    font-size: var(--fs-small);
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .featured__quote {
+    margin: 18px 0 0;
+    padding-left: 14px;
+    border-left: 3px solid var(--pink);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  /* Etiquetas sobre la imagen doble (antes a la izquierda, después a la derecha) */
+  .ba-label {
+    position: absolute;
+    bottom: 10px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .ba-label--before {
+    left: 10px;
+    background: rgb(30 21 48 / 0.75);
+    color: var(--white);
+  }
+  .ba-label--after {
+    left: calc(50% + 10px);
+    background: var(--pink-strong);
+    color: var(--white);
   }
 
   /* Filas en bucle infinito: dos copias de la lista, la pista se desplaza el 50 % */
@@ -123,11 +197,11 @@ const isPlaceholder = !realTestimonials;
   .marquee-row__track {
     display: flex;
     width: max-content;
-    animation: row-left 70s linear infinite;
+    animation: row-left 90s linear infinite;
   }
   .marquee-row--quotes .marquee-row__track {
     animation-name: row-right;
-    animation-duration: 80s;
+    animation-duration: 120s;
   }
   .marquee-row:hover .marquee-row__track,
   .marquee-row:focus-within .marquee-row__track {
@@ -154,27 +228,28 @@ const isPlaceholder = !realTestimonials;
     }
   }
 
-  .photo-card {
-    position: relative;
+  .ba-card {
     flex: none;
-    width: 220px;
+    width: 300px;
   }
-  .photo-card :global(.photo-card__img) {
+  .ba-card__media {
+    position: relative;
+  }
+  .ba-card__media :global(.ba-card__img) {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     border-radius: 18px;
     background: var(--lilac-50);
   }
-  .photo-card__name {
-    position: absolute;
-    left: 12px;
-    bottom: 12px;
-    padding: 4px 10px;
-    border-radius: var(--radius-pill);
-    background: var(--white);
-    font-size: var(--fs-small);
+  .ba-card__name {
+    margin-top: 10px;
     font-weight: 600;
+  }
+  .ba-card__line {
+    color: var(--muted);
+    font-size: var(--fs-small);
+    line-height: 1.35;
   }
 
   .quote-card {
@@ -204,24 +279,15 @@ const isPlaceholder = !realTestimonials;
     color: var(--muted);
     font-size: var(--fs-small);
   }
-  /* Hueco de diseño: se nota que falta el testimonio real */
-  .quote-card--placeholder {
-    background: rgb(255 255 255 / 0.65);
-    border: 1.5px dashed #e8b6cd;
-    box-shadow: none;
-  }
-  .quote-card--placeholder .quote-card__text {
-    color: var(--muted);
-    font-style: italic;
-  }
 
   .results__disclaimer {
     margin-top: 16px;
     text-align: center;
   }
+
   @media (min-width: 768px) {
-    .photo-card {
-      width: 280px;
+    .ba-card {
+      width: 420px;
     }
     .marquee-row__list {
       gap: 18px;
@@ -232,11 +298,18 @@ const isPlaceholder = !realTestimonials;
       padding: 26px 26px 22px;
     }
   }
-  @media (min-width: 900px) {
-    .results__featured {
-      grid-template-columns: 1fr 1fr;
-      padding: 28px;
-      gap: 40px;
+  @media (min-width: 960px) {
+    .featured {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: center;
+      gap: 36px;
+      padding: 18px 36px 18px 18px;
+    }
+    .featured__body {
+      padding: 0;
+    }
+    .featured__num {
+      font-size: 2.5rem;
     }
   }
 

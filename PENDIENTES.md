@@ -13,17 +13,18 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 ## Autorizaciones y contenido real
 
-- [ ] **Autorización escrita** para usar fotos y testimonios de Noelia, Ana Pino, Alexandra, Judith y Andrea. Con ellas: fotos en `src/assets/img/transformaciones/`, datos en `src/data/transformations.ts` y `showTransformations: true`.
+Las fotos, vídeos y testimonios de alumnas y del equipo ya son reales (material del Drive de la marca). Queda:
+
+- [ ] **Confirmar que todas las alumnas que aparecen han dado su permiso** para salir en una web pública con anuncios: Noelia, Ariadna, Cris S., Claudia, Anna P., Anna S., Ainhoa, Gloria, Marina, Lucía, Cris G., Alba, Judith, Montse (fotos), Liliam, Andrea, Alexandra (vídeos) y Coralie, Carlota, Lorena, Alice (solo testimonio). Si alguna no quiere salir, se quita su entrada de `src/data/transformations.ts` o `src/data/testimonials.ts`.
+- [ ] Revisar que los **nombres** son como cada alumna quiere aparecer (ahora: nombre de pila, con inicial cuando se repite).
+- [ ] **Descripción de Fede**: no venía en el Drive. Ahora su ficha dice "Coach del equipo de Pomposo y Peligroso" (`src/components/Coach.astro`).
+- [ ] Fotos de Fede `IMG_1159`, `IMG_1679`, vídeo `IMG_0793` y una captura de Cris Serrasolsas no se pudieron descargar (límite de Google Drive). No son necesarias, pero si las queréis en la web, pasádmelas por otro medio.
 - [ ] Confirmar si se puede decir que **Noelia es influencer** y mencionar su cuenta. Ahora no se menciona.
-- [ ] **Testimonios reales (IMPRESCINDIBLE antes de lanzar anuncios)**: no se han podido sacar del Instagram (bloqueado). Ahora en "Mujeres normales, cambios reales" la fila de testimonios muestra **huecos de diseño** que dicen "Aquí irá el testimonio real de una alumna..." para que se vea cómo quedará. Hay que poner al menos 2 reales en `src/data/testimonials.ts` (texto literal de 30 palabras como mucho, nombre como lo autorice cada alumna, una línea de contexto y de dónde sale). Si se lanza sin ellos, poner `SHOW_TESTIMONIAL_PLACEHOLDERS = false` en ese archivo y la fila desaparece.
-- [ ] **Fotos del carrusel** (12 fotos que se mueven en "Mujeres normales, cambios reales"): ahora son 6 del centro y 6 de Pexels. Cambiarlas por fotos propias de alumnas con su permiso en `src/assets/img/galeria/` y `src/data/gallery.ts` (vertical 3:4, mínimo 900 x 1200).
-- [ ] **Nombre y foto de la entrenadora o entrenadoras**. Ahora la sección del equipo ("Detrás de cada glúteo pomposo hay un equipo") habla de The Monkeys con un collage de 3 fotos del centro. El chat de "No te falta motivación" es una ilustración de cómo es el seguimiento, no una conversación real.
-- [ ] Confirmar que se pueden usar en la landing las **fotos del centro** sacadas de themonkeyscommunity.com (aparecen personas reales): ver `source/brand/README.md`.
+- [ ] El chat de "No te falta motivación" es una ilustración de cómo es el seguimiento, no una conversación real.
 
 ## Marca
 
 - [ ] **Logo oficial vectorial** y **lila exacto** del avatar. No se pudo descargar el avatar de Instagram: el mono se ha vectorizado a partir del logo de The Monkeys (`tmc-logo-4.png`) y se ha puesto en un círculo `#B9A4F2` (valor de partida del brief). Si el original es distinto, sustituir `public/logo-mark.svg`, el símbolo de `src/components/MonoSprite.astro`, los favicons y el color `--lilac` de `src/styles/tokens.css`.
-- [ ] Fotos y vídeos propios de alumnas entrenando glúteo (si los hay) para sustituir las de banco de imágenes del hero, "No te falta motivación", los fondos de "Así funciona" y del cierre, y el carrusel.
 
 ## Textos por confirmar
 
@@ -38,7 +39,9 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 - "+30 alumnas" se usa como dato real porque el brief dice "aproximadamente 30 alumnas".
 - El centro se ubica en Gavà (domicilio fiscal, Miquel Servet 14). La web de The Monkeys habla de "la zona de Castelldefels"; el mismo local aparece en directorios como Gavà o Castelldefels.
-- Las fotos de entrenamiento del centro y de Pexels se muestran en el carrusel de "Resultados" (con el interruptor de transformaciones apagado), sin decir que sean alumnas del programa. Con `showTransformations: true` y al menos 4 transformaciones con foto, el carrusel pasa a mostrar las transformaciones.
+- Las alumnas marcadas "no mostrar cara" solo aparecen de espaldas (en vez de difuminar la cara), o solo con su testimonio.
+- Cuando no se indicaba cuál era el antes, se ha deducido por las fechas de la app de seguimiento y la gráfica de peso.
+- Los datos de peso y medidas salen de sus gráficas y fichas de seguimiento del Drive.
 - Se ha quitado la sección "Es para ti si..." y los enlaces del header, como se pidió en el rediseño.
 - Sin precio visible y sin promesas de kilos en un plazo concreto (cuidado con la revisión de Meta).
 - El honeypot relleno se descarta en el servidor sin escribir la fila (`DISCARD_HONEYPOT = true` en el Apps Script); los envíos de menos de 3 s se escriben marcados como sospechosos.

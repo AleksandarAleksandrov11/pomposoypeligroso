@@ -1,6 +1,6 @@
 /**
  * Comportamiento de interfaz: header, apariciones al hacer scroll, barra fija móvil,
- * botón flotante de WhatsApp, precarga de fotos en segundo plano y clics de contacto.
+ * botón flotante de WhatsApp, precarga de fotos en segundo plano, clips de vídeo y clics de contacto.
  */
 import { track } from './pixel';
 
@@ -119,6 +119,56 @@ function warmUpImages() {
   else window.addEventListener('load', whenIdle, { once: true });
 }
 
+/**
+ * Clips de alumnas entrenando: el vídeo se pide cuando la sección se acerca a la pantalla y solo se
+ * reproduce mientras se ve. Con "reducir movimiento" no se reproducen solos (llevan controles).
+ */
+function initVideos() {
+  const section = document.querySelector<HTMLElement>('[data-videos]');
+  if (!section) return;
+  const videos = [...section.querySelectorAll<HTMLVideoElement>('video[data-src]')];
+  // data-src lleva la ruta sin extensión: MP4 (H.264) si el navegador lo admite y, si no, WebM (VP9)
+  const ext = document.createElement('video').canPlayType('video/mp4; codecs="avc1.4D401E"') ? 'mp4' : 'webm';
+  const load = (v: HTMLVideoElement) => {
+    if (v.src || !v.dataset.src) return;
+    v.src = `${v.dataset.src}.${ext}`;
+  };
+  if (reducedMotion || !('IntersectionObserver' in window)) {
+    videos.forEach((v) => {
+      // Con controles deja de ser decorativo: vuelve a ser accesible. Se descarga solo al darle a reproducir.
+      v.removeAttribute('aria-hidden');
+      v.controls = true;
+      load(v);
+    });
+    return;
+  }
+  const near = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        videos.forEach(load);
+        near.disconnect();
+      }
+    },
+    { rootMargin: '600px 0px' },
+  );
+  near.observe(section);
+  const visible = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) {
+          load(v);
+          v.play().catch(() => {
+            /* el navegador no deja reproducir: se queda la imagen de portada */
+          });
+        } else v.pause();
+      }
+    },
+    { threshold: 0.25 },
+  );
+  videos.forEach((v) => visible.observe(v));
+}
+
 /** Evento Contact al pulsar WhatsApp o teléfono. */
 function initContactTracking() {
   document.addEventListener('click', (e) => {
@@ -141,6 +191,7 @@ export function initUI() {
   initMobileBar();
   initFab();
   warmUpImages();
+  initVideos();
   initContactTracking();
   initYear();
 }

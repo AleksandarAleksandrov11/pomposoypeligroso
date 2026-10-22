@@ -99,7 +99,7 @@ for (const [w, h] of sizes) {
     const out = [];
     if (document.documentElement.scrollWidth > innerWidth) out.push(`scroll horizontal ${document.documentElement.scrollWidth} > ${innerWidth}`);
     document.querySelectorAll('h1,h2,h3,.btn,.pill,.option span,p,li,a,summary').forEach((el) => {
-      if (el.closest('.marquee,.marquee-row,.carousel__track,.site-footer__giant,.visually-hidden,.hp,[hidden]')) return;
+      if (el.closest('.marquee,.marquee-row,.videos__row,.carousel__track,.site-footer__giant,.visually-hidden,.hp,[hidden]')) return;
       const r = el.getBoundingClientRect();
       if (!r.width) return;
       if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== 'visible') out.push('texto cortado: ' + el.textContent.trim().slice(0, 50));
