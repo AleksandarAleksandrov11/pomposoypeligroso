@@ -6,7 +6,7 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 
 | Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | FCP | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|---|
-| `/` | Móvil | 96 a 98 | 100 | 100 | 100 | 1,1 a 1,3 s | 1,9 s | 0 | 100 a 200 ms |
+| `/` | Móvil | 97 a 99 | 100 | 100 | 100 | 1,1 a 1,2 s | 1,9 s | 0 | 0 a 170 ms |
 | `/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,6 s | 0,001 | 0 ms |
 | `/gracias` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
 | `/gracias` | Escritorio | 100 | 100 | 100 | 66 * | | 0,3 s | 0 | 0 ms |
@@ -16,6 +16,8 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 \* SEO 66 solo por el `noindex`, que el brief pide para gracias y legales. Es intencionado.
 
 Optimización de carga:
+
+- iPhone emulado (SE, 13 mini, 15 y 15 Pro Max; Safari y navegador de Instagram; 4G lento de 1,6 Mbps y 150 ms): foto del hero en 0,84 a 0,9 s, página cargada en 1,8 a 2 s, CTA visible sin scroll en todos, sin scroll lateral y sin errores. La página mide de 14 a 19 pantallas y el formulario empieza en la pantalla 3,6 a 4,8 (antes, en la 12).
 
 - Prueba en iPhone emulado (navegador de Instagram, 4G lento de 1,6 Mbps y 150 ms): primer contenido a 0,45 s, foto del hero a 1,2 s, página cargada a 2 s con 305 KB y 16 peticiones.
 

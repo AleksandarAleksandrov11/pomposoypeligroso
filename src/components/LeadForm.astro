@@ -25,7 +25,11 @@ const prefixes: [string, string][] = [
 <section class="section form-section" id="formulario" aria-labelledby="form-title">
   <div class="container form-section__inner">
     <div class="section-head form-section__intro">
-      <h2 id="form-title">Empieza aquí <span class="script script--low">cuéntanos sobre ti.</span></h2>
+      <h2 id="form-title">Mira si encajas <span class="script script--low">cuéntanos sobre ti.</span></h2>
+      <ul class="form-section__chips" role="list">
+        <li><Icon name="check" size={16} /> Plazas limitadas</li>
+        <li><Icon name="check" size={16} /> Videollamada sin compromiso</li>
+      </ul>
     </div>
 
     <div class="lead-card">
@@ -232,6 +236,29 @@ const prefixes: [string, string][] = [
     z-index: 1;
     display: grid;
     gap: 28px;
+  }
+  .form-section__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 18px 0 0;
+    padding: 0;
+  }
+  .form-section__chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: rgb(255 255 255 / 0.14);
+    color: var(--white);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .form-section__chips :global(svg) {
+    color: var(--pink);
+    stroke-width: 2.5;
   }
   .form-section__help {
     text-align: center;

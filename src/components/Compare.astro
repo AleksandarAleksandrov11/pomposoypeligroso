@@ -1,25 +1,27 @@
 ---
 import Icon from './Icon.astro';
-const rows: [string, string][] = [
-  ['Rutina genérica descargada', 'Plan hecho para ti'],
-  ['Dieta de pasar hambre', 'Raciones flexibles, sin prohibiciones'],
-  ['Nadie revisa si lo cumples', 'Revisión cada semana'],
-  ['Dudas sin resolver', 'Chat directo con tu coach'],
-  ['Lo dejas cuando baja la motivación', 'Alguien te sostiene cuando flojeas'],
+// Lo de siempre frente a lo que incluyen tus 12 semanas (antes había una sección aparte de "Qué incluye")
+const rows: { old: string; t: string; d: string }[] = [
+  { old: 'Rutina genérica descargada', t: 'Plan de fuerza hecho para ti', d: '3 o 4 días por semana, 45 minutos, según tu nivel y tu material.' },
+  { old: 'Dieta de pasar hambre', t: 'Nutrición sin dietas', d: 'Raciones y equivalencias para comer lo que te gusta.' },
+  { old: 'Nadie revisa si lo cumples', t: 'Revisión cada semana', d: 'Peso, medidas, fotos y sensaciones. Con eso ajustamos tu plan.' },
+  { old: 'Dudas sin resolver', t: 'Chat directo con tu coach', d: 'Y videollamadas para marcar los siguientes objetivos.' },
+  { old: 'Lo dejas cuando baja la motivación', t: 'Alguien te sostiene cuando flojeas', d: '12 semanas acompañada de principio a fin.' },
 ];
 ---
 
-<section class="section bg-lilac compare" aria-labelledby="compare-title">
+<section class="section compare" aria-labelledby="compare-title">
   <div class="container">
     <div class="section-head" data-reveal>
       <h2 id="compare-title">Adiós a lo&nbsp;de&nbsp;siempre <span class="script">hola, Pomposo.</span></h2>
+      <p>Esto es lo que incluyen tus 12 semanas.</p>
     </div>
     <div class="compare__grid">
       <div class="compare__card compare__card--old" data-reveal>
         <h3>Lo de siempre</h3>
         <ul role="list">
           {
-            rows.map(([old]) => (
+            rows.map(({ old }) => (
               <li>
                 <Icon name="cross" size={18} class="compare__icon" />
                 <span>
@@ -40,12 +42,15 @@ const rows: [string, string][] = [
         </h3>
         <ul role="list">
           {
-            rows.map(([, nuevo]) => (
+            rows.map(({ t, d }) => (
               <li>
                 <span class="compare__check" aria-hidden="true">
                   <Icon name="check" size={16} />
                 </span>
-                <span>{nuevo}</span>
+                <span>
+                  {t}
+                  <span class="compare__detail">{d}</span>
+                </span>
               </li>
             ))
           }
@@ -97,7 +102,7 @@ const rows: [string, string][] = [
 
   /* Lo de siempre: apagado y tachado */
   .compare__card--old {
-    background: rgb(255 255 255 / 0.7);
+    background: var(--lilac-50);
     color: var(--muted);
     border: 1px dashed #cfc3e6;
   }
@@ -141,6 +146,14 @@ const rows: [string, string][] = [
     color: var(--ink);
     transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  .compare__detail {
+    display: block;
+    margin-top: 2px;
+    color: var(--on-dark);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
   .compare__check :global(svg) {
     stroke-width: 2.5;
   }
@@ -160,7 +173,7 @@ const rows: [string, string][] = [
     font-family: var(--font-display);
     font-size: 1.5rem;
     letter-spacing: 0.04em;
-    box-shadow: 0 0 0 6px var(--lilac-50);
+    box-shadow: 0 0 0 6px var(--white);
   }
 
   /* Animación al entrar en pantalla (solo si la sección estaba fuera al cargar) */

@@ -15,11 +15,11 @@ export const SITE = {
   /** URL del Web App de Google Apps Script (termina en /exec). PENDIENTE. */
   formEndpoint: '',
   /** WhatsApp en formato internacional, sin + ni espacios (ej. 34612345678). PENDIENTE. */
-  whatsappNumber: '34XXXXXXXXX',
+  whatsappNumber: '34622437549',
   whatsappMessage: 'Hola, vengo de la web de Pomposo y Peligroso y quiero información.',
   /** Teléfono visible y enlace tel:. PENDIENTE. */
-  phoneDisplay: '+34 XXX XXX XXX',
-  phoneHref: 'tel:+34XXXXXXXXX',
+  phoneDisplay: '+34 622 43 75 49',
+  phoneHref: 'tel:+34622437549',
   email: 'info@themonkeyscommunity.com',
   instagram: 'https://www.instagram.com/pomposoypeligrosotmc/',
   instagramHandle: '@pomposoypeligrosotmc',

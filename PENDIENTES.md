@@ -5,7 +5,7 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 ## Configuración (`src/config/site.ts`)
 
 - [ ] **ID del Meta Pixel** → `metaPixelId`.
-- [ ] **Teléfono / WhatsApp de contacto** → `whatsappNumber`, `phoneDisplay`, `phoneHref`. En la web de The Monkeys aparece el WhatsApp **+34 644 117 740**: confirmar si es el mismo para Pomposo y Peligroso. Hasta entonces el botón morado de WhatsApp de la barra fija del móvil y el flotante de escritorio llevan al formulario, y el resto de enlaces de WhatsApp no se muestran.
+- [x] **WhatsApp y teléfono**: +34 622 43 75 49 (`site.ts`). Los botones de WhatsApp ya abren el chat con un mensaje preparado.
 - [ ] **Dominio definitivo** → `url` (y añadirlo en Vercel). Mientras tanto se usa la URL `*.vercel.app`.
 - [ ] **URL del Web App de Apps Script** → `formEndpoint` (la pegas tú tras implementarlo, ver README).
 - [ ] **Email para avisos de leads** → `NOTIFY_EMAIL` en `apps-script/Code.gs`.

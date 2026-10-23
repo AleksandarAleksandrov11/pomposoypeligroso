@@ -3,6 +3,11 @@ import Pic from './Pic.astro';
 import heroV from '../assets/img/hero-flor-gluteo-vertical.jpg';
 import heroH from '../assets/img/hero-clientas-entrenando-horizontal.jpg';
 import { HERO } from '../lib/images';
+import Icon from './Icon.astro';
+import { transformations, featured } from '../data/transformations';
+
+// Tres antes/después reales en miniatura: prueba de resultados en la primera pantalla
+const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')!.image, transformations.find((t) => t.name === 'Claudia')!.image];
 ---
 
 <section class="hero on-dark" aria-labelledby="hero-title">
@@ -24,8 +29,14 @@ import { HERO } from '../lib/images';
     <p class="hero__lead">Programa online de 12 semanas para mujeres +30.<br />Fuerza, comida sin dietas y un coach pendiente de ti.</p>
     <div class="hero__ctas">
       <a class="btn" href="#formulario" data-hero-cta data-cta="hero">Quiero mi plaza</a>
-      <a class="btn btn--outline-light" href="#resultados">Ver resultados</a>
+      <p class="hero__note"><Icon name="check" size={16} /> Videollamada sin compromiso</p>
     </div>
+    <a class="proof" href="#resultados">
+      <span class="proof__thumbs" aria-hidden="true">
+        {proof.map((img) => <Pic src={img} widths={[160]} sizes="80px" quality={60} alt="" class="proof__img" />)}
+      </span>
+      <span class="proof__text">Mira los resultados de nuestras alumnas</span>
+    </a>
   </div>
 </section>
 
@@ -93,8 +104,64 @@ import { HERO } from '../lib/images';
   .hero__ctas {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 24px;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .hero__note {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--on-dark);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .hero__note :global(svg) {
+    color: var(--pink);
+    stroke-width: 2.5;
+  }
+  /* Tira de antes/después: lleva a la sección de resultados */
+  .proof {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    margin-top: 16px;
+    padding: 6px 14px 6px 6px;
+    border-radius: var(--radius-pill);
+    background: rgb(255 255 255 / 0.12);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: var(--white);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    text-decoration: none;
+    text-align: left;
+    line-height: 1.25;
+    transition: background-color 0.2s ease;
+  }
+  .proof:hover {
+    background: rgb(255 255 255 / 0.2);
+  }
+  .proof__thumbs {
+    display: flex;
+    flex: none;
+  }
+  .proof__thumbs :global(.proof__img) {
+    width: 54px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--white);
+  }
+  .proof__thumbs :global(picture + picture) {
+    margin-left: -10px;
+  }
+  .proof__text {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
   }
   /* En escritorio el aviso de cookies va abajo: mientras no hay elección guardada, el hero reserva
      su hueco desde el primer pintado (clase needs-consent del script inline de Base.astro), sin saltos */
@@ -105,9 +172,10 @@ import { HERO } from '../lib/images';
   }
   @media (min-width: 600px) {
     .hero__ctas {
-      flex-direction: row;
-      justify-content: center;
-      gap: 14px;
+      align-items: center;
+    }
+    .hero__ctas .btn {
+      min-width: 280px;
     }
     .hero__lead {
       font-size: 1.125rem;
