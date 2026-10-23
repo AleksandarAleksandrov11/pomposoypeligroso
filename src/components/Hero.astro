@@ -1,6 +1,6 @@
 ---
 import Pic from './Pic.astro';
-import heroV from '../assets/img/hero-liliam-mancuernas-vertical.jpg';
+import heroV from '../assets/img/hero-flor-gluteo-vertical.jpg';
 import heroH from '../assets/img/hero-clientas-entrenando-horizontal.jpg';
 import { HERO } from '../lib/images';
 ---
@@ -53,9 +53,9 @@ import { HERO } from '../lib/images';
   }
   .hero__bg :global(.hero__img) {
     object-fit: cover;
-    object-position: 50% 30%;
+    object-position: 50% 0%;
   }
-  /* Velo: deja ver la foto arriba y oscurece donde va el texto */
+  /* Velo: deja ver la foto (el glúteo de Flor llega hasta el titular) y oscurece donde va el texto pequeño y los botones */
   .hero::after {
     content: '';
     position: absolute;
@@ -63,11 +63,11 @@ import { HERO } from '../lib/images';
     z-index: -1;
     background: linear-gradient(
       180deg,
-      rgb(30 21 48 / 0.2) 0%,
-      rgb(30 21 48 / 0.12) 26%,
-      rgb(30 21 48 / 0.62) 50%,
-      rgb(30 21 48 / 0.92) 72%,
-      rgb(30 21 48 / 0.97) 100%
+      rgb(30 21 48 / 0.15) 0%,
+      rgb(30 21 48 / 0.08) 30%,
+      rgb(30 21 48 / 0.38) 50%,
+      rgb(30 21 48 / 0.86) 66%,
+      rgb(30 21 48 / 0.96) 100%
     );
   }
   .hero__content {
@@ -80,6 +80,7 @@ import { HERO } from '../lib/images';
   .hero__title {
     font-size: var(--fs-h1);
     line-height: 0.98;
+    text-shadow: 0 2px 24px rgb(30 21 48 / 0.55);
   }
   .hero__lead {
     max-width: 34rem;
