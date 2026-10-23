@@ -296,7 +296,8 @@ test('las fórmulas del Contador están bien formadas y leen la hoja Leads', () 
   assert.equal(formulas.length, 5 + 7, 'cinco contadores y siete estados');
   for (const f of formulas) {
     assert.ok(f.startsWith('='), f);
-    assert.ok(!f.includes(';'), 'sin punto y coma (setFormula usa sintaxis inglesa): ' + f);
+    const outsideStrings = f.replace(/"[^"]*"/g, '');
+    assert.ok(!/[,;]/.test(outsideStrings), 'sin separadores de argumentos, para que valga en cualquier idioma de la hoja: ' + f);
     assert.ok(f.includes("'Leads'!"), f);
     let depth = 0;
     let inStr = false;
@@ -311,7 +312,7 @@ test('las fórmulas del Contador están bien formadas y leen la hoja Leads', () 
     assert.ok(!inStr, 'comillas sin cerrar: ' + f);
   }
   assert.ok(formulas.some((f) => f.startsWith('=COUNTA(')), 'total');
-  assert.ok(formulas.filter((f) => f.startsWith('=COUNTIF(')).length === 7, 'un contador por estado');
+  assert.equal(formulas.filter((f) => f.startsWith('=SUMPRODUCT(')).length, 4 + 7, 'cuatro de fechas y uno por estado');
 });
 
 test('setup() con la versión anterior de 10 columnas añade Estado sin borrar leads', () => {

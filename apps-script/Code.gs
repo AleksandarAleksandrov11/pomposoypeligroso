@@ -315,10 +315,10 @@ function setupCounter_(ss) {
 
   var kpis = [
     ['Total', '=COUNTA(' + names + ')'],
-    ['Hoy', '=COUNTIFS(' + dates + ',">="&TODAY(),' + dates + ',"<"&TODAY()+1)'],
-    ['Ayer', '=COUNTIFS(' + dates + ',">="&TODAY()-1,' + dates + ',"<"&TODAY())'],
-    ['Últimos 7 días', '=COUNTIFS(' + dates + ',">="&TODAY()-6)'],
-    ['Últimos 30 días', '=COUNTIFS(' + dates + ',">="&TODAY()-29)']
+    ['Hoy', '=SUMPRODUCT((' + dates + '>=TODAY())*(' + dates + '<TODAY()+1))'],
+    ['Ayer', '=SUMPRODUCT((' + dates + '>=TODAY()-1)*(' + dates + '<TODAY()))'],
+    ['Últimos 7 días', '=SUMPRODUCT(--(' + dates + '>=TODAY()-6))'],
+    ['Últimos 30 días', '=SUMPRODUCT(--(' + dates + '>=TODAY()-29))']
   ];
   kpis.forEach(function (k, i) {
     var col = 2 + i;
@@ -335,6 +335,6 @@ function setupCounter_(ss) {
     var r = 7 + i;
     var c = STATUS_COLORS[st];
     sheet.getRange(r, 2).setValue(st).setBackground(c[0]).setFontColor(c[1]).setFontWeight('bold');
-    sheet.getRange(r, 3).setFormula('=COUNTIF(' + states + ',B' + r + ')').setNumberFormat('0').setHorizontalAlignment('center');
+    sheet.getRange(r, 3).setFormula('=SUMPRODUCT(--(' + states + '=B' + r + '))').setNumberFormat('0').setHorizontalAlignment('center');
   });
 }
