@@ -61,7 +61,10 @@ if (ONLY === 'all' || ONLY === 'A') {
   const body = state.posts[0] ? JSON.parse(state.posts[0].body) : {};
   ok('A POST text/plain', state.posts[0]?.ct?.startsWith('text/plain'), state.posts[0]?.ct);
   ok('A consent_marketing = no', body.consent_marketing === 'no', body.consent_marketing);
-  ok('A UTMs llegan sin consentimiento (misma sesión)', body.utm_source === 'fb' && body.utm_content === 'anuncio1' && body.fbclid === 'abc', JSON.stringify({ s: body.utm_source, c: body.utm_content, f: body.fbclid }));
+  ok('A UTMs llegan sin consentimiento (misma página)', body.utm_source === 'fb' && body.utm_content === 'anuncio1', JSON.stringify({ s: body.utm_source, c: body.utm_content }));
+  ok('A sin consentimiento no viajan identificadores de Meta', !body.fbclid && !body.fbc && !body.fbp && !/fbclid/.test(body.landing_url + body.page_url + body.first_touch + body.last_touch), JSON.stringify({ f: body.fbclid, l: body.landing_url }));
+  const stored = await page.evaluate(() => ({ ls: Object.keys(localStorage), ss: Object.keys(sessionStorage) }));
+  ok('A sin consentimiento solo se guarda lo necesario', !stored.ls.concat(stored.ss).some((k) => /touch|form_started|lead_sent/.test(k)), JSON.stringify(stored));
   ok('A sin localStorage de atribución sin consentimiento', (await page.evaluate(() => localStorage.getItem('pyp_last_touch'))) === null);
   ok('A /gracias con nombre', (await page.locator('[data-thanks-title]').textContent())?.includes('María'), await page.locator('[data-thanks-title]').textContent());
   ok('A sin errores de consola', state.console.length === 0, state.console.join(' | '));

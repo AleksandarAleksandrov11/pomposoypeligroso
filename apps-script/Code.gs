@@ -1,33 +1,13 @@
-/**
- * POMPOSO Y PELIGROSO · Recepción de leads en Google Sheets
- * ----------------------------------------------------------
- * - doPost(e): recibe el formulario de la landing (JSON enviado como text/plain),
- *   valida, sanea, evita duplicados y escribe una fila en la hoja "Leads".
- * - doGet(): responde { ok: true, status: 'alive' } para comprobar la implementación.
- * - setup(): crea o repara las hojas "Leads" y "Resumen" (cabeceras, formatos,
- *   desplegables, colores, fórmulas y gráficos). Se puede ejecutar varias veces.
- *
- * Instalación: ver README.md del proyecto (sección "Google Sheets + Apps Script").
- */
-
-/* ======================= CONFIGURACIÓN ======================= */
-
-/** ID de la hoja. Déjalo vacío si el script está creado desde la propia hoja (Extensiones > Apps Script). */
 var SPREADSHEET_ID = '';
 
-/** Email que recibe un aviso por cada lead nuevo. Vacío = sin aviso. PENDIENTE. */
-var NOTIFY_EMAIL = '';
+var NOTIFY_EMAIL = 'aaswebmarketing@gmail.com';
 
-/** Si el honeypot viene relleno: true = se descarta sin escribir; false = se escribe marcado como sospechoso. */
 var DISCARD_HONEYPOT = true;
 
-/** Minutos en los que un mismo teléfono no se vuelve a escribir (evita duplicados por doble envío). */
 var DUPLICATE_WINDOW_MINUTES = 10;
 
-/** Segundos mínimos para completar el formulario; por debajo se marca como sospechoso. */
 var MIN_SECONDS = 3;
 
-/** Filas reservadas para cada tabla dinámica del Resumen (anuncios, campañas...). */
 var RESERVED_ROWS = 40;
 
 var TZ = 'Europe/Madrid';
@@ -60,7 +40,6 @@ var BRAND = {
   white: '#FFFFFF'
 };
 
-/** Columnas de la hoja Leads, en orden. [cabecera, ancho en px] */
 var COLUMNS = [
   ['Fecha', 95],
   ['Hora', 60],
@@ -99,7 +78,6 @@ var COLUMNS = [
   ['Sospechoso', 95]
 ];
 
-/** Posición (1 = A) de las columnas que se usan en el código y en las fórmulas. */
 var COL = {
   fecha: 1, hora: 2, id: 3, nombre: 4, telefono: 5, whatsapp: 6, edad: 7, experiencia: 8, estado: 9, notas: 10,
   utm_source: 11, utm_medium: 12, utm_campaign: 13, utm_content: 14, utm_term: 15, utm_id: 16,
@@ -107,8 +85,6 @@ var COL = {
   event_id: 25, consent: 26, dispositivo: 27, inapp: 28, landing: 29, referrer: 30, first_touch: 31,
   user_agent: 32, tiempo: 33, iso: 34, sospechoso: 35
 };
-
-/* ======================= WEB APP ======================= */
 
 function doGet() {
   return json_({ ok: true, status: 'alive' });
@@ -131,7 +107,6 @@ function doPost(e) {
     var lead = check.lead;
 
     if (lead.honeypot && DISCARD_HONEYPOT) {
-      // Se responde ok para no dar pistas al bot, pero no se escribe nada.
       return json_({ ok: true, id: '' });
     }
 
@@ -146,9 +121,8 @@ function doPost(e) {
 
       id = makeLeadId_(now);
       var row = buildRow_(lead, id, now);
-      var r = Math.max(2, sheet.getLastRow() + 1); // la fila 1 es la cabecera
+      var r = Math.max(2, sheet.getLastRow() + 1);
       var range = sheet.getRange(r, 1, 1, row.length);
-      // Teléfono e IDs como texto para no perder el "+" ni convertirlos en números
       sheet.getRange(r, COL.telefono).setNumberFormat('@');
       [COL.campaign_id, COL.adset_id, COL.ad_id, COL.utm_id].forEach(function (c) {
         sheet.getRange(r, c).setNumberFormat('@');
@@ -176,9 +150,6 @@ function doPost(e) {
   }
 }
 
-/* ======================= LÓGICA PURA (se prueba en Node) ======================= */
-
-/** Limita longitud y neutraliza fórmulas (=, +, -, @) anteponiendo un apóstrofo. */
 function sanitize_(value, maxLen) {
   if (value === null || value === undefined) return '';
   var s = String(value).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim();
@@ -187,7 +158,6 @@ function sanitize_(value, maxLen) {
   return s;
 }
 
-/** Teléfono en E.164 (+34612345678). Con +34 exige 9 dígitos que empiecen por 6, 7, 8 o 9. */
 function validPhone_(phone) {
   if (typeof phone !== 'string') return false;
   if (!/^\+\d{7,16}$/.test(phone)) return false;
@@ -201,7 +171,6 @@ function validName_(name) {
   return v.length >= 2 && v.length <= 60 && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(v);
 }
 
-/** Valida y normaliza el JSON recibido. Devuelve { ok, lead } o { ok: false, error }. */
 function validateLead_(d) {
   if (!d || typeof d !== 'object') return { ok: false, error: 'invalid_payload' };
   if (!validName_(d.name)) return { ok: false, error: 'invalid_name' };
@@ -249,7 +218,6 @@ function validateLead_(d) {
   return { ok: true, lead: lead };
 }
 
-/** Origen legible del lead a partir de UTMs, fbclid y referrer. */
 function computeOrigin_(l) {
   var src = (l.utm_source || '').toLowerCase();
   var med = (l.utm_medium || '').toLowerCase();
@@ -268,7 +236,6 @@ function computeOrigin_(l) {
   return 'Referido: ' + (m ? m[1].replace(/^www\./, '') : ref.slice(0, 60));
 }
 
-/** ID corto: PYP-AAAAMMDD-XXXX */
 function makeLeadId_(date) {
   var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   var suffix = '';
@@ -276,12 +243,10 @@ function makeLeadId_(date) {
   return 'PYP-' + Utilities.formatDate(date, TZ, 'yyyyMMdd') + '-' + suffix;
 }
 
-/** Fórmula del enlace a WhatsApp (sintaxis inglesa con comas, como exige setFormula). */
 function whatsappFormula_(phone) {
   return '=HYPERLINK("https://wa.me/' + String(phone).replace(/\D/g, '') + '","Abrir chat")';
 }
 
-/** Construye la fila en el orden de COLUMNS (la columna WhatsApp se rellena luego con setFormula). */
 function buildRow_(l, id, now) {
   var row = [];
   row[COL.fecha - 1] = now;
@@ -322,8 +287,6 @@ function buildRow_(l, id, now) {
   return row;
 }
 
-/* ======================= HOJA ======================= */
-
 function getSpreadsheet_() {
   return SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
 }
@@ -338,7 +301,6 @@ function getLeadsSheet_() {
   return sheet;
 }
 
-/** Devuelve el ID del lead si el mismo teléfono entró en los últimos minutos. */
 function findRecentDuplicate_(sheet, phone, now) {
   var last = sheet.getLastRow();
   if (last < 2) return '';
@@ -389,9 +351,6 @@ function colLetter_(n) {
   return s;
 }
 
-/* ======================= SETUP ======================= */
-
-/** Crea o repara las hojas. Ejecútalo una vez tras pegar el código (y cuando quieras rehacer el Resumen). */
 function setup() {
   var ss = getSpreadsheet_();
   ss.setSpreadsheetTimeZone(TZ);
@@ -405,7 +364,6 @@ function setupLeads_(ss) {
   var sheet = ss.getSheetByName(SHEET_LEADS);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_LEADS, 0);
-    // Si la hoja nueva venía con la "Hoja 1" vacía por defecto, la quitamos
     var def = ss.getSheetByName('Hoja 1') || ss.getSheetByName('Sheet1');
     if (def && def.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(def);
   }
@@ -414,7 +372,6 @@ function setupLeads_(ss) {
   if (sheet.getMaxRows() < 1000) sheet.insertRowsAfter(sheet.getMaxRows(), 1000 - sheet.getMaxRows());
   var maxRows = sheet.getMaxRows();
 
-  // Cabecera
   var headers = COLUMNS.map(function (c) { return c[0]; });
   sheet.getRange(1, 1, 1, nCols)
     .setValues([headers])
@@ -428,7 +385,6 @@ function setupLeads_(ss) {
   sheet.setFrozenColumns(0);
   COLUMNS.forEach(function (c, i) { sheet.setColumnWidth(i + 1, c[1]); });
 
-  // Formatos de columna
   var body = function (col) { return sheet.getRange(2, col, maxRows - 1, 1); };
   body(COL.fecha).setNumberFormat('dd/mm/yyyy');
   body(COL.hora).setNumberFormat('HH:mm');
@@ -439,11 +395,9 @@ function setupLeads_(ss) {
   sheet.getRange(1, 1, 1, nCols).setFontFamily('Inter').setFontSize(10);
   body(COL.nombre).setFontWeight('bold');
 
-  // Desplegable de Estado
   var rule = SpreadsheetApp.newDataValidation().requireValueInList(STATUS_OPTIONS, true).setAllowInvalid(false).build();
   body(COL.estado).setDataValidation(rule);
 
-  // Formato condicional: estados y sospechosos
   var rules = [];
   var statusRange = body(COL.estado);
   STATUS_OPTIONS.forEach(function (s) {
@@ -455,13 +409,10 @@ function setupLeads_(ss) {
   rules.push(SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(suspiciousRow).setFontColor('#9B1C1C').setRanges([sheet.getRange(2, COL.nombre, maxRows - 1, 1)]).build());
   sheet.setConditionalFormatRules(rules);
 
-  // Filtro sobre todas las columnas
   var filter = sheet.getFilter();
   if (filter) filter.remove();
   sheet.getRange(1, 1, maxRows, nCols).createFilter();
 }
-
-/* ---------- Resumen ---------- */
 
 function setupSummary_(ss) {
   var sheet = ss.getSheetByName(SHEET_SUMMARY);
@@ -483,7 +434,6 @@ function setupSummary_(ss) {
   var VALID = rng(COL.id) + ',"<>",' + rng(COL.sospechoso) + ',"<>Sí"';
   var okMask = 'ARRAYFORMULA((' + rng(COL.id) + '<>"")*(' + rng(COL.sospechoso) + '<>"Sí"))';
 
-  // Título
   sheet.getRange('B1:H1').merge().setValue('Pomposo y Peligroso · Resumen de leads')
     .setFontSize(20).setFontWeight('bold').setFontColor(BRAND.white).setBackground(BRAND.purpleDark).setVerticalAlignment('middle');
   sheet.setRowHeight(1, 56);
@@ -491,7 +441,6 @@ function setupSummary_(ss) {
     .setValue('Se actualiza solo con cada lead. Los leads sospechosos (honeypot o menos de ' + MIN_SECONDS + ' s) no cuentan, salvo en su casilla.')
     .setFontColor(BRAND.muted).setFontSize(10);
 
-  // KPIs
   var kpis = [
     ['Total leads', '=COUNTIFS(' + VALID + ')', '0'],
     ['Hoy', '=COUNTIFS(' + rng(COL.fecha) + ',">="&TODAY(),' + rng(COL.fecha) + ',"<"&TODAY()+1,' + VALID + ')', '0'],
@@ -513,12 +462,10 @@ function setupSummary_(ss) {
 
   var row = 8;
 
-  // Tablas dinámicas por anuncio, campaña y conjunto
   row = groupTable_(sheet, row, 'Leads por anuncio (utm_content)', 'Anuncio', COL.utm_content, okMask, rng, true);
   row = groupTable_(sheet, row, 'Leads por campaña (utm_campaign)', 'Campaña', COL.utm_campaign, okMask, rng, true);
   row = groupTable_(sheet, row, 'Leads por conjunto (utm_term)', 'Conjunto', COL.utm_term, okMask, rng, true);
 
-  // Edad y experiencia (tablas fijas + gráficos de barras)
   var ageRow = row;
   row = fixedTable_(sheet, row, 'Leads por tramo de edad', 'Tramo de edad', AGE_OPTIONS, COL.edad, VALID, rng);
   addBarChart_(sheet, ageRow + 1, AGE_OPTIONS.length, 'Leads por tramo de edad', ageRow);
@@ -526,15 +473,12 @@ function setupSummary_(ss) {
   row = fixedTable_(sheet, row, 'Leads por experiencia entrenando', 'Experiencia', EXPERIENCE_OPTIONS, COL.experiencia, VALID, rng);
   addBarChart_(sheet, expRow + 1, EXPERIENCE_OPTIONS.length, 'Leads por experiencia entrenando', expRow);
 
-  // Tablas cruzadas
   row = crossTable_(sheet, row, 'Anuncio × tramo de edad', COL.edad, AGE_OPTIONS, okMask, rng);
   row = crossTable_(sheet, row, 'Anuncio × experiencia', COL.experiencia, EXPERIENCE_OPTIONS, okMask, rng);
 
-  // Origen y dispositivo
   row = simpleGroup_(sheet, row, 'Leads por origen', 'Origen', COL.origen, okMask, rng, 14);
   row = simpleGroup_(sheet, row, 'Leads por dispositivo', 'Dispositivo', COL.dispositivo, okMask, rng, 8);
 
-  // Últimos 30 días + gráfico de líneas
   row = dailyTable_(sheet, row, VALID, rng);
 }
 
@@ -549,7 +493,6 @@ function headerRow_(sheet, row, values) {
     .setBackground(BRAND.lilac50).setBorder(null, null, true, null, null, null, BRAND.line, SpreadsheetApp.BorderStyle.SOLID);
 }
 
-/** Tabla agrupada con total, últimos 7 días, alumnas y tasa, ordenada de mayor a menor. */
 function groupTable_(sheet, row, title, label, col, okMask, rng, withRates) {
   sectionTitle_(sheet, row, title);
   headerRow_(sheet, row + 1, [label, 'Leads', 'Últimos 7 días', 'Alumnas', 'Conversión']);
@@ -570,7 +513,6 @@ function groupTable_(sheet, row, title, label, col, okMask, rng, withRates) {
   return row + 2 + RESERVED_ROWS + 1;
 }
 
-/** Tabla agrupada simple (valor, leads, %). */
 function simpleGroup_(sheet, row, title, label, col, okMask, rng, reserved) {
   sectionTitle_(sheet, row, title);
   headerRow_(sheet, row + 1, [label, 'Leads', '%']);
@@ -582,7 +524,6 @@ function simpleGroup_(sheet, row, title, label, col, okMask, rng, reserved) {
   return row + 2 + reserved + 1;
 }
 
-/** Tabla con filas fijas (edad o experiencia) y porcentaje. */
 function fixedTable_(sheet, row, title, label, options, col, VALID, rng) {
   sectionTitle_(sheet, row, title);
   headerRow_(sheet, row + 1, [label, 'Leads', '%']);
@@ -592,7 +533,7 @@ function fixedTable_(sheet, row, title, label, options, col, VALID, rng) {
     sheet.getRange(r, 3).setFormula('=COUNTIFS(' + rng(col) + ',B' + r + ',' + VALID + ')').setNumberFormat('0');
     sheet.getRange(r, 4).setFormula('=IFERROR(C' + r + '/SUM(C' + (row + 2) + ':C' + (row + 1 + options.length) + '),0)').setNumberFormat('0.0%');
   });
-  return row + 2 + options.length + 12; // hueco para el gráfico
+  return row + 2 + options.length + 12;
 }
 
 function addBarChart_(sheet, firstDataRow, n, title, anchorRow) {
@@ -610,7 +551,6 @@ function addBarChart_(sheet, firstDataRow, n, title, anchorRow) {
   sheet.insertChart(chart);
 }
 
-/** Tabla cruzada: anuncios en filas, opciones en columnas. */
 function crossTable_(sheet, row, title, col, options, okMask, rng) {
   sectionTitle_(sheet, row, title);
   var key = 'ARRAYFORMULA(IF(' + rng(COL.utm_content) + '="","(sin anuncio)",' + rng(COL.utm_content) + '))';
@@ -623,7 +563,6 @@ function crossTable_(sheet, row, title, col, options, okMask, rng) {
   return row + 1 + RESERVED_ROWS + 1;
 }
 
-/** Leads por día de los últimos 30 días + gráfico de líneas. */
 function dailyTable_(sheet, row, VALID, rng) {
   sectionTitle_(sheet, row, 'Leads por día (últimos 30 días)');
   headerRow_(sheet, row + 1, ['Día', 'Leads']);

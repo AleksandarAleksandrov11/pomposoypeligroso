@@ -141,6 +141,13 @@ const prefixes: [string, string][] = [
               <span class="spinner" aria-hidden="true"></span>
               <span data-submit-label>Quiero mi plaza</span>
             </button>
+
+            <p class="lopd">
+              <strong>Protección de datos.</strong> Responsable: {SITE.legal.company} Finalidad: contactarte sobre el programa.
+              Legitimación: tu consentimiento. Destinatarios: no cedemos tus datos; se guardan con Google como proveedor.
+              Derechos: acceso, rectificación, supresión y los demás que explica la
+              <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>, en {SITE.email}.
+            </p>
           </div>
         </div>
 
@@ -589,6 +596,20 @@ const prefixes: [string, string][] = [
   }
   .step__submit {
     margin-top: 20px;
+  }
+  .lopd {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.6875rem;
+    line-height: 1.45;
+  }
+  .lopd strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .lopd a {
+    color: var(--purple);
+    font-weight: 600;
   }
   .spinner {
     display: none;

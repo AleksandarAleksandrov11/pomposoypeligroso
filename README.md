@@ -91,9 +91,10 @@ No está implementada, pero cada lead ya guarda en el Sheet lo necesario: `event
 
 ## Cookies y consentimiento
 
-- Banner con Aceptar, Rechazar y Configurar con la misma prominencia (guía de la AEPD). En móvil y tablet se muestra arriba para no tapar el CTA del hero ni la barra fija; en escritorio va abajo y el hero le reserva el hueco desde el primer pintado (sin saltos de diseño).
+- Banner con Aceptar, Rechazar y Configurar con la misma prominencia (guía de la AEPD). Va siempre arriba, bajo el header, y mientras se ve la página le reserva su hueco desde el primer pintado (clase `needs-consent`, variable `--cookie-space`): no tapa el titular, el CTA del hero, el formulario al que saltan los botones ni el inicio de las páginas legales, y la barra fija inferior y el botón de WhatsApp siguen visibles. En pantallas bajas el hero se compacta para que el CTA quepa. Al elegir, el hueco desaparece sin saltos en lo que se está leyendo.
+- Debajo del botón de envío del formulario está la información básica de protección de datos (primera capa, art. 11 LOPDGDD).
 - La elección se guarda en `localStorage` (`pyp_consent`) con versión y fecha durante 12 meses. Para volver a preguntar a todo el mundo, sube `SITE.consentVersion`.
-- La atribución (UTMs, `fbclid`) se guarda en `sessionStorage` si no hay consentimiento de marketing y en `localStorage` 30 días si lo hay. Así los UTMs llegan con el lead aunque navegue por las páginas legales, sin guardar nada persistente sin permiso.
+- Sin consentimiento de marketing no se guarda nada de atribución en el dispositivo (art. 22.2 LSSI): los UTMs se leen de la URL y viajan con el lead si lo envía en esa misma página, y nunca viajan los identificadores de Meta (`fbclid`, `_fbc`, `_fbp`). Con consentimiento, la atribución se guarda en `localStorage` 30 días e incluye esos identificadores.
 
 ## Seguridad
 
@@ -103,7 +104,7 @@ No está implementada, pero cada lead ya guarda en el Sheet lo necesario: `event
 
 ## Google Sheets + Apps Script
 
-El código completo está en `apps-script/Code.gs`.
+El código completo está en `apps-script/Code.gs` (sin comentarios, listo para pegar; esta sección lo explica).
 
 ### Instalación
 
@@ -115,7 +116,7 @@ El código completo está en `apps-script/Code.gs`.
 6. Prueba: abre la URL `/exec` en el navegador; debe responder `{"ok":true,"status":"alive"}`. Después envía el formulario desde la web y comprueba que aparece la fila en **Leads**.
 7. Si cambias el código más adelante: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión → Implementar**. Así la URL no cambia.
 
-Opcional: pon un email en `NOTIFY_EMAIL` (al principio del script) para recibir un aviso por cada lead, y vuelve a implementar como en el paso 7.
+Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, anuncio, origen y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
 
 ### Qué hace
 

@@ -1,15 +1,15 @@
 ---
 /**
  * Banner de cookies conforme a la guía de la AEPD:
- * Aceptar, Rechazar y Configurar con la misma prominencia. No bloquea el contenido.
+ * Aceptar, Rechazar y Configurar con la misma prominencia. No bloquea ni tapa el contenido.
  * Oculto por defecto: solo lo muestra el JS si no hay una elección válida guardada.
  */
 ---
 
 <section class="cookie-banner" aria-label="Aviso de cookies" data-cookie-banner hidden>
   <p class="cookie-banner__text">
-    Usamos cookies propias necesarias y, si aceptas, el píxel de Meta para medir nuestros anuncios.
-    <a href="/cookies">Más información sobre cookies</a>
+    Usamos cookies propias necesarias y, si aceptas, cookies de Meta (terceros) para medir y personalizar nuestros anuncios.
+    <a href="/cookies">Más información</a>
   </p>
   <div class="cookie-banner__actions">
     <button type="button" class="cookie-btn" data-consent-action="accept">Aceptar</button>
@@ -19,25 +19,26 @@
 </section>
 
 <style>
-  /* Móvil y tablet: arriba, bajo el header, para no tapar nunca el CTA del hero ni la barra fija.
-     Escritorio: abajo (el hero reserva ese hueco, ver Hero.astro y el script inline de Base.astro). */
+  /* Siempre arriba, justo bajo el header. Mientras se ve, la página le reserva su hueco (clase needs-consent del
+     script inline de Base.astro, antes del primer pintado): el hero, el formulario al que saltan los CTA y el inicio
+     de cada página quedan por debajo, y la barra fija inferior y el botón de WhatsApp siguen libres abajo. */
   .cookie-banner {
     position: fixed;
-    left: 10px;
-    right: 10px;
-    top: calc(var(--header-h) + 8px);
+    left: 8px;
+    right: 8px;
+    top: calc(var(--header-h) + 6px);
     z-index: 90;
     display: grid;
-    gap: 12px;
-    max-width: 760px;
+    gap: 10px;
+    max-width: 820px;
     margin-inline: auto;
-    padding: 16px;
+    padding: 12px 14px;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 16px;
     background: var(--white);
     box-shadow: 0 12px 32px -18px rgb(30 21 48 / 0.45);
-    font-size: 0.875rem;
-    line-height: 1.45;
+    font-size: 0.8125rem;
+    line-height: 1.4;
   }
   .cookie-banner__text a {
     color: var(--purple);
@@ -50,13 +51,13 @@
     gap: 8px;
   }
   .cookie-btn {
-    min-height: 44px;
-    padding: 0 10px;
+    min-height: 40px;
+    padding: 0 8px;
     border: 1.5px solid var(--ink);
     border-radius: var(--radius-pill);
     background: var(--white);
     color: var(--ink);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
     transition:
       background-color 0.2s ease,
@@ -77,21 +78,19 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 20px;
-      padding: 14px 16px 14px 22px;
+      padding: 10px 12px 10px 20px;
       left: 16px;
       right: 16px;
+      top: calc(var(--header-h) + 8px);
+      font-size: 0.875rem;
     }
     .cookie-banner__actions {
       grid-template-columns: repeat(3, auto);
     }
     .cookie-btn {
+      min-height: 42px;
       padding: 0 18px;
-    }
-  }
-  @media (min-width: 960px) {
-    .cookie-banner {
-      top: auto;
-      bottom: 16px;
+      font-size: 0.9375rem;
     }
   }
 </style>

@@ -11,7 +11,7 @@ export const SITE = {
   /** Dominio definitivo con https y sin barra final. PENDIENTE. */
   url: 'https://PENDIENTE-DOMINIO',
   /** ID del píxel de Meta (solo números). Vacío = el píxel NO se carga. PENDIENTE. */
-  metaPixelId: '',
+  metaPixelId: '1162548892864094',
   /** URL del Web App de Google Apps Script (termina en /exec). PENDIENTE. */
   formEndpoint: '',
   /** WhatsApp en formato internacional, sin + ni espacios (ej. 34612345678). PENDIENTE. */
@@ -30,7 +30,7 @@ export const SITE = {
     /** Datos del Registro Mercantil de Barcelona (tomo, folio, hoja). PENDIENTE. */
     registry: '',
     /** Fecha de la última revisión de los textos legales. */
-    updatedAt: '15 de octubre de 2026',
+    updatedAt: '23 de octubre de 2026',
   },
   /** Mostrar antes/después y caso de Noelia (material facilitado por la marca; ver PENDIENTES.md). */
   showTransformations: true,

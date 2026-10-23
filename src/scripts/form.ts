@@ -122,6 +122,8 @@ function writePending(list: Payload[]) {
 }
 
 function fireLead(payload: Payload) {
+  // Sin consentimiento de marketing no hay píxel ni nada que guardar para él
+  if (!hasMarketingConsent()) return;
   try {
     if (sessionStorage.getItem(LEAD_SENT_KEY) === String(payload.event_id)) return;
     sessionStorage.setItem(LEAD_SENT_KEY, String(payload.event_id));
@@ -203,6 +205,7 @@ export function initForm() {
 
   const markStarted = () => {
     if (!startedAt) startedAt = Date.now();
+    if (!hasMarketingConsent()) return;
     try {
       if (sessionStorage.getItem(STARTED_KEY)) return;
       sessionStorage.setItem(STARTED_KEY, '1');

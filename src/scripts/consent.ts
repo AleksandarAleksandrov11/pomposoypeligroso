@@ -70,8 +70,15 @@ export function initConsent() {
       }
     } else {
       bannerObserver?.disconnect();
+      // Al quitar el hueco reservado arriba, lo que se está leyendo no debe dar un salto
+      const anchor = window.scrollY > 0 ? document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2) : null;
+      const before = anchor?.getBoundingClientRect().top ?? 0;
       root.style.removeProperty('--banner-h');
       root.classList.remove('needs-consent');
+      if (anchor) {
+        const shift = anchor.getBoundingClientRect().top - before;
+        if (Math.abs(shift) > 1) window.scrollBy({ top: shift, behavior: 'instant' });
+      }
     }
     document.dispatchEvent(new CustomEvent('pyp:banner', { detail: visible }));
   };

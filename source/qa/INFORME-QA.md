@@ -38,7 +38,7 @@ En cada uno se comprueba de forma automática y luego a ojo:
 
 - Sin scroll horizontal.
 - Ningún texto cortado ni fuera de pantalla.
-- El banner de cookies no tapa el CTA del hero (en móvil y tablet va arriba, bajo el header; en escritorio abajo, con el hueco reservado en el hero).
+- El aviso de cookies no tapa nada (23/10/2026): va arriba, bajo el header, con su hueco reservado. Comprobado en 14 tamaños (320x568 a 1920x1080 y móvil en horizontal): titular, CTA, miniaturas de resultados, barra fija, botón de WhatsApp, formulario tras pulsar un CTA e inicio de las páginas legales quedan libres; al rechazar a mitad de página no hay salto. En móvil en horizontal el CTA queda por debajo de la primera pantalla también sin aviso (el hero no cabe en 375 px de alto).
 - El CTA del hero se ve en la primera pantalla en todos los móviles verticales, incluido 375×667 y 320×568.
 - Barra fija móvil: aparece al pasar el hero, desaparece sobre el formulario y con el teclado abierto, no tapa el final del footer.
 - El ancla al formulario deja el título justo bajo el header.
