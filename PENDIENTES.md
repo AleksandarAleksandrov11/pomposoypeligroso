@@ -8,7 +8,7 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 - [x] **WhatsApp y teléfono**: +34 644 11 77 40 (`site.ts`). Los botones de WhatsApp ya abren el chat con un mensaje preparado.
 - [ ] **Dominio definitivo** → `url` (y añadirlo en Vercel). Mientras tanto se usa la URL `*.vercel.app`.
 - [ ] **URL del Web App de Apps Script** → `formEndpoint` (la pegas tú tras implementarlo, ver README).
-- [ ] **Email para avisos de leads** → `NOTIFY_EMAIL` en `apps-script/Code.gs`.
+- [x] **Email para avisos de leads**: aaswebmarketing@gmail.com (`NOTIFY_EMAIL` en `apps-script/Code.gs`).
 - [ ] **Datos registrales de la S.L.** (Registro Mercantil de Barcelona, tomo, folio, hoja) → `legal.registry`. Ahora pone "Sociedad inscrita en el Registro Mercantil de Barcelona.".
 
 ## Autorizaciones y contenido real

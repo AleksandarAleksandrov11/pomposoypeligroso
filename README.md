@@ -103,7 +103,7 @@ No está implementada, pero cada lead ya guarda en el Sheet lo necesario: `event
 
 ## Google Sheets + Apps Script
 
-El código completo está en `apps-script/Code.gs`.
+El código completo está en `apps-script/Code.gs` (sin comentarios, listo para pegar; esta sección lo explica).
 
 ### Instalación
 
@@ -115,7 +115,7 @@ El código completo está en `apps-script/Code.gs`.
 6. Prueba: abre la URL `/exec` en el navegador; debe responder `{"ok":true,"status":"alive"}`. Después envía el formulario desde la web y comprueba que aparece la fila en **Leads**.
 7. Si cambias el código más adelante: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión → Implementar**. Así la URL no cambia.
 
-Opcional: pon un email en `NOTIFY_EMAIL` (al principio del script) para recibir un aviso por cada lead, y vuelve a implementar como en el paso 7.
+Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, anuncio, origen y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
 
 ### Qué hace
 
