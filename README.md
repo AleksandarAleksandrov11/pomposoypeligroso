@@ -49,6 +49,7 @@ Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se oculta
 
 - **Titulares:** mayúsculas en Anton y, debajo, una línea corta en manuscrita (Allura, rosa, un poco girada). En el código: `<h2>Texto en mayúsculas <span class="script">línea manuscrita.</span></h2>`. La línea manuscrita va siempre sola y con 2 a 4 palabras.
 - **Fondos con foto:** hero, "Así funciona" (grupo de The Monkeys entrenando junto al mar) y cierre. Llevan un velo oscuro para que el texto se lea; si cambias la foto, revisa que el texto siga leyéndose bien.
+- **Orden pensado para Meta:** hero (con tres antes/después y "Videollamada sin compromiso"), ¿te suena?, resultados, formulario ("Mira si encajas", plazas limitadas), comparativa con lo que incluye, vídeos, acompañamiento, equipo, cómo funciona, preguntas y cierre. El formulario está en la cuarta pantalla del móvil.
 - **Formulario:** la tarjeta toma el alto de cada pregunta y el cambio de alto se anima.
 - **Carga:** todo el HTML y el CSS llegan en una sola petición; las fuentes y la foto del hero se precargan; el resto de fotos se piden en cuanto la página ha cargado y el navegador está libre, para que al hacer scroll ya estén (no se hace con "ahorro de datos" ni en 2G).
 - **Fotos:** todas reales (alumnas y equipo), ninguna de banco de imágenes. Origen en `source/brand/README.md`.

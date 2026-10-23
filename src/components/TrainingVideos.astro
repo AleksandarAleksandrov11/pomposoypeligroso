@@ -23,7 +23,7 @@ const clips = [
 const items = await Promise.all(clips.map(async (c) => ({ ...c, posterUrl: (await getImage({ src: c.poster, width: 480, format: 'webp', quality: 60 })).src })));
 ---
 
-<section class="section videos" aria-labelledby="videos-title" data-videos>
+<section class="section bg-lilac videos" aria-labelledby="videos-title" data-videos>
   <div class="container">
     <div class="section-head" data-reveal>
       <h2 id="videos-title">Así entrenan <span class="script">ellas.</span></h2>

@@ -11,7 +11,7 @@ Todo el material visual de la web es propio de Pomposo y Peligroso (The Monkeys 
 
 | Archivo | Origen (carpeta del Drive) | Dónde se ve |
 |---|---|---|
-| `src/assets/img/hero-flor-gluteo-vertical.jpg` | `Flor/Fotos/IMG_7659.HEIC` (recorte de cintura a muslos) | Hero en móvil |
+| `src/assets/img/hero-flor-gluteo-vertical.jpg` | `Flor/Fotos/IMG_7659.HEIC` (recorte de cintura a muslos, glúteo centrado) | Hero en móvil |
 | `src/assets/img/hero-clientas-entrenando-horizontal.jpg` | Fotogramas de vídeos de Liliam, Andrea Jara y Alexandra Bernat | Hero en escritorio e imagen para redes (`public/og.jpg`) |
 | `src/assets/img/fondo-pasos-clientas-peso-muerto*.jpg` | Fotograma de `Liliam Corrales/VIDEOS/IMG_7760.MOV` | Fondo de "Así funciona" |
 | `src/assets/img/fondo-cierre-flor-gluteo*.jpg` | `Flor/Fotos/IMG_0290.HEIC` | Fondo del cierre |
