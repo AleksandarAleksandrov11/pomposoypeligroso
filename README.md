@@ -2,7 +2,7 @@
 
 Landing de captación para el programa online de 12 semanas de **Pomposo y Peligroso** (The Monkeys Centro de Entrenamiento S.L.). Objetivo único: que la usuaria rellene un formulario de 4 pasos para que el equipo la contacte por WhatsApp. La conversión (evento `Lead`) es el envío del formulario.
 
-- **Stack:** Astro 7 (salida 100 % estática), CSS propio con variables, JavaScript vanilla (7,2 KB comprimido), fuentes autoalojadas (Anton para titulares, Allura para la línea manuscrita, Inter para el texto), imágenes AVIF/WebP con `astro:assets`.
+- **Stack:** Astro 7 (salida 100 % estática), CSS propio con variables, JavaScript vanilla (7,4 KB comprimido), fuentes autoalojadas y precargadas (Anton para titulares, Allura para la línea manuscrita, Inter para el texto), fotos en WebP con varios tamaños por foto generadas por `astro:assets`.
 - **Despliegue:** Vercel (`vercel.json` incluido).
 - **Datos:** Google Sheets vía Google Apps Script (`apps-script/Code.gs`).
 
@@ -34,21 +34,26 @@ En `npm run dev` cada evento del píxel aparece en la consola del navegador como
 |---|---|
 | ID del píxel, endpoint del formulario, WhatsApp, teléfono, email, dominio, datos legales, interruptor de transformaciones | `src/config/site.ts` |
 | Preguntas frecuentes | `src/data/faq.ts` |
-| Fotos del carrusel de "Mujeres normales, cambios reales" | `src/data/gallery.ts` + `src/assets/img/galeria/` |
-| Testimonios (solo reales, con `source`) y huecos de diseño mientras no los haya | `src/data/testimonials.ts` |
-| Transformaciones antes/después (Noelia y resto) | `src/data/transformations.ts` + `SITE.showTransformations` |
+| Testimonios reales (con `source`) | `src/data/testimonials.ts` |
+| Antes y después (caso de Noelia y carrusel) | `src/data/transformations.ts` + `src/assets/img/antes-despues/` + `SITE.showTransformations` |
+| Clips de vídeo de alumnas | `src/components/TrainingVideos.astro` + `public/video/` (MP4 y WebM) |
+| Fichas del equipo (Dani, Adri, Flor, Fede) | `src/components/Coach.astro` |
 | Textos de cada sección | `src/components/*.astro` (un archivo por sección) |
 | Colores, tipografías y espaciados | `src/styles/tokens.css` |
 | Textos legales | `src/pages/aviso-legal.astro`, `privacidad.astro`, `cookies.astro` |
 | Fotos | `src/assets/img/` (se optimizan solas al hacer build) |
 
-Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se ocultan los enlaces de WhatsApp del footer, las preguntas frecuentes y el formulario, y el botón verde de la barra fija del móvil y el flotante de escritorio llevan al formulario (en cuanto pongas el número, abren WhatsApp); si no hay ID de píxel, no se carga nada de Meta; si no hay endpoint, en desarrollo se simula el envío y en producción se muestra la alternativa de contacto (y el lead queda guardado en el navegador para reintentarlo).
+Comportamiento con valores PENDIENTE: si el WhatsApp es el de ejemplo, se ocultan los enlaces de WhatsApp del footer, las preguntas frecuentes y el formulario, y el botón morado de WhatsApp de la barra fija del móvil y el flotante de escritorio llevan al formulario (en cuanto pongas el número, abren WhatsApp); si no hay ID de píxel, no se carga nada de Meta; si no hay endpoint, en desarrollo se simula el envío y en producción se muestra la alternativa de contacto (y el lead queda guardado en el navegador para reintentarlo).
 
 ### Diseño
 
 - **Titulares:** mayúsculas en Anton y, debajo, una línea corta en manuscrita (Allura, rosa, un poco girada). En el código: `<h2>Texto en mayúsculas <span class="script">línea manuscrita.</span></h2>`. La línea manuscrita va siempre sola y con 2 a 4 palabras.
 - **Fondos con foto:** hero, "Así funciona" (grupo de The Monkeys entrenando junto al mar) y cierre. Llevan un velo oscuro para que el texto se lea; si cambias la foto, revisa que el texto siga leyéndose bien.
-- **Movimiento:** el carrusel de fotos va hacia la izquierda y el de testimonios hacia la derecha, en bucle. Se paran al pasar el ratón y del todo si el sistema tiene activado "reducir movimiento" (entonces se deslizan con el dedo).
+- **Formulario:** la tarjeta toma el alto de cada pregunta y el cambio de alto se anima.
+- **Carga:** todo el HTML y el CSS llegan en una sola petición; las fuentes y la foto del hero se precargan; el resto de fotos se piden en cuanto la página ha cargado y el navegador está libre, para que al hacer scroll ya estén (no se hace con "ahorro de datos" ni en 2G).
+- **Fotos:** todas reales (alumnas y equipo), ninguna de banco de imágenes. Origen en `source/brand/README.md`.
+- **Vídeos:** 6 clips de 6 s sin audio (unos 300 KB cada uno). No se descargan hasta que la sección se acerca a la pantalla y solo se reproducen mientras se ven.
+- **Movimiento:** el carrusel de antes y después va hacia la izquierda y el de testimonios hacia la derecha, en bucle. Se paran al pasar el ratón y del todo si el sistema tiene activado "reducir movimiento" (entonces se deslizan con el dedo).
 
 ## Meta Pixel
 
@@ -119,7 +124,7 @@ Opcional: pon un email en `NOTIFY_EMAIL` (al principio del script) para recibir 
 
 ## Calidad
 
-- Lighthouse en la home: móvil **99 / 100 / 100 / 100** (LCP 2,0 s, CLS 0,003), escritorio **100 / 100 / 100 / 100**. Detalle completo, anchos probados y limitaciones en `source/qa/INFORME-QA.md`; capturas en `source/qa/capturas/`.
+- Lighthouse en la home: móvil **99 / 100 / 100 / 100** (FCP 1,1 s, LCP 2,0 s, CLS 0), escritorio **100 / 100 / 100 / 100** (LCP 0,4 s). Detalle completo, anchos probados y limitaciones en `source/qa/INFORME-QA.md`; capturas en `source/qa/capturas/`.
 - Scripts de QA reutilizables en `source/qa/scripts/` (necesitan `npm i -D playwright @axe-core/playwright` y un build servido en local).
 
 ## Material de partida
@@ -127,7 +132,7 @@ Opcional: pon un email en `NOTIFY_EMAIL` (al principio del script) para recibir 
 - `source/reference/`: análisis de las tres landings de referencia.
 - `source/instagram/README.md`: por qué no se pudo usar el Instagram (bloqueo de acceso) y qué se usó en su lugar.
 - `source/brand/`: logo original de The Monkeys y origen de las fotos propias del centro.
-- `source/stock/CREDITS.md`: créditos y licencias de las fotos de Pexels.
+- `source/stock/CREDITS.md`: ya no se usa stock (nota histórica).
 
 ## Aviso sobre los textos legales
 

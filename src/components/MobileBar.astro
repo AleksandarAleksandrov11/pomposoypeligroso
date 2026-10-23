@@ -55,10 +55,15 @@ import { hasWhatsApp, whatsappUrl } from '../config/site';
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: var(--whatsapp);
+    background: var(--purple);
     color: var(--white);
-    box-shadow: 0 6px 14px -8px rgb(22 163 74 / 0.9);
-    transition: transform 0.2s var(--ease);
+    box-shadow: 0 6px 14px -8px rgb(75 42 145 / 0.8);
+    transition:
+      transform 0.2s var(--ease),
+      background-color 0.2s var(--ease);
+  }
+  .mobilebar__wa:hover {
+    background: var(--purple-dark);
   }
   .mobilebar__wa:active {
     transform: scale(0.96);

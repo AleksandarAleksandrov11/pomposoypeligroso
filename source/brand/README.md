@@ -1,19 +1,38 @@
-# Material de marca (The Monkeys Community)
+# Material de marca
 
-Fuente: web oficial de la empresa que hay detrás del programa, https://themonkeyscommunity.com (The Monkeys Centro de Entrenamiento S.L.). Son fotos propias del centro, no de banco de imágenes. **PENDIENTE confirmar con el cliente que se pueden usar en la landing** (aparecen personas reales).
+Todo el material visual de la web es propio de Pomposo y Peligroso (The Monkeys Centro de Entrenamiento S.L.), facilitado por la marca en Google Drive:
 
-| Archivo | URL original | Uso en la landing |
+- Clientas: https://drive.google.com/drive/folders/1SDXuOgjNmGZjt0xsIntggnvpkBcfGzvE
+- Equipo: https://drive.google.com/drive/folders/1-Wph6KUS0ov0zkMrIwM3QhttABtxpd-_
+
+`tmc-logo-4.png` (web de The Monkeys) sigue siendo la base del mono vectorizado (`public/logo-mark.svg`).
+
+## Qué se usa y de dónde sale
+
+| Archivo | Origen (carpeta del Drive) | Dónde se ve |
 |---|---|---|
-| `tmc-logo-4.png` | https://themonkeyscommunity.com/cdn/shop/files/tmc-logo-4.png | Base del mono vectorizado (`public/logo-mark.svg`) |
-| `src/assets/img/fondo-pasos-entrenamiento-grupo-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-59.jpg | Fondo de "Así funciona" |
-| `src/assets/img/equipo-the-monkeys-corrige-plancha.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P2197684.jpg | Collage del equipo |
-| `src/assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg` | https://themonkeyscommunity.com/cdn/shop/articles/P4153134.jpg | Collage del equipo |
-| `src/assets/img/equipo-the-monkeys-sudaderas.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-21.jpg | Collage del equipo |
-| `src/assets/img/galeria/02-press-mancuernas-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P2197982.jpg | Carrusel de fotos |
-| `src/assets/img/galeria/04-fuerza-con-discos-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P1115961_28ded7d5-4dd2-49b8-9f0d-a4f49cc9c542.jpg | Carrusel de fotos |
-| `src/assets/img/galeria/06-zancadas-aire-libre-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P6288432.jpg | Carrusel de fotos |
-| `src/assets/img/galeria/08-barra-dominadas-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P2197607.jpg | Carrusel de fotos |
-| `src/assets/img/galeria/10-bici-aire-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/P2198170.jpg | Carrusel de fotos |
-| `src/assets/img/galeria/12-kettlebell-con-entrenador-the-monkeys.jpg` | https://themonkeyscommunity.com/cdn/shop/files/TMC1-12-2.jpg | Carrusel de fotos |
+| `src/assets/img/hero-liliam-mancuernas-vertical.jpg` | Fotograma de `Liliam Corrales/VIDEOS/IMG_7758.MOV` | Hero en móvil |
+| `src/assets/img/hero-clientas-entrenando-horizontal.jpg` | Fotogramas de vídeos de Liliam, Andrea Jara y Alexandra Bernat | Hero en escritorio e imagen para redes (`public/og.jpg`) |
+| `src/assets/img/fondo-pasos-clientas-peso-muerto*.jpg` | Fotograma de `Liliam Corrales/VIDEOS/IMG_7760.MOV` | Fondo de "Así funciona" |
+| `src/assets/img/fondo-cierre-flor-gluteo*.jpg` | `Flor/Fotos/IMG_0290.HEIC` | Fondo del cierre |
+| `src/assets/img/acompanamiento-flor.jpg` | `Flor/Fotos/IMG_7672.HEIC` | "No te falta motivación" |
+| `src/assets/img/equipo-dani.jpg` | `Dani/Fotos Dani/IMG_0537.JPG` | Equipo |
+| `src/assets/img/equipo-adri.jpg` | `Adri/Fotos Adri/IMG_0425.heic` | Equipo |
+| `src/assets/img/equipo-flor.jpg` | `Flor/Fotos/IMG_7973.HEIC` | Equipo |
+| `src/assets/img/equipo-fede.jpg` | `Fede/Fotos/IMG_2102.HEIC` | Equipo |
+| `src/assets/img/antes-despues/*.jpg` | Carpetas ANTES/DESPUÉS de cada clienta (y capturas de Harbiz) | Caso de Noelia y carrusel de antes y después |
+| `public/video/*.mp4` y `*.webm` + `src/assets/img/videos/*.jpg` | 6 s de los vídeos de Liliam, Anna Pino, Andrea Jara, Judith Carballo, Alexandra Bernat y Noelia | "Así entrenan ellas" |
 
-El WhatsApp que aparece en esa web es +34 644 117 740 (`wa.me/34644117740`). **No se ha puesto en la landing** porque el brief lo marca como PENDIENTE: confirmar si es el mismo número para Pomposo y Peligroso.
+Textos: testimonios (`src/data/testimonials.ts`), datos de antes y después (`src/data/transformations.ts`) y presentaciones de Dani, Adri y Flor (`src/components/Coach.astro`), transcritos de los documentos, formularios de seguimiento y mensajes del Drive.
+
+## Caras
+
+Las carpetas marcadas "NO MOSTRAR CARA" / "NO SACAR CARA" son Coralie, Claudia, Cris García, Gloria, Lorena, Alice y Anna Serrano. De esas alumnas solo se usan fotos **de espaldas** (Claudia, Gloria, Cris G. y Anna S.); en lugar de difuminar, se ha preferido no mostrar ninguna foto de frente para que no se pueda reconocer a nadie. De Coralie, Lorena y Alice solo se usa su testimonio con el nombre de pila. Lucía no tenía la marca, pero sus fotos ya venían sin la cara.
+
+## Antes y después
+
+Cuando la carpeta no decía cuál era el antes, se ha deducido por la fecha de la app de seguimiento (Harbiz), la fecha EXIF o la evolución de peso de su gráfica. Las fotos de app se recortan para quitar la interfaz.
+
+## Material descargado que no se ha usado
+
+Fotos de Fede `IMG_1159` e `IMG_1679` y vídeo `IMG_0793`, y una captura de Cris Serrasolsas: Google Drive no dejó descargarlas (límite de descargas). El resto de fotos y vídeos se revisaron uno a uno; se eligieron los más nítidos y representativos.

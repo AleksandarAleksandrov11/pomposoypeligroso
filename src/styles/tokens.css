@@ -62,8 +62,6 @@
   --muted: #6b6280;
   --line: #ece6f5;
   --on-dark: #e9e0ff;
-  /* Verde WhatsApp algo más oscuro que el oficial para que el icono blanco tenga contraste 3:1 */
-  --whatsapp: #16a34a;
 
   /* Tipografía */
   --font-display: 'Anton', 'Display Fallback', 'Arial Narrow', sans-serif;

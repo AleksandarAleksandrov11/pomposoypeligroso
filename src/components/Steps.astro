@@ -1,21 +1,23 @@
 ---
 import Pic from './Pic.astro';
-import bg from '../assets/img/fondo-pasos-entrenamiento-grupo-the-monkeys.jpg';
+import bgH from '../assets/img/fondo-pasos-clientas-peso-muerto.jpg';
+import bgV from '../assets/img/fondo-pasos-clientas-peso-muerto-vertical.jpg';
 // Título de cada paso en dos líneas
 const steps = [
   { t: ['Rellenas el', 'formulario'], d: '4 preguntas, 30 segundos.' },
   { t: ['Hablamos por', 'videollamada'], d: 'Vemos tu caso y si el programa encaja contigo.' },
-  { t: ['Empiezas tus', '12 semanas'], d: 'Con tu plan y tu entrenadora pendiente de ti.' },
+  { t: ['Empiezas tus', '12 semanas'], d: 'Con tu plan y tu coach pendiente de ti.' },
 ];
 ---
 
 <section class="steps on-dark" id="como-funciona" aria-labelledby="steps-title">
   <div class="steps__bg" aria-hidden="true">
     <Pic
-      src={bg}
-      widths={[640, 960, 1250]}
-      sizes="(max-width: 767px) 240vw, 100vw"
-      quality={{ avif: 50, webp: 66 }}
+      src={bgH}
+      art={[{ src: bgV, media: '(max-width: 767px)', widths: [480, 768, 1000], sizes: '100vw' }]}
+      widths={[960, 1440, 2160]}
+      sizes="100vw"
+      quality={50}
       alt=""
       class="steps__img"
     />
@@ -68,14 +70,14 @@ const steps = [
   }
   .steps__bg :global(.steps__img) {
     object-fit: cover;
-    object-position: 50% 60%;
+    object-position: 50% 55%;
   }
   .steps::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* La foto es muy luminosa: velo suficiente para que el texto blanco se lea encima */
+    /* La foto es luminosa: velo suficiente para que el texto blanco se lea encima */
     background: linear-gradient(180deg, rgb(30 21 48 / 0.76) 0%, rgb(30 21 48 / 0.64) 50%, rgb(75 42 145 / 0.8) 100%);
   }
   .steps__list {

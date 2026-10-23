@@ -1,0 +1,113 @@
+---
+/**
+ * Clips cortos de alumnas entrenando (sin audio, 6 s, ~270 KB cada uno en public/video/).
+ * Cada clip va en MP4 (H.264, todos los navegadores) y WebM (VP9, alternativa); ui.ts elige el que se puede reproducir.
+ * No se descarga nada hasta que la sección se acerca a la pantalla (ui.ts → initVideos).
+ */
+import { getImage } from 'astro:assets';
+import liliam from '../assets/img/videos/liliam-sentadilla.jpg';
+import anna from '../assets/img/videos/anna-sentadilla.jpg';
+import andrea from '../assets/img/videos/andrea-hip-thrust.jpg';
+import judith from '../assets/img/videos/judith-zancada.jpg';
+import alexandra from '../assets/img/videos/alexandra-peso-muerto.jpg';
+import noelia from '../assets/img/videos/noelia-sentadilla.jpg';
+
+const clips = [
+  { src: '/video/liliam-sentadilla', poster: liliam, name: 'Liliam', what: 'Sentadilla con mancuernas' },
+  { src: '/video/anna-sentadilla', poster: anna, name: 'Anna', what: 'Sentadilla con barra' },
+  { src: '/video/andrea-hip-thrust', poster: andrea, name: 'Andrea', what: 'Hip thrust' },
+  { src: '/video/judith-zancada', poster: judith, name: 'Judith', what: 'Zancada con mancuerna' },
+  { src: '/video/alexandra-peso-muerto', poster: alexandra, name: 'Alexandra', what: 'Peso muerto rumano' },
+  { src: '/video/noelia-sentadilla', poster: noelia, name: 'Noelia', what: 'Sentadilla con barra' },
+];
+const items = await Promise.all(clips.map(async (c) => ({ ...c, posterUrl: (await getImage({ src: c.poster, width: 480, format: 'webp', quality: 60 })).src })));
+---
+
+<section class="section videos" aria-labelledby="videos-title" data-videos>
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="videos-title">Así entrenan <span class="script">ellas.</span></h2>
+    </div>
+  </div>
+  <ul class="videos__row" role="list">
+    {
+      items.map((c) => (
+        <li class="clip">
+          <video class="clip__video" muted loop playsinline preload="none" poster={c.posterUrl} width="480" height="854" aria-hidden="true" data-src={c.src} />
+          <p class="clip__caption">
+            <span class="clip__name">{c.name}</span> {c.what}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="container">
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="videos">Quiero entrenar así</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .videos__row {
+    display: flex;
+    gap: 12px;
+    margin: clamp(32px, 5vw, 56px) 0 0;
+    padding: 0 var(--gutter) 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .videos__row::-webkit-scrollbar {
+    display: none;
+  }
+  .clip {
+    position: relative;
+    flex: 0 0 58%;
+    scroll-snap-align: start;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--ink);
+  }
+  .clip__video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+  }
+  .clip__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 36px 14px 12px;
+    background: linear-gradient(180deg, transparent, rgb(30 21 48 / 0.85));
+    color: var(--on-dark);
+    font-size: var(--fs-small);
+    line-height: 1.3;
+  }
+  .clip__name {
+    display: block;
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 700px) {
+    .clip {
+      flex-basis: 30%;
+    }
+  }
+  @media (min-width: 1100px) {
+    .videos__row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      max-width: calc(var(--max) + 2 * var(--gutter));
+      margin-inline: auto;
+      overflow: visible;
+    }
+  }
+</style>

@@ -1,6 +1,6 @@
 ---
 /**
- * <picture> con AVIF + WebP, srcset responsive y dirección de arte opcional
+ * <picture> con WebP, srcset responsive y dirección de arte opcional
  * (un recorte distinto por breakpoint). Siempre con width/height para CLS cero.
  */
 import { getImage } from 'astro:assets';
@@ -23,7 +23,8 @@ interface Props {
   priority?: boolean;
   class?: string;
   pictureClass?: string;
-  quality?: { avif: number; webp: number };
+  /** Calidad WebP (0 a 100). */
+  quality?: number;
 }
 
 const { src, alt, widths, sizes, art = [], priority = false, class: className, pictureClass, quality = DEFAULT_QUALITY } = Astro.props;
@@ -31,23 +32,20 @@ const { src, alt, widths, sizes, art = [], priority = false, class: className, p
 const artBuilt = await Promise.all(art.map(async (a) => ({ ...a, built: await buildSources(a.src, a.widths, quality) })));
 const main = await buildSources(src, widths, quality);
 const list = clampWidths(src, widths);
-const fallback = await getImage({ src, width: list[Math.min(1, list.length - 1)], format: 'webp', quality: quality.webp });
+const fallback = await getImage({ src, width: list[Math.min(1, list.length - 1)], format: 'webp', quality });
 ---
 
 <picture class={pictureClass}>
   {
     artBuilt.map((a) => (
-      <>
-        <source type="image/avif" media={a.media} srcset={a.built.avif.srcSet.attribute} sizes={a.sizes} width={a.built.width} height={a.built.height} />
-        <source type="image/webp" media={a.media} srcset={a.built.webp.srcSet.attribute} sizes={a.sizes} width={a.built.width} height={a.built.height} />
-      </>
+      <source type="image/webp" media={a.media} srcset={a.built.webp.srcSet.attribute} sizes={a.sizes} width={a.built.width} height={a.built.height} />
     ))
   }
-  <source type="image/avif" srcset={main.avif.srcSet.attribute} sizes={sizes} />
-  <source type="image/webp" srcset={main.webp.srcSet.attribute} sizes={sizes} />
   <img
     class={className}
     src={fallback.src}
+    srcset={main.webp.srcSet.attribute}
+    sizes={sizes}
     alt={alt}
     width={main.width}
     height={main.height}

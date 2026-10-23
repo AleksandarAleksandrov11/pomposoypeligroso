@@ -8,13 +8,14 @@ import Includes from '../components/Includes.astro';
 import Compare from '../components/Compare.astro';
 import Steps from '../components/Steps.astro';
 import Results from '../components/Results.astro';
+import TrainingVideos from '../components/TrainingVideos.astro';
 import Coach from '../components/Coach.astro';
 import LeadForm from '../components/LeadForm.astro';
 import Faq from '../components/Faq.astro';
 import Closing from '../components/Closing.astro';
 import MobileBar from '../components/MobileBar.astro';
-import heroV from '../assets/img/hero-mujer-sentadilla-barra-vertical.jpg';
-import heroH from '../assets/img/hero-mujer-sentadilla-barra-horizontal.jpg';
+import heroV from '../assets/img/hero-liliam-mancuernas-vertical.jpg';
+import heroH from '../assets/img/hero-clientas-entrenando-horizontal.jpg';
 import { buildSources, HERO } from '../lib/images';
 import { SITE } from '../config/site';
 
@@ -22,7 +23,7 @@ import { SITE } from '../config/site';
 const heroMobile = await buildSources(heroV, HERO.mobileWidths, HERO.quality);
 const heroDesktop = await buildSources(heroH, HERO.desktopWidths, HERO.quality);
 // href de respaldo (solo lo usan navegadores sin soporte de imagesrcset): la versión intermedia
-const fallbackHref = (s: typeof heroMobile, w: string) => s.avif.srcSet.values.find((v) => v.descriptor === w)?.url ?? s.avif.src;
+const fallbackHref = (s: typeof heroMobile, w: string) => s.webp.srcSet.values.find((v) => v.descriptor === w)?.url ?? s.webp.src;
 
 const site = Astro.site ?? new URL('http://localhost:4321');
 const orgJsonLd = {
@@ -39,8 +40,8 @@ const orgJsonLd = {
 
 <Base home path="/" skipTo={{ href: '#formulario', label: 'Saltar al formulario' }}>
   <Fragment slot="head">
-    <link rel="preload" as="image" type="image/avif" media={HERO.media} href={fallbackHref(heroMobile, '720w')} imagesrcset={heroMobile.avif.srcSet.attribute} imagesizes={HERO.sizesMobile} fetchpriority="high" />
-    <link rel="preload" as="image" type="image/avif" media={HERO.notMedia} href={fallbackHref(heroDesktop, '1440w')} imagesrcset={heroDesktop.avif.srcSet.attribute} imagesizes={HERO.sizesDesktop} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/webp" media={HERO.media} href={fallbackHref(heroMobile, '720w')} imagesrcset={heroMobile.webp.srcSet.attribute} imagesizes={HERO.sizesMobile} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/webp" media={HERO.notMedia} href={fallbackHref(heroDesktop, '1440w')} imagesrcset={heroDesktop.webp.srcSet.attribute} imagesizes={HERO.sizesDesktop} fetchpriority="high" />
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
   </Fragment>
   <Hero />
@@ -51,6 +52,7 @@ const orgJsonLd = {
   <Compare />
   <Steps />
   <Results />
+  <TrainingVideos />
   <Coach />
   <LeadForm />
   <Faq />

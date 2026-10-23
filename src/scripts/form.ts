@@ -226,14 +226,35 @@ export function initForm() {
     }
   };
 
+  const stepsWrap = form.querySelector<HTMLElement>('.lead-form__steps');
+  let resizeTimer = 0;
+
+  /** La tarjeta toma el alto de cada pregunta; el cambio de alto se anima (salvo con reduced motion). */
+  const animateHeight = (from: number) => {
+    if (!stepsWrap || reduced) return;
+    const to = stepsWrap.offsetHeight;
+    if (Math.abs(to - from) < 2) return;
+    window.clearTimeout(resizeTimer);
+    stepsWrap.classList.add('is-resizing');
+    stepsWrap.style.height = `${from}px`;
+    void stepsWrap.offsetHeight; // fuerza el reflow para que la transición arranque desde "from"
+    stepsWrap.style.height = `${to}px`;
+    resizeTimer = window.setTimeout(() => {
+      stepsWrap.style.height = '';
+      stepsWrap.classList.remove('is-resizing');
+    }, 320);
+  };
+
   const go = (n: number, opts: { focus?: boolean } = {}) => {
     current = Math.min(Math.max(n, 1), TOTAL);
+    const fromHeight = stepsWrap?.offsetHeight ?? 0;
     steps.forEach((s) => {
       const active = Number(s.dataset.step) === current;
       s.classList.toggle('is-active', active);
       s.toggleAttribute('inert', !active);
       s.setAttribute('aria-hidden', String(!active));
     });
+    if (opts.focus !== false) animateHeight(fromHeight);
     if (bar) bar.style.transform = `scaleX(${current / TOTAL})`;
     if (count) count.textContent = String(current);
     if (back) back.hidden = current === 1;

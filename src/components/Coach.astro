@@ -1,164 +1,91 @@
 ---
 import Pic from './Pic.astro';
-import imgPlank from '../assets/img/equipo-the-monkeys-corrige-plancha.jpg';
-import imgBeach from '../assets/img/equipo-the-monkeys-corrige-sentadilla-playa.jpg';
-import imgTeam from '../assets/img/equipo-the-monkeys-sudaderas.jpg';
+import dani from '../assets/img/equipo-dani.jpg';
+import adri from '../assets/img/equipo-adri.jpg';
+import flor from '../assets/img/equipo-flor.jpg';
+import fede from '../assets/img/equipo-fede.jpg';
 
-const stats = [
-  { n: '+30', t: 'alumnas acompañadas' },
-  { n: '12', t: 'semanas contigo' },
-  { n: '100\u00a0%', t: 'online' },
+// Textos sacados de la presentación que ha escrito cada coach (Drive del equipo).
+const team = [
+  { name: 'Dani', full: 'Daniel Pueyo', img: dani, bio: 'Entrenador personal, Técnico Superior en AAFE. Más de 10 años ayudándote a sacar tu mejor versión.' },
+  { name: 'Adri', full: 'Adri Moruno', img: adri, bio: 'Graduado en Ciencias de la Actividad Física y del Deporte. Más de 10 años en entrenamiento y salud.' },
+  { name: 'Flor', full: 'Flor Madia', img: flor, bio: 'Entrenadora personal y coach online. Fuerza y entrenamiento híbrido, sin vivir a dieta.' },
+  { name: 'Fede', full: 'Fede', img: fede, bio: 'Coach del equipo de Pomposo y Peligroso.' },
 ];
 ---
 
 <section class="section bg-lilac coach" aria-labelledby="coach-title">
-  <div class="container coach__grid">
-    <div class="coach__collage" data-reveal>
-      <Pic src={imgPlank} widths={[400, 640, 900]} sizes="(min-width: 960px) 300px, 58vw" alt="Entrenador de The Monkeys corrigiendo la plancha de una alumna" class="coach__img coach__img--a" />
-      <Pic src={imgBeach} widths={[320, 480, 720]} sizes="(min-width: 960px) 230px, 44vw" alt="Entrenador guiando una sentadilla en la playa" class="coach__img coach__img--b" />
-      <Pic src={imgTeam} widths={[400, 640]} sizes="(min-width: 960px) 260px, 50vw" alt="Dos entrenadores de The Monkeys con la sudadera del centro, de espaldas" class="coach__img coach__img--c" />
-      <span class="coach__sticker" aria-hidden="true">The Monkeys<br />Gavà</span>
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="coach-title">Detrás de cada glúteo pomposo <span class="script script--low">hay un equipo.</span></h2>
+      <p>Somos The Monkeys, un centro de entrenamiento en Gavà. Trabajamos con pocas alumnas a la vez para dedicarte tiempo de verdad.</p>
     </div>
 
-    <div class="coach__text">
-      <h2 id="coach-title" data-reveal>Detrás de cada glúteo pomposo <span class="script script--low">hay un equipo.</span></h2>
-      <p class="coach__lead" data-reveal>
-        Somos The Monkeys, un centro de entrenamiento en Gavà. Trabajamos con pocas alumnas a la vez para dedicarte tiempo de verdad.
-      </p>
-      <ul class="coach__stats" role="list" data-reveal>
-        {
-          stats.map((s) => (
-            <li>
-              <span class="coach__num">{s.n}</span>
-              <span class="coach__label">{s.t}</span>
-            </li>
-          ))
-        }
-      </ul>
-      <div class="coach__cta" data-reveal>
-        <a class="btn btn--block-mobile" href="#formulario" data-cta="equipo">Quiero mi plaza</a>
-      </div>
+    <ul class="team" role="list">
+      {
+        team.map((c) => (
+          <li class="team__card" data-reveal>
+            <Pic src={c.img} widths={[320, 480, 640]} sizes="(min-width: 1100px) 260px, (min-width: 700px) 30vw, 46vw" alt={`${c.full}, coach de Pomposo y Peligroso`} class="team__img" />
+            <div class="team__body">
+              <h3>{c.name}</h3>
+              <p>{c.bio}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="section-cta" data-reveal>
+      <a class="btn btn--block-mobile" href="#formulario" data-cta="equipo">Quiero mi plaza</a>
     </div>
   </div>
 </section>
 
 <style>
-  .coach__grid {
+  .team {
     display: grid;
-    gap: 44px;
-  }
-
-  /* Collage de 3 fotos */
-  .coach__collage {
-    position: relative;
-    width: 100%;
-    max-width: 520px;
-    margin-inline: auto;
-    aspect-ratio: 1 / 1.04;
-  }
-  .coach__collage :global(picture) {
-    position: absolute;
-  }
-  .coach__collage :global(picture:nth-of-type(1)) {
-    left: 0;
-    top: 0;
-    width: 58%;
-  }
-  .coach__collage :global(picture:nth-of-type(2)) {
-    right: 0;
-    top: 14%;
-    width: 44%;
-    z-index: 2;
-  }
-  .coach__collage :global(picture:nth-of-type(3)) {
-    left: 16%;
-    bottom: 0;
-    width: 50%;
-    z-index: 3;
-  }
-  .coach__collage :global(.coach__img) {
-    width: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-    background: var(--lilac-100);
-  }
-  .coach__collage :global(.coach__img--a) {
-    aspect-ratio: 4 / 5;
-    object-position: 60% 50%;
-  }
-  .coach__collage :global(.coach__img--b) {
-    aspect-ratio: 4 / 5;
-    border: 5px solid var(--lilac-50);
-    border-radius: 24px;
-  }
-  .coach__collage :global(.coach__img--c) {
-    aspect-ratio: 3 / 2;
-    border: 5px solid var(--lilac-50);
-    border-radius: 24px;
-  }
-  .coach__sticker {
-    position: absolute;
-    right: 5%;
-    top: 60%;
-    z-index: 4;
-    display: grid;
-    place-items: center;
-    width: 92px;
-    height: 92px;
-    border-radius: 50%;
-    background: var(--pink);
-    color: var(--ink);
-    font-family: var(--font-display);
-    font-size: 0.875rem;
-    line-height: 1.05;
-    letter-spacing: 0.04em;
-    text-align: center;
-    text-transform: uppercase;
-    transform: rotate(-10deg);
-  }
-
-  .coach__lead {
-    margin-top: 20px;
-    max-width: 34rem;
-  }
-  .coach__stats {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    justify-content: start;
-    gap: 12px clamp(20px, 4vw, 40px);
-    margin: 28px 0 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: clamp(32px, 5vw, 56px) 0 0;
     padding: 0;
   }
-  .coach__stats li {
-    display: grid;
-    gap: 2px;
+  .team__card {
+    overflow: hidden;
+    border-radius: 22px;
+    background: var(--white);
+    box-shadow: 0 20px 40px -32px rgb(75 42 145 / 0.55);
   }
-  .coach__num {
-    font-family: var(--font-display);
-    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
-    line-height: 1;
-    color: var(--purple);
+  .team__card :global(.team__img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: var(--lilac-100);
   }
-  .coach__label {
-    font-size: var(--fs-small);
+  .team__body {
+    padding: 14px 14px 18px;
+  }
+  .team__body h3 {
+    font-size: 1.5rem;
+  }
+  .team__body p {
+    margin-top: 4px;
     color: var(--muted);
-    line-height: 1.3;
+    font-size: 0.875rem;
+    line-height: 1.45;
   }
-  .coach__cta {
-    margin-top: 32px;
-  }
-  @media (max-width: 420px) {
-    .coach__sticker {
-      width: 76px;
-      height: 76px;
-      font-size: 0.75rem;
+  @media (min-width: 1100px) {
+    .team {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
     }
-  }
-  @media (min-width: 960px) {
-    .coach__grid {
-      grid-template-columns: minmax(0, 500px) minmax(0, 1fr);
-      align-items: center;
-      gap: clamp(56px, 7vw, 112px);
+    .team__body {
+      padding: 18px 20px 22px;
+    }
+    .team__body h3 {
+      font-size: 1.75rem;
+    }
+    .team__body p {
+      font-size: var(--fs-small);
     }
   }
 </style>

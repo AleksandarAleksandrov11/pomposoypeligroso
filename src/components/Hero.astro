@@ -1,7 +1,7 @@
 ---
 import Pic from './Pic.astro';
-import heroV from '../assets/img/hero-mujer-sentadilla-barra-vertical.jpg';
-import heroH from '../assets/img/hero-mujer-sentadilla-barra-horizontal.jpg';
+import heroV from '../assets/img/hero-liliam-mancuernas-vertical.jpg';
+import heroH from '../assets/img/hero-clientas-entrenando-horizontal.jpg';
 import { HERO } from '../lib/images';
 ---
 
@@ -21,7 +21,7 @@ import { HERO } from '../lib/images';
 
   <div class="container hero__content">
     <h1 id="hero-title" class="hero__title t-center">Un glúteo pomposo <span class="script">y peligroso.</span></h1>
-    <p class="hero__lead">Programa online de 12 semanas para mujeres +30. Fuerza, comida sin dietas y una entrenadora pendiente de ti.</p>
+    <p class="hero__lead">Programa online de 12 semanas para mujeres +30.<br />Fuerza, comida sin dietas y un coach pendiente de ti.</p>
     <div class="hero__ctas">
       <a class="btn" href="#formulario" data-hero-cta data-cta="hero">Quiero mi plaza</a>
       <a class="btn btn--outline-light" href="#resultados">Ver resultados</a>
@@ -53,7 +53,7 @@ import { HERO } from '../lib/images';
   }
   .hero__bg :global(.hero__img) {
     object-fit: cover;
-    object-position: 50% 18%;
+    object-position: 50% 30%;
   }
   /* Velo: deja ver la foto arriba y oscurece donde va el texto */
   .hero::after {
@@ -87,6 +87,7 @@ import { HERO } from '../lib/images';
     color: var(--on-dark);
     font-size: 1.0625rem;
     line-height: 1.5;
+    text-wrap: balance;
   }
   .hero__ctas {
     display: flex;
@@ -117,12 +118,13 @@ import { HERO } from '../lib/images';
       min-height: max(560px, calc(100svh - var(--header-h)));
     }
     .hero__bg :global(.hero__img) {
-      object-position: 100% 50%;
+      object-position: 50% 50%;
     }
+    /* Tríptico de clientas entrenando: el panel central queda bajo el titular, más oscuro */
     .hero::after {
       background:
-        radial-gradient(ellipse 46% 62% at 50% 52%, rgb(30 21 48 / 0.7) 0%, rgb(30 21 48 / 0.42) 62%, rgb(30 21 48 / 0.18) 100%),
-        linear-gradient(180deg, rgb(30 21 48 / 0.2) 0%, rgb(30 21 48 / 0) 35%, rgb(30 21 48 / 0.6) 100%);
+        radial-gradient(ellipse 42% 70% at 50% 52%, rgb(30 21 48 / 0.82) 0%, rgb(30 21 48 / 0.6) 65%, rgb(30 21 48 / 0.35) 100%),
+        linear-gradient(180deg, rgb(30 21 48 / 0.25) 0%, rgb(30 21 48 / 0.1) 35%, rgb(30 21 48 / 0.65) 100%);
     }
     .hero__title {
       max-width: 7.6em;

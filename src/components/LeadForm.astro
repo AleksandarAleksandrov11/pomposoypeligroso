@@ -22,7 +22,7 @@ const prefixes: [string, string][] = [
 ];
 ---
 
-<section class="section bg-lilac form-section" id="formulario" aria-labelledby="form-title">
+<section class="section form-section" id="formulario" aria-labelledby="form-title">
   <div class="container form-section__inner">
     <div class="section-head form-section__intro">
       <h2 id="form-title">Empieza aquí <span class="script script--low">cuéntanos sobre ti.</span></h2>
@@ -90,7 +90,7 @@ const prefixes: [string, string][] = [
           </div>
 
           <div class="step" data-step="4" inert aria-hidden="true">
-            <label for="lf-phone" class="step__title" tabindex="-1" data-step-title>¿A qué número te escribimos por WhatsApp?</label>
+            <label for="lf-phone" class="step__title" tabindex="-1" data-step-title>¿A qué número te contactamos?</label>
             <div class="phone-row">
               <div class="prefix">
                 <span class="prefix__value" aria-hidden="true" data-prefix-value>+34</span>
@@ -192,11 +192,19 @@ const prefixes: [string, string][] = [
 </script>
 
 <style>
+  /* Fondo morado propio (distinto del lila de la sección anterior) para que el formulario destaque */
   .form-section {
     position: relative;
     overflow: hidden;
+    background: linear-gradient(160deg, var(--purple-dark) 0%, #5b35b0 55%, var(--purple) 100%);
   }
-  /* Círculos de color muy suaves de fondo */
+  .form-section h2 {
+    color: var(--white);
+  }
+  .form-section h2 .script {
+    color: var(--pink);
+  }
+  /* Brillos de color suaves de fondo */
   .form-section::before,
   .form-section::after {
     content: '';
@@ -210,14 +218,14 @@ const prefixes: [string, string][] = [
     height: 520px;
     left: -260px;
     top: 8%;
-    background: radial-gradient(circle, rgb(242 141 184 / 0.22), transparent 70%);
+    background: radial-gradient(circle, rgb(242 141 184 / 0.3), transparent 70%);
   }
   .form-section::after {
     width: 600px;
     height: 600px;
     right: -300px;
     bottom: -120px;
-    background: radial-gradient(circle, rgb(185 164 242 / 0.35), transparent 70%);
+    background: radial-gradient(circle, rgb(185 164 242 / 0.3), transparent 70%);
   }
   .form-section__inner {
     position: relative;
@@ -227,11 +235,15 @@ const prefixes: [string, string][] = [
   }
   .form-section__help {
     text-align: center;
+    color: var(--on-dark);
   }
   .form-section__help a {
-    color: var(--purple);
+    color: var(--white);
     font-weight: 600;
     overflow-wrap: anywhere;
+  }
+  .form-section__help a:focus-visible {
+    outline-color: var(--white);
   }
 
   /* Tarjeta */
@@ -243,7 +255,8 @@ const prefixes: [string, string][] = [
     border-radius: 28px;
     background: var(--white);
     border: 1px solid var(--line);
-    box-shadow: 0 30px 60px -36px rgb(75 42 145 / 0.5);
+    border-color: transparent;
+    box-shadow: 0 30px 70px -30px rgb(20 10 45 / 0.65);
     scroll-margin-top: calc(var(--header-h) + 12px);
   }
   :global(html:not(.js)) .lead-form {
@@ -296,12 +309,16 @@ const prefixes: [string, string][] = [
     transition: transform 0.3s var(--ease);
   }
 
-  /* Pasos apilados en la misma celda: la tarjeta mantiene la altura del paso más alto */
+  /* La tarjeta se adapta al alto de cada pregunta: solo el paso activo ocupa sitio.
+     form.ts anima el cambio de alto (clase is-resizing mientras dura). */
   .lead-form__steps {
-    display: grid;
+    position: relative;
+    transition: height 0.3s var(--ease);
+  }
+  .lead-form__steps:global(.is-resizing) {
+    overflow: hidden;
   }
   .step {
-    grid-area: 1 / 1;
     min-width: 0;
     margin: 0;
     padding: 0;
@@ -319,6 +336,10 @@ const prefixes: [string, string][] = [
       visibility 0s;
   }
   .step:not(.is-active) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     visibility: hidden;
     opacity: 0;
     transform: translateX(12px);
