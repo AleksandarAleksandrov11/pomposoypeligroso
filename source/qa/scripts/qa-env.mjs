@@ -52,8 +52,8 @@ for (const [name, ua] of Object.entries(UAS)) {
   await p.locator('[data-submit]').click();
   await p.waitForURL('**/gracias', { timeout: 8000 }).catch(() => {});
   ok(`${name}: envío y redirección a /gracias`, p.url().endsWith('/gracias'));
-  ok(`${name}: in_app_browser detectado`, payload?.in_app_browser === (name === 'instagram' ? 'Instagram' : 'Facebook'), payload?.in_app_browser);
-  ok(`${name}: device móvil`, payload?.device === 'móvil', payload?.device);
+  ok(`${name}: el lead lleva solo los datos del formulario y los utm`, !!payload && Object.keys(payload).every((k) => ['age_range','experience','name','phone','utm_source','utm_medium','utm_campaign','utm_content','utm_term','event_id','website'].includes(k)), Object.keys(payload || {}).join(','));
+  ok(`${name}: utm_content llega`, payload?.utm_content === 'ad2', payload?.utm_content);
   ok(`${name}: sin errores de consola`, errs.length === 0, errs.join(' | '));
   await p.screenshot({ path: `${OUT}/inapp-${name}-gracias.png` });
   await ctx.close();

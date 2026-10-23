@@ -83,24 +83,11 @@ Pega esto en **Parámetros de URL** de cada anuncio en Meta Ads:
 utm_source={{site_source_name}}&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_term={{adset.name}}&utm_id={{campaign.id}}&campaign_id={{campaign.id}}&adset_id={{adset.id}}&ad_id={{ad.id}}&placement={{placement}}
 ```
 
-Con eso el Sheet sabe de qué campaña, conjunto y anuncio viene cada lead, y la hoja Resumen agrupa por anuncio (`utm_content`), campaña y conjunto.
+Con eso el Sheet sabe de qué campaña, conjunto y anuncio viene cada lead. El formulario solo envía `utm_source`, `utm_medium`, `utm_campaign`, `utm_content` y `utm_term`; el resto de parámetros de la plantilla se ignoran.
 
 ### API de Conversiones (para más adelante)
 
-No está implementada, pero cada lead ya guarda en el Sheet lo necesario: `event_id` (el mismo `eventID` del `Lead` del navegador, para deduplicar), `fbp`, `fbc`, `user_agent`, teléfono en E.164 y fecha ISO. Para activarla: en el Apps Script, tras escribir la fila, hacer un `UrlFetchApp.fetch` a `https://graph.facebook.com/v{versión}/{PIXEL_ID}/events?access_token={TOKEN}` con un evento `Lead` que lleve `event_id`, `event_time`, `action_source: 'website'`, `event_source_url` y `user_data` con `ph` (teléfono normalizado sin `+` y con hash SHA‑256), `fbp`, `fbc` y `client_user_agent`. Enviarlo solo si `consent_marketing = Sí`.
-
-## Cookies y consentimiento
-
-- Banner con Aceptar, Rechazar y Configurar con la misma prominencia (guía de la AEPD). Va siempre arriba, bajo el header, y mientras se ve la página le reserva su hueco desde el primer pintado (clase `needs-consent`, variable `--cookie-space`): no tapa el titular, el CTA del hero, el formulario al que saltan los botones ni el inicio de las páginas legales, y la barra fija inferior y el botón de WhatsApp siguen visibles. En pantallas bajas el hero se compacta para que el CTA quepa. Al elegir, el hueco desaparece sin saltos en lo que se está leyendo.
-- Debajo del botón de envío del formulario está la información básica de protección de datos (primera capa, art. 11 LOPDGDD).
-- La elección se guarda en `localStorage` (`pyp_consent`) con versión y fecha durante 12 meses. Para volver a preguntar a todo el mundo, sube `SITE.consentVersion`.
-- Sin consentimiento de marketing no se guarda nada de atribución en el dispositivo (art. 22.2 LSSI): los UTMs se leen de la URL y viajan con el lead si lo envía en esa misma página, y nunca viajan los identificadores de Meta (`fbclid`, `_fbc`, `_fbp`). Con consentimiento, la atribución se guarda en `localStorage` 30 días e incluye esos identificadores.
-
-## Seguridad
-
-- **CSP** en una `<meta>` con hashes de los scripts y estilos inline (la genera Astro, ver `astro.config.mjs`). Permite `connect.facebook.net`, `www.facebook.com`, `script.google.com` y `script.googleusercontent.com`. Probada con el píxel real de Meta y con el envío del formulario: sin violaciones. Si añades un proveedor nuevo, añade su dominio ahí.
-- Cabeceras de seguridad y caché en `vercel.json`.
-- En las vistas previas de Vercel (no en producción) la barra de herramientas de Vercel puede dar un aviso de CSP en consola; es normal y no afecta a la web.
+No está implementada. La hoja ya no guarda `fbp`, `fbc`, `event_id` ni el user agent, que la API de Conversiones necesita para casar el evento con el clic del anuncio. Si se activa más adelante hay que volver a enviarlos desde el formulario (solo con consentimiento de marketing) y mandar el evento `Lead` desde el Apps Script con `UrlFetchApp.fetch`, usando el mismo `event_id` que el `Lead` del navegador para deduplicar.
 
 ## Google Sheets + Apps Script
 
@@ -110,19 +97,19 @@ El código completo está en `apps-script/Code.gs` (sin comentarios, listo para 
 
 1. Crea un Google Sheet nuevo (con la cuenta que vaya a recibir los leads). Ve a **Extensiones → Apps Script**.
 2. Borra el contenido de `Código.gs`, pega todo `apps-script/Code.gs` y guarda.
-3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crean las hojas **Leads** y **Resumen**.
+3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crea la hoja **Leads**. Si ya tenías la versión anterior del script, `setup` borra el contenido de esa hoja (era solo de pruebas) y quita la hoja **Resumen**.
 4. **Implementar → Nueva implementación**. Tipo: **Aplicación web**. Ejecutar como: **Yo**. Quién tiene acceso: **Cualquier usuario**. Pulsa **Implementar** y copia la URL que termina en `/exec`.
 5. Pega esa URL en `SITE.formEndpoint` (`src/config/site.ts`), haz commit y despliega.
 6. Prueba: abre la URL `/exec` en el navegador; debe responder `{"ok":true,"status":"alive"}`. Después envía el formulario desde la web y comprueba que aparece la fila en **Leads**.
 7. Si cambias el código más adelante: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión → Implementar**. Así la URL no cambia.
 
-Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, anuncio, origen y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
+Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, anuncio, campaña y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
 
 ### Qué hace
 
-- **Leads:** una fila por lead (la más reciente abajo) con 35 columnas: fecha y hora (Europe/Madrid), ID `PYP-AAAAMMDD-XXXX`, nombre, teléfono en texto (E.164), enlace "Abrir chat" de WhatsApp, tramo de edad, experiencia, **Estado** (desplegable con colores: Nuevo, Contactado, No contesta, Videollamada agendada, Videollamada hecha, Alumna, Descartada), notas, UTMs, IDs de campaña, conjunto y anuncio, ubicación, origen calculado, `fbclid`, `fbc`, `fbp`, `event_id`, consentimiento, dispositivo, navegador in‑app, URL de llegada, referrer, primer contacto, user agent, tiempo en completar, marca de tiempo ISO y **Sospechoso**.
-- Valida los datos, neutraliza fórmulas inyectadas, usa `LockService`, no duplica el mismo teléfono en 10 minutos, descarta el honeypot y marca como sospechoso lo que se rellena en menos de 3 segundos.
-- **Resumen:** KPIs (total, hoy, 7 días, 30 días, alumnas, tasa lead → alumna, sospechosos), leads por anuncio (con últimos 7 días, alumnas y conversión), por campaña, por conjunto, por tramo de edad y por experiencia (con gráficos de barras), tablas cruzadas anuncio × edad y anuncio × experiencia, por origen, por dispositivo y leads por día de los últimos 30 días con gráfico de líneas. Los sospechosos no cuentan en los totales. Se actualiza solo; si se descoloca, vuelve a ejecutar `setup()` (no borra ningún lead).
+- **Leads:** una fila por lead (la más reciente abajo) con 10 columnas: fecha y hora juntas (Europe/Madrid), nombre, teléfono en texto (E.164), edad, experiencia y los cinco `utm` (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content` con el anuncio y `utm_term` con el conjunto). Nada más: ni IDs, ni referrer, ni dispositivo, ni tiempos.
+- Valida los datos, neutraliza fórmulas inyectadas, usa `LockService`, no duplica el mismo teléfono en 10 minutos y descarta en silencio el campo trampa (honeypot) de los bots.
+- Manda un email por cada lead nuevo (no por duplicados ni bots).
 
 ## Calidad
 

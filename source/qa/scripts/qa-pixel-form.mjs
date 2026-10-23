@@ -60,9 +60,9 @@ if (ONLY === 'all' || ONLY === 'A') {
   ok('A cero peticiones a Meta sin consentimiento', state.fbRequests.length === 0, state.fbRequests.join(','));
   const body = state.posts[0] ? JSON.parse(state.posts[0].body) : {};
   ok('A POST text/plain', state.posts[0]?.ct?.startsWith('text/plain'), state.posts[0]?.ct);
-  ok('A consent_marketing = no', body.consent_marketing === 'no', body.consent_marketing);
   ok('A UTMs llegan sin consentimiento (misma página)', body.utm_source === 'fb' && body.utm_content === 'anuncio1', JSON.stringify({ s: body.utm_source, c: body.utm_content }));
-  ok('A sin consentimiento no viajan identificadores de Meta', !body.fbclid && !body.fbc && !body.fbp && !/fbclid/.test(body.landing_url + body.page_url + body.first_touch + body.last_touch), JSON.stringify({ f: body.fbclid, l: body.landing_url }));
+  const extraA = Object.keys(body).filter((k) => !['age_range','experience','name','phone','utm_source','utm_medium','utm_campaign','utm_content','utm_term','event_id','website'].includes(k));
+  ok('A el lead lleva solo los datos del formulario y los cinco utm', extraA.length === 0 && !/fbclid/.test(JSON.stringify(body)), 'sobran: ' + extraA.join(','));
   const stored = await page.evaluate(() => ({ ls: Object.keys(localStorage), ss: Object.keys(sessionStorage) }));
   ok('A sin consentimiento solo se guarda lo necesario', !stored.ls.concat(stored.ss).some((k) => /touch|form_started|lead_sent/.test(k)), JSON.stringify(stored));
   ok('A sin localStorage de atribución sin consentimiento', (await page.evaluate(() => localStorage.getItem('pyp_last_touch'))) === null);
@@ -94,18 +94,12 @@ if (ONLY === 'all' || ONLY === 'B') {
   // Las llamadas de la página anterior se pierden al navegar: las recogemos antes del redirect
   ok('B redirige a /gracias', page.url().endsWith('/gracias'));
   const body = state.posts[0] ? JSON.parse(state.posts[0].body) : {};
-  const required = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','campaign_id','adset_id','ad_id','adset_name','ad_name','placement','site_source','fbclid','fbc','fbp','landing_url','page_url','referrer','first_touch','last_touch','device','user_agent','in_app_browser','screen','language','event_id','submitted_at','time_to_complete','consent_marketing','website','age_range','experience','name','phone'];
-  const missing = required.filter((k) => !(k in body));
-  ok('B payload incluye todos los campos de 9.3', missing.length === 0, 'faltan: ' + missing.join(','));
+  const ALLOWED = ['age_range','experience','name','phone','utm_source','utm_medium','utm_campaign','utm_content','utm_term','event_id','website'];
+  const extra = Object.keys(body).filter((k) => !ALLOWED.includes(k));
+  ok('B el lead lleva solo los datos del formulario y los cinco utm', extra.length === 0, 'sobran: ' + extra.join(','));
   ok('B UTMs se conservan tras ir a legal y volver', body.utm_source === 'fb' && body.utm_campaign === 'test' && body.utm_content === 'anuncio1');
-  ok('B fbc construido desde fbclid', /^fb\.1\.\d+\.abc$/.test(body.fbc), body.fbc);
-  ok('B landing_url es la de llegada con UTMs', body.landing_url.includes('utm_content=anuncio1'), body.landing_url);
-  ok('B page_url es la del envío', body.page_url === BASE + '/', body.page_url);
   ok('B teléfono E.164', body.phone === '+34612345678', body.phone);
-  ok('B consent_marketing = si', body.consent_marketing === 'si');
-  ok('B device móvil', body.device === 'móvil', body.device);
   ok('B event_id uuid v4', /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(body.event_id), body.event_id);
-  ok('B time_to_complete >= 3', body.time_to_complete >= 3, String(body.time_to_complete));
   ok('B atribución en localStorage con consentimiento', !!(await page.evaluate(() => localStorage.getItem('pyp_last_touch'))));
   ok('B sin errores de consola / CSP', state.console.length === 0, state.console.join(' | '));
   await ctx.close();
@@ -170,7 +164,7 @@ if (ONLY === 'all' || ONLY === 'C') {
   await ctx.route('https://script.google.com/**', (route) => { posts2.push(route.request().postData()); route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"id":"PYP-RETRY"}' }); });
   await page.goto(BASE + '/privacidad', { waitUntil: 'networkidle' });
   await page.waitForTimeout(4500);
-  ok('C reintento en la siguiente visita', posts2.length === 1 && JSON.parse(posts2[0]).retried === 'si', String(posts2.length));
+  ok('C reintento en la siguiente visita', posts2.length === 1 && JSON.parse(posts2[0]).phone === '+34612345678', String(posts2.length));
   ok('C cola vacía tras reintento', (await page.evaluate(() => localStorage.getItem('pyp_pending_leads'))) === null);
   ok('C sin errores de consola', state.console.length === 0, state.console.join(' | '));
   await ctx.close();
