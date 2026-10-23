@@ -9,7 +9,7 @@ import { testimonials } from '../data/testimonials';
 const show = SITE.showTransformations;
 ---
 
-<section class="section bg-blush results" id="resultados" aria-labelledby="results-title">
+<section class="section bg-lilac results" id="resultados" aria-labelledby="results-title">
   <div class="container">
     <div class="section-head" data-reveal>
       <h2 id="results-title">Mujeres normales <span class="script">cambios reales.</span></h2>
@@ -91,7 +91,6 @@ const show = SITE.showTransformations;
   </div>
 
   <div class="container">
-    {show && <p class="micro results__disclaimer">Resultados individuales. Pueden variar según cada persona.</p>}
     <div class="section-cta" data-reveal>
       <a class="btn btn--block-mobile" href="#formulario" data-cta="resultados">Quiero ser la siguiente</a>
     </div>
@@ -280,10 +279,6 @@ const show = SITE.showTransformations;
     font-size: var(--fs-small);
   }
 
-  .results__disclaimer {
-    margin-top: 16px;
-    text-align: center;
-  }
 
   @media (min-width: 768px) {
     .ba-card {

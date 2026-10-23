@@ -6,7 +6,7 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 
 | Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | FCP | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|---|
-| `/` | Móvil | 99 | 100 | 100 | 100 | 1,1 s | 2,2 a 2,3 s | 0 | 0 a 20 ms |
+| `/` | Móvil | 96 a 98 | 100 | 100 | 100 | 1,1 a 1,3 s | 1,9 s | 0 | 100 a 200 ms |
 | `/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,6 s | 0,001 | 0 ms |
 | `/gracias` | Móvil | 100 | 100 | 100 | 66 * | | 1,4 s | 0 | 0 ms |
 | `/gracias` | Escritorio | 100 | 100 | 100 | 66 * | | 0,3 s | 0 | 0 ms |
@@ -16,6 +16,8 @@ Todo se ha probado sobre el build de producción (`npm run build` + servidor est
 \* SEO 66 solo por el `noindex`, que el brief pide para gracias y legales. Es intencionado.
 
 Optimización de carga:
+
+- Prueba en iPhone emulado (navegador de Instagram, 4G lento de 1,6 Mbps y 150 ms): primer contenido a 0,45 s, foto del hero a 1,2 s, página cargada a 2 s con 305 KB y 16 peticiones.
 
 - Ya no hay ninguna foto de stock: todas son de alumnas y del equipo. La foto del hero en móvil es un fotograma de vídeo 4K; se le ha quitado ruido para que pese 37 a 62 KB (LCP de 2,5 s a 2,2 s).
 - Vídeos ("Así entrenan ellas"): 6 clips de 6 s sin audio, MP4 H.264 (250 a 330 KB) y WebM VP9 de alternativa. Cero descargas al cargar la página: se piden cuando la sección está a 600 px y solo se reproducen mientras se ven (comprobado: 0 peticiones al cargar, 6 al llegar, los 6 reproduciéndose). Con "reducir movimiento" no se reproducen solos, llevan controles y no se descargan hasta darle al play.
