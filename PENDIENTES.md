@@ -4,7 +4,7 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 ## Configuración (`src/config/site.ts`)
 
-- [ ] **ID del Meta Pixel** → `metaPixelId`.
+- [x] **ID del Meta Pixel**: 1162548892864094 (`metaPixelId`). Se carga solo tras aceptar cookies de marketing.
 - [x] **WhatsApp y teléfono**: +34 644 11 77 40 (`site.ts`). Los botones de WhatsApp ya abren el chat con un mensaje preparado.
 - [ ] **Dominio definitivo** → `url` (y añadirlo en Vercel). Mientras tanto se usa la URL `*.vercel.app`.
 - [ ] **URL del Web App de Apps Script** → `formEndpoint` (la pegas tú tras implementarlo, ver README).

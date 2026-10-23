@@ -11,7 +11,7 @@ export const SITE = {
   /** Dominio definitivo con https y sin barra final. PENDIENTE. */
   url: 'https://PENDIENTE-DOMINIO',
   /** ID del píxel de Meta (solo números). Vacío = el píxel NO se carga. PENDIENTE. */
-  metaPixelId: '',
+  metaPixelId: '1162548892864094',
   /** URL del Web App de Google Apps Script (termina en /exec). PENDIENTE. */
   formEndpoint: '',
   /** WhatsApp en formato internacional, sin + ni espacios (ej. 34612345678). PENDIENTE. */
