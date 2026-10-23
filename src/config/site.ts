@@ -13,7 +13,7 @@ export const SITE = {
   /** ID del píxel de Meta (solo números). Vacío = el píxel NO se carga. PENDIENTE. */
   metaPixelId: '1162548892864094',
   /** URL del Web App de Google Apps Script (termina en /exec). PENDIENTE. */
-  formEndpoint: '',
+  formEndpoint: 'https://script.google.com/macros/s/AKfycbzFifMV_tthy36EBoAiqkljf6n8xunkG4TyZTqCabP8pXFZeCMt_HQMnT_NXx9HrFlD/exec',
   /** WhatsApp en formato internacional, sin + ni espacios (ej. 34612345678). PENDIENTE. */
   whatsappNumber: '34644117740',
   whatsappMessage: 'Hola, vengo de la web de Pomposo y Peligroso y quiero información.',

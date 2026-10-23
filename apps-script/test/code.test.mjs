@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const code = fs.readFileSync(path.join(here, '..', 'Code.gs'), 'utf8');
 
+const N_COLS = 11;
+
 /* ---------- Simulación de una hoja en memoria ---------- */
 class FakeRange {
   constructor(sheet, row, col, nr = 1, nc = 1) {
@@ -27,12 +29,10 @@ class FakeRange {
   setValues(vals) {
     vals.forEach((line, r) => line.forEach((v, c) => {
       const cell = this.sheet.cell(this.row + r, this.col + c);
-      // Igual que Sheets: un texto que empieza por "=" es una fórmula
       if (typeof v === 'string' && v.startsWith('=')) cell.f = v; else cell.v = v;
     }));
     return this;
   }
-  setFormula(f) { this.sheet.cell(this.row, this.col).f = f; return this; }
   setNumberFormat(fmt) {
     for (let r = 0; r < this.nr; r++) for (let c = 0; c < this.nc; c++) this.sheet.cell(this.row + r, this.col + c).fmt = fmt;
     return this;
@@ -41,21 +41,22 @@ class FakeRange {
 class FakeSheet {
   constructor(name) { this.name = name; this.cells = new Map(); }
   cell(r, c) { const k = `${r},${c}`; if (!this.cells.has(k)) this.cells.set(k, {}); return this.cells.get(k); }
+  getMaxRows() { return this.maxRows ?? 1000; }
+  insertRowsAfter(_after, n) { this.maxRows = this.getMaxRows() + n; this.inserted = n; }
   getLastRow() { let m = 0; for (const [k, v] of this.cells) if (v.v !== undefined && v.v !== '' || v.f) m = Math.max(m, +k.split(',')[0]); return m; }
   getRange(r, c, nr, nc) { return new FakeRange(this, r, c, nr, nc); }
-  row(r) { const out = []; for (let c = 1; c <= 35; c++) { const cell = this.cells.get(`${r},${c}`) || {}; out.push(cell.f ?? cell.v); } return out; }
+  row(r) { const out = []; for (let c = 1; c <= N_COLS; c++) out.push((this.cells.get(`${r},${c}`) || {}).v); return out; }
 }
 
-/** Objeto "comodín" para setup(): acepta cualquier llamada encadenada y registra fórmulas. */
+/** Objeto "comodín" para setup(): acepta cualquier llamada encadenada y registra las llamadas. */
 function chainable(log, overrides = {}) {
   const handler = {
     get(_t, prop) {
       if (prop in overrides) return overrides[prop];
       if (prop === 'then') return undefined;
       return (...args) => {
-        if (prop === 'setFormula') log.formulas.push(args[0]);
-        if (prop === 'setValue' || prop === 'setValues') log.values.push(args[0]);
         log.calls.push(prop);
+        log.args.push([prop, args]);
         return proxy;
       };
     },
@@ -66,53 +67,46 @@ function chainable(log, overrides = {}) {
 
 function makeLeadsSheet() {
   const sh = new FakeSheet('Leads');
-  for (let c = 1; c <= 35; c++) sh.cell(1, c).v = `col${c}`; // cabecera, como deja setup()
+  for (let c = 1; c <= N_COLS; c++) sh.cell(1, c).v = `col${c}`;
   return sh;
 }
 
-function makeContext({ leadsSheet = makeLeadsSheet(), setupMode = false } = {}) {
+function makeContext({ leadsSheet = makeLeadsSheet(), setupMode = null } = {}) {
   const mails = [];
-  const log = { formulas: [], values: [], calls: [] };
+  const log = { calls: [], args: [] };
   let spreadsheet;
   if (setupMode) {
-    const sheetMock = () => chainable(log, {
-      getMaxRows: () => 1000, getMaxColumns: () => 26, getLastRow: () => 0, getFilter: () => null, getCharts: () => [],
+    const sheetMock = (headers) => chainable(log, {
+      getMaxRows: () => 1000, getMaxColumns: () => 35, getLastRow: () => 3, getFilter: () => null,
+      getRange: () => chainable(log, { getValues: () => [headers.concat(new Array(35 - headers.length).fill(''))], getValue: () => headers[0] ?? '' }),
     });
     const sheets = {};
+    if (setupMode.existing) sheets.Leads = sheetMock(setupMode.existing);
+    if (setupMode.oldSummary) sheets.Resumen = sheetMock([]);
     spreadsheet = chainable(log, {
       getSheetByName: (n) => sheets[n] || null,
-      insertSheet: (n) => (sheets[n] = sheetMock()),
+      insertSheet: (n) => { log.calls.push('insertSheet:' + n); return (sheets[n] = sheetMock([])); },
       getSheets: () => Object.values(sheets),
-      setActiveSheet: () => {},
-      setSpreadsheetTimeZone: () => {},
-      setSpreadsheetLocale: () => {},
-      deleteSheet: () => {},
+      deleteSheet: (s) => { log.calls.push('deleteSheet:' + Object.keys(sheets).find((k) => sheets[k] === s)); },
     });
   } else {
     spreadsheet = { getSheetByName: (n) => (n === 'Leads' ? leadsSheet : null) };
   }
   const ctx = {
     console: { error: () => {}, log: () => {} },
-    Utilities: {
-      formatDate: (d, tz, pattern) => {
-        const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d).map((x) => [x.type, x.value]));
-        return pattern.replace('yyyy', p.year).replace('MM', p.month).replace('dd', p.day);
-      },
-    },
     LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
     ContentService: {
       MimeType: { JSON: 'JSON' },
       createTextOutput: (s) => ({ content: s, setMimeType() { return this; } }),
     },
     MailApp: { sendEmail: (o) => mails.push(o) },
-    SpreadsheetApp: chainable(log, {
+    SpreadsheetApp: {
       getActiveSpreadsheet: () => spreadsheet,
       openById: () => spreadsheet,
-      BorderStyle: { SOLID: 'SOLID', SOLID_THICK: 'SOLID_THICK' },
+      BorderStyle: { SOLID_THICK: 'SOLID_THICK' },
       newDataValidation: () => chainable(log),
       newConditionalFormatRule: () => chainable(log),
-    }),
-    Charts: { ChartType: { BAR: 'BAR', LINE: 'LINE' } },
+    },
   };
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
@@ -129,28 +123,7 @@ const valid = () => ({
   utm_campaign: 'Captación octubre',
   utm_content: 'Anuncio 1',
   utm_term: 'Mujeres 30-45',
-  utm_id: '120200000000001',
-  campaign_id: '120200000000001',
-  adset_id: '120200000000002',
-  ad_id: '120200000000003',
-  placement: 'Instagram_Stories',
-  fbclid: 'abc',
-  fbc: 'fb.1.1700000000000.abc',
-  fbp: 'fb.1.1700000000000.123',
-  landing_url: 'https://example.com/?utm_source=ig',
-  page_url: 'https://example.com/',
-  referrer: '',
-  first_touch: '{"utm_source":"ig"}',
-  last_touch: '{"utm_source":"ig"}',
-  device: 'móvil',
-  user_agent: 'Mozilla/5.0 Instagram',
-  in_app_browser: 'Instagram',
-  screen: '390x844',
-  language: 'es-ES',
   event_id: '0f8fad5b-d9cb-469f-a165-70867728950e',
-  submitted_at: new Date().toISOString(),
-  time_to_complete: 25,
-  consent_marketing: 'si',
   website: '',
 });
 const post = (ctx, body) => JSON.parse(ctx.doPost({ postData: { contents: typeof body === 'string' ? body : JSON.stringify(body) } }).content);
@@ -183,47 +156,28 @@ test('validateLead_ rechaza datos fuera de los valores permitidos', () => {
   assert.equal(ctx.validateLead_(null).error, 'invalid_payload');
 });
 
-test('validateLead_ marca sospechosos (honeypot o < 3 s)', () => {
+test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado y los cinco utm', () => {
   const { ctx } = makeContext();
-  assert.equal(ctx.validateLead_({ ...valid(), time_to_complete: 1 }).lead.suspicious, true);
-  assert.equal(ctx.validateLead_({ ...valid(), website: 'spam' }).lead.suspicious, true);
-  assert.equal(ctx.validateLead_(valid()).lead.suspicious, false);
+  assert.equal(ctx.COLUMNS.length, N_COLS);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(ctx.COLUMNS)).map((c) => c[0]),
+    ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+  );
 });
 
-test('computeOrigin_ clasifica el origen', () => {
-  const { ctx } = makeContext();
-  const o = (x) => ctx.computeOrigin_({ utm_source: '', utm_medium: '', referrer: '', fbclid: '', in_app: 'No', ...x });
-  assert.equal(o({ fbclid: 'abc' }), 'Meta Ads');
-  assert.equal(o({ utm_source: 'fb', utm_medium: 'paid_social' }), 'Meta Ads');
-  assert.equal(o({ utm_source: 'instagram' }), 'Instagram orgánico');
-  assert.equal(o({ referrer: 'https://l.instagram.com/' }), 'Instagram orgánico');
-  assert.equal(o({ in_app: 'Facebook' }), 'Facebook orgánico');
-  assert.equal(o({ referrer: 'https://www.google.com/' }), 'Google');
-  assert.equal(o({}), 'Directo');
-  assert.equal(o({ utm_source: 'newsletter' }), 'Campaña: newsletter');
-  assert.equal(o({ referrer: 'https://www.blog.com/post' }), 'Referido: blog.com');
-});
-
-test('makeLeadId_ tiene el formato PYP-AAAAMMDD-XXXX', () => {
-  const { ctx } = makeContext();
-  assert.match(ctx.makeLeadId_(new Date('2026-10-15T10:00:00Z')), /^PYP-20261015-[A-Z2-9]{4}$/);
-});
-
-test('buildRow_ devuelve 35 columnas en el orden de la hoja', () => {
+test('buildRow_ devuelve las columnas en el orden de la hoja', () => {
   const { ctx } = makeContext();
   const lead = ctx.validateLead_(valid()).lead;
-  const row = ctx.buildRow_(lead, 'PYP-1', new Date());
-  assert.equal(row.length, 35);
-  assert.equal(ctx.COLUMNS.length, 35);
-  assert.equal(row[2], 'PYP-1');
-  assert.equal(row[3], 'María José');
-  assert.equal(row[4], '+34612345678');
-  assert.equal(row[8], 'Nuevo');
-  assert.equal(row[13], 'Anuncio 1');
-  assert.equal(row[20], 'Meta Ads');
-  assert.equal(row[25], 'Sí');
-  assert.equal(row[27], 'Instagram');
-  assert.equal(row[34], 'No');
+  const when = new Date();
+  const row = ctx.buildRow_(lead, when);
+  assert.equal(row.length, N_COLS);
+  assert.equal(row[0], when);
+  assert.equal(row[1], 'María José');
+  assert.equal(row[2], '+34612345678');
+  assert.equal(row[3], 'De 30 a 39');
+  assert.equal(row[4], 'Nunca he entrenado');
+  assert.equal(row[5], 'Nuevo');
+  assert.equal(row.slice(6).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
 });
 
 /* ---------- doGet / doPost ---------- */
@@ -232,39 +186,45 @@ test('doGet responde alive', () => {
   assert.deepEqual(JSON.parse(ctx.doGet().content), { ok: true, status: 'alive' });
 });
 
-test('doPost escribe una fila completa y responde ok con id', () => {
+test('doPost escribe una fila y responde ok', () => {
   const { ctx, leadsSheet } = makeContext();
   const res = post(ctx, valid());
-  assert.equal(res.ok, true);
-  assert.match(res.id, /^PYP-\d{8}-[A-Z2-9]{4}$/);
+  assert.deepEqual(res, { ok: true });
   const row = leadsSheet.row(2);
-  assert.equal(row[2], res.id);
-  assert.equal(row[4], '+34612345678');
-  assert.equal(leadsSheet.cell(2, 5).fmt, '@', 'el teléfono se guarda como texto');
-  assert.equal(row[5], '=HYPERLINK("https://wa.me/34612345678","Abrir chat")');
   assert.equal(Object.prototype.toString.call(row[0]), '[object Date]');
-  assert.equal(row[32], 25);
-  assert.equal(row[34], 'No');
+  assert.equal(leadsSheet.cell(2, 1).fmt, 'dd/mm/yyyy HH:mm');
+  assert.equal(row[2], '+34612345678');
+  assert.equal(leadsSheet.cell(2, 3).fmt, '@', 'el teléfono se guarda como texto');
+  assert.equal(row[5], 'Nuevo', 'cada lead entra como Nuevo');
+  assert.equal(row[9], 'Anuncio 1');
+});
+
+test('doPost ignora cualquier dato que no sea de la hoja', () => {
+  const { ctx, leadsSheet } = makeContext();
+  post(ctx, { ...valid(), referrer: 'https://x', user_agent: 'UA', fbclid: 'abc', time_to_complete: 1, device: 'móvil' });
+  assert.equal(leadsSheet.getLastRow(), 2);
+  const stored = leadsSheet.row(2).join('|');
+  assert.ok(!/https:\/\/x|UA|abc|móvil/.test(stored));
+  assert.equal(leadsSheet.cell(2, N_COLS + 1).v, undefined, 'no escribe columnas de más');
 });
 
 test('doPost no duplica el mismo teléfono en 10 minutos', () => {
   const { ctx, leadsSheet } = makeContext();
-  const a = post(ctx, valid());
+  post(ctx, valid());
   const b = post(ctx, { ...valid(), name: 'Otra' });
-  assert.equal(b.ok, true);
-  assert.equal(b.duplicate, true);
-  assert.equal(b.id, a.id);
+  assert.deepEqual(b, { ok: true, duplicate: true });
   assert.equal(leadsSheet.getLastRow(), 2);
   const c = post(ctx, { ...valid(), phone: '+34699999999' });
   assert.equal(c.ok, true);
   assert.equal(leadsSheet.getLastRow(), 3);
 });
 
-test('doPost descarta el honeypot sin escribir', () => {
-  const { ctx, leadsSheet } = makeContext();
+test('doPost descarta el honeypot sin escribir ni avisar', () => {
+  const { ctx, leadsSheet, mails } = makeContext();
   const res = post(ctx, { ...valid(), website: 'http://spam' });
   assert.equal(res.ok, true);
   assert.equal(leadsSheet.getLastRow(), 1);
+  assert.equal(mails.length, 0);
 });
 
 test('doPost nunca escribe sobre la cabecera aunque la hoja esté vacía', () => {
@@ -273,16 +233,10 @@ test('doPost nunca escribe sobre la cabecera aunque la hoja esté vacía', () =>
   assert.equal(leadsSheet.getLastRow(), 2);
 });
 
-test('doPost marca como sospechoso si se completa en menos de 3 s', () => {
-  const { ctx, leadsSheet } = makeContext();
-  post(ctx, { ...valid(), time_to_complete: 1 });
-  assert.equal(leadsSheet.row(2)[34], 'Sí');
-});
-
 test('doPost neutraliza inyección de fórmulas', () => {
   const { ctx, leadsSheet } = makeContext();
   post(ctx, { ...valid(), utm_content: '=IMPORTXML("http://x","//a")', name: 'Ana' });
-  assert.equal(leadsSheet.row(2)[13], `'=IMPORTXML("http://x","//a")`);
+  assert.equal(leadsSheet.row(2)[9], `'=IMPORTXML("http://x","//a")`);
 });
 
 test('doPost devuelve errores sin detalles internos', () => {
@@ -293,24 +247,58 @@ test('doPost devuelve errores sin detalles internos', () => {
   assert.deepEqual(JSON.parse(ctx.doPost(undefined).content), { ok: false, error: 'empty_body' });
 });
 
-test('doPost envía aviso por email si NOTIFY_EMAIL tiene valor', () => {
+test('doPost avisa por email a aaswebmarketing@gmail.com', () => {
   const { ctx, mails } = makeContext();
-  vm.runInContext("NOTIFY_EMAIL = 'equipo@example.com';", ctx);
   post(ctx, valid());
   assert.equal(mails.length, 1);
+  assert.equal(mails[0].to, 'aaswebmarketing@gmail.com');
   assert.match(mails[0].body, /wa\.me\/34612345678/);
+  assert.match(mails[0].body, /Anuncio: Anuncio 1/);
   assert.match(mails[0].subject, /María José/);
 });
 
+test('doPost no avisa de un duplicado ni si NOTIFY_EMAIL está vacío', () => {
+  const { ctx, mails } = makeContext();
+  post(ctx, valid());
+  post(ctx, valid());
+  assert.equal(mails.length, 1);
+  vm.runInContext("NOTIFY_EMAIL = '';", ctx);
+  post(ctx, { ...valid(), phone: '+34699999999' });
+  assert.equal(mails.length, 1);
+});
+
+test('doPost añade filas si la hoja se queda sin espacio', () => {
+  const { ctx, leadsSheet } = makeContext();
+  leadsSheet.maxRows = 3;
+  leadsSheet.cell(3, 2).v = 'Última fila libre';
+  post(ctx, valid());
+  assert.equal(leadsSheet.inserted, 500);
+});
+
 /* ---------- setup ---------- */
-test('setup() se ejecuta sin errores y genera fórmulas bien formadas', () => {
-  const { ctx, log } = makeContext({ setupMode: true });
+const NEW_HEADERS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+const PREVIOUS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+test('setup() crea las hojas Leads y Contador cuando no existen', () => {
+  const { ctx, log } = makeContext({ setupMode: {} });
   ctx.setup();
-  ctx.setup(); // idempotente
-  assert.ok(log.formulas.length > 50, 'genera las fórmulas del resumen');
-  for (const f of log.formulas) {
+  assert.ok(log.calls.includes('insertSheet:Leads'));
+  assert.ok(log.calls.includes('insertSheet:Contador'));
+  assert.ok(log.calls.includes('createFilter'));
+  assert.ok(log.calls.includes('setDataValidation'), 'desplegable de estado');
+  assert.ok(!log.calls.includes('clear') || log.calls.filter((c) => c === 'clear').length === 1, 'solo limpia el contador');
+});
+
+test('las fórmulas del Contador están bien formadas y leen la hoja Leads', () => {
+  const { ctx, log } = makeContext({ setupMode: {} });
+  ctx.setup();
+  const formulas = log.args.filter(([m]) => m === 'setFormula').map(([, a]) => a[0]);
+  assert.equal(formulas.length, 5 + 7, 'cinco contadores y siete estados');
+  for (const f of formulas) {
     assert.ok(f.startsWith('='), f);
-    assert.ok(!f.includes(';'), 'sin punto y coma (setFormula usa sintaxis inglesa): ' + f);
+    const outsideStrings = f.replace(/"[^"]*"/g, '');
+    assert.ok(!/[,;]/.test(outsideStrings), 'sin separadores de argumentos, para que valga en cualquier idioma de la hoja: ' + f);
+    assert.ok(f.includes("'Leads'!"), f);
     let depth = 0;
     let inStr = false;
     for (const ch of f) {
@@ -323,9 +311,32 @@ test('setup() se ejecuta sin errores y genera fórmulas bien formadas', () => {
     assert.equal(depth, 0, 'paréntesis desequilibrados: ' + f);
     assert.ok(!inStr, 'comillas sin cerrar: ' + f);
   }
-  assert.ok(log.formulas.some((f) => f.includes('MAKEARRAY')), 'tablas cruzadas');
-  assert.ok(log.formulas.some((f) => f.includes("'Leads'!N2:N")), 'agrupa por utm_content');
-  assert.ok(log.calls.includes('insertChart'), 'crea gráficos');
-  assert.ok(log.calls.includes('createFilter'), 'crea filtro');
-  assert.ok(log.calls.includes('setDataValidation'), 'desplegable de estado');
+  assert.ok(formulas.some((f) => f.startsWith('=COUNTA(')), 'total');
+  assert.equal(formulas.filter((f) => f.startsWith('=SUMPRODUCT(')).length, 4 + 7, 'cuatro de fechas y uno por estado');
+});
+
+test('setup() con la versión anterior de 10 columnas añade Estado sin borrar leads', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: PREVIOUS } });
+  ctx.setup();
+  assert.ok(log.calls.includes('insertColumnBefore'));
+  assert.ok(!log.calls.includes('deleteColumns'));
+  assert.ok(!log.calls.includes('deleteSheet:Resumen'));
+  assert.ok(log.args.some(([m, a]) => m === 'setValue' && a[0] === 'Nuevo'), 'los leads existentes quedan como Nuevo');
+});
+
+test('setup() con el diseño original lo limpia y quita el Resumen', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: ['Fecha', 'Hora', 'ID lead'], oldSummary: true } });
+  ctx.setup();
+  assert.ok(log.calls.includes('clearDataValidations'));
+  assert.ok(log.calls.includes('deleteColumns'));
+  assert.ok(log.calls.includes('deleteSheet:Resumen'));
+});
+
+test('setup() con la hoja ya actual conserva los leads', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: NEW_HEADERS } });
+  ctx.setup();
+  assert.ok(!log.calls.includes('insertColumnBefore'));
+  assert.ok(!log.calls.includes('clearDataValidations'));
+  assert.ok(!log.calls.includes('deleteColumns'));
+  assert.ok(log.calls.includes('createFilter'));
 });

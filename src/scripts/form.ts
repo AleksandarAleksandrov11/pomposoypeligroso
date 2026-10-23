@@ -144,7 +144,7 @@ export async function retryPendingLeads() {
   const left: Payload[] = [];
   for (const p of list) {
     try {
-      await sendLead({ ...p, retried: 'si' });
+      await sendLead(p);
       if (p.website === '' || p.website === undefined) fireLead(p);
     } catch {
       left.push(p);
@@ -417,17 +417,18 @@ export function initForm() {
     const fd = new FormData(form);
     const name = String(fd.get('name') ?? '').trim().replace(/\s+/g, ' ');
     const eventId = uuidv4();
-    const seconds = startedAt ? Math.round((Date.now() - startedAt) / 1000) : 0;
+    const attribution = getAttribution();
     const payload: Payload = {
       age_range: String(fd.get('age_range') ?? ''),
       experience: String(fd.get('experience') ?? ''),
       name,
       phone: phone!,
-      ...getAttribution(),
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      utm_campaign: attribution.utm_campaign,
+      utm_content: attribution.utm_content,
+      utm_term: attribution.utm_term,
       event_id: eventId,
-      submitted_at: new Date().toISOString(),
-      time_to_complete: seconds,
-      consent_marketing: hasMarketingConsent() ? 'si' : 'no',
       website: honeypot.value,
     };
 

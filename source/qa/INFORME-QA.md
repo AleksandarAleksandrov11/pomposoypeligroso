@@ -84,7 +84,7 @@ Movimiento: con "reducir movimiento" activado las filas de fotos y testimonios s
 
 Material real: comprobado que las alumnas marcadas "no mostrar cara" solo salen de espaldas, que los antes/después tienen el orden correcto (fechas de la app y gráficas de peso) y que no queda ninguna imagen de Pexels ni de internet en `src/assets/img`.
 
-Apps Script (`npm run test:apps-script`): 17/17 pruebas en Node con los servicios de Google simulados (validación, saneado, duplicados, honeypot, sospechosos, email, fórmulas del Resumen y `setup()` idempotente).
+Apps Script (`npm run test:apps-script`): 21/21 pruebas en Node con los servicios de Google simulados (validación, saneado, duplicados, honeypot, email, hoja de 11 columnas con Estado, fórmulas del Contador y `setup()` con hoja nueva, con la versión anterior y con la original).
 
 ## Lo que no se ha podido probar aquí
 
