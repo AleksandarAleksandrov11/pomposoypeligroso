@@ -92,7 +92,7 @@ const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(loca
     <a class="skip-link" href={skipTo.href}>{skipTo.label}</a>
     <MonoSprite />
     <Header home={home} cta={headerCta} />
-    <main id="contenido">
+    <main id="contenido" class:list={[{ 'main--home': home }]}>
       <slot />
     </main>
     <Footer home={home} />

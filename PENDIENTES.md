@@ -9,13 +9,13 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 - [ ] **Dominio definitivo** → `url` (y añadirlo en Vercel). Mientras tanto se usa la URL `*.vercel.app`.
 - [ ] **URL del Web App de Apps Script** → `formEndpoint` (la pegas tú tras implementarlo, ver README).
 - [x] **Email para avisos de leads**: aaswebmarketing@gmail.com (`NOTIFY_EMAIL` en `apps-script/Code.gs`).
-- [ ] **Datos registrales de la S.L.** (Registro Mercantil de Barcelona, tomo, folio, hoja) → `legal.registry`. Ahora pone "Sociedad inscrita en el Registro Mercantil de Barcelona.".
+- [ ] **Datos registrales de la S.L.** (Registro Mercantil de Barcelona, tomo, folio, hoja e inscripción) → `legal.registry`. Los exige el art. 10 de la LSSI; están en la escritura o en una nota simple del Registro. Ahora pone "Sociedad inscrita en el Registro Mercantil de Barcelona.".
 
 ## Autorizaciones y contenido real
 
 Las fotos, vídeos y testimonios de alumnas y del equipo ya son reales (material del Drive de la marca). Queda:
 
-- [ ] **Confirmar que todas las alumnas que aparecen han dado su permiso** para salir en una web pública con anuncios: Noelia, Ariadna, Cris S., Claudia, Anna P., Anna S., Ainhoa, Gloria, Marina, Lucía, Cris G., Alba, Judith, Montse (fotos), Liliam, Andrea, Alexandra (vídeos) y Coralie, Carlota, Lorena, Alice (solo testimonio). Si alguna no quiere salir, se quita su entrada de `src/data/transformations.ts` o `src/data/testimonials.ts`.
+- [ ] **Confirmar que todas las alumnas que aparecen han dado su permiso** (el aviso legal ya dice que se publican con su autorización, así que tiene que ser cierto) para salir en una web pública con anuncios: Noelia, Ariadna, Cris S., Claudia, Anna P., Anna S., Ainhoa, Gloria, Marina, Lucía, Cris G., Alba, Judith, Montse (fotos), Liliam, Andrea, Alexandra (vídeos) y Coralie, Carlota, Lorena, Alice (solo testimonio). Si alguna no quiere salir, se quita su entrada de `src/data/transformations.ts` o `src/data/testimonials.ts`.
 - [ ] Revisar que los **nombres** son como cada alumna quiere aparecer (ahora: nombre de pila, con inicial cuando se repite).
 - [ ] **Descripción de Fede**: no venía en el Drive. Ahora su ficha dice "Coach del equipo de Pomposo y Peligroso" (`src/components/Coach.astro`).
 - [ ] Fotos de Fede `IMG_1159`, `IMG_1679`, vídeo `IMG_0793` y una captura de Cris Serrasolsas no se pudieron descargar (límite de Google Drive). No son necesarias, pero si las queréis en la web, pasádmelas por otro medio.

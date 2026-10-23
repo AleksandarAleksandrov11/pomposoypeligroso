@@ -51,18 +51,11 @@ const { home = false } = Astro.props;
         background-color 0.2s ease,
         transform 0.2s ease,
         opacity 0.2s ease,
-        visibility 0.2s,
-        bottom 0.2s ease;
+        visibility 0.2s;
     }
     .wa-fab:hover {
       background: var(--purple-dark);
       transform: translateY(-2px);
-    }
-    /* En escritorio el aviso de cookies va abajo: el botón sube mientras se ve */
-    @media (min-width: 960px) {
-      .wa-fab {
-        bottom: calc(24px + var(--banner-h, 0px));
-      }
     }
     .wa-fab:global(.is-hidden) {
       opacity: 0;

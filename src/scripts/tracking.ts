@@ -3,7 +3,8 @@
  * Guarda primer y último contacto para no perderlos si la usuaria navega a las páginas
  * legales y vuelve:
  *  - Con consentimiento de marketing: localStorage durante 30 días.
- *  - Sin consentimiento: sessionStorage (solo mientras la pestaña está abierta).
+ *  - Sin consentimiento: nada en el dispositivo (LSSI art. 22.2), solo en memoria mientras dura la página.
+ *    Además no viajan con el lead los identificadores de Meta (fbclid, _fbc, _fbp).
  */
 import { readConsent } from './consent';
 
@@ -37,21 +38,17 @@ export interface Touch extends Partial<Record<ParamName, string>> {
   ts: number;
 }
 
-function store(): Storage | null {
-  try {
-    return readConsent()?.marketing ? localStorage : sessionStorage;
-  } catch {
-    return null;
-  }
-}
+const memory = new Map<string, string>();
+
+const hasMarketing = () => !!readConsent()?.marketing;
 
 function read(key: string): Touch | null {
   try {
-    const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
+    const raw = memory.get(key) ?? (hasMarketing() ? localStorage.getItem(key) : null);
     if (!raw) return null;
     const t = JSON.parse(raw) as Touch;
     if (!t.ts || Date.now() - t.ts > TTL_MS) {
-      sessionStorage.removeItem(key);
+      memory.delete(key);
       localStorage.removeItem(key);
       return null;
     }
@@ -62,31 +59,52 @@ function read(key: string): Touch | null {
 }
 
 function write(key: string, t: Touch) {
+  const raw = JSON.stringify(t);
+  memory.set(key, raw);
+  if (!hasMarketing()) return;
   try {
-    store()?.setItem(key, JSON.stringify(t));
+    localStorage.setItem(key, raw);
   } catch {
     /* sin almacenamiento disponible */
   }
 }
 
-/** Mueve los datos al almacenamiento que toca cuando cambia el consentimiento. */
+/** Cuando cambia el consentimiento: con marketing se guarda en el dispositivo; sin él se borra de ahí. */
 export function syncAttributionStorage() {
   try {
-    const marketing = !!readConsent()?.marketing;
+    const marketing = hasMarketing();
     for (const key of [FIRST_KEY, LAST_KEY]) {
-      const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
-      if (!raw) continue;
+      sessionStorage.removeItem(key); // versiones anteriores lo guardaban aquí sin consentimiento
       if (marketing) {
-        localStorage.setItem(key, raw);
-        sessionStorage.removeItem(key);
+        const raw = memory.get(key);
+        if (raw) localStorage.setItem(key, raw);
       } else {
-        sessionStorage.setItem(key, raw);
+        const raw = localStorage.getItem(key);
+        if (raw && !memory.has(key)) memory.set(key, raw);
         localStorage.removeItem(key);
       }
     }
   } catch {
     /* sin almacenamiento */
   }
+}
+
+/** Quita fbclid de una URL (identificador de clic de Meta). */
+function withoutFbclid(url: string): string {
+  try {
+    const u = new URL(url);
+    if (!u.searchParams.has('fbclid')) return url;
+    u.searchParams.delete('fbclid');
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
+function anonymousTouch(t: Touch | null): Partial<Touch> {
+  if (!t) return {};
+  const { fbclid: _fbclid, fbc: _fbc, ...rest } = t;
+  return { ...rest, landing_url: withoutFbclid(t.landing_url), referrer: withoutFbclid(t.referrer) };
 }
 
 function isExternalReferrer(ref: string) {
@@ -147,12 +165,14 @@ export function detectInAppBrowser(): 'Instagram' | 'Facebook' | 'No' {
 
 /** Campos de atribución que viajan con cada lead. */
 export function getAttribution() {
-  const first = read(FIRST_KEY);
-  const last = read(LAST_KEY) ?? first;
+  const marketing = hasMarketing();
+  const first = marketing ? read(FIRST_KEY) : (anonymousTouch(read(FIRST_KEY)) as Touch);
+  const lastRaw = read(LAST_KEY);
+  const last = lastRaw ? (marketing ? lastRaw : (anonymousTouch(lastRaw) as Touch)) : first;
   const src: Partial<Touch> = last ?? {};
   const pick = (k: ParamName) => src[k] ?? '';
-  const fbclid = src.fbclid ?? first?.fbclid ?? '';
-  const fbc = getCookie('_fbc') || src.fbc || first?.fbc || '';
+  const fbclid = marketing ? (src.fbclid ?? first?.fbclid ?? '') : '';
+  const fbc = marketing ? getCookie('_fbc') || src.fbc || first?.fbc || '' : '';
 
   return {
     utm_source: pick('utm_source'),
@@ -170,9 +190,9 @@ export function getAttribution() {
     site_source: pick('site_source'),
     fbclid,
     fbc,
-    fbp: getCookie('_fbp'),
-    landing_url: src.landing_url ?? location.href,
-    page_url: location.href,
+    fbp: marketing ? getCookie('_fbp') : '',
+    landing_url: src.landing_url ?? (marketing ? location.href : withoutFbclid(location.href)),
+    page_url: marketing ? location.href : withoutFbclid(location.href),
     referrer: src.referrer ?? document.referrer,
     first_touch: JSON.stringify(first ?? {}),
     last_touch: JSON.stringify(last ?? {}),

@@ -10,7 +10,24 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 12px);
+  scroll-padding-top: calc(var(--header-h) + var(--cookie-space) + 12px);
+}
+
+/* Aviso de cookies: mientras se ve, la página le reserva su hueco bajo el header (ver CookieBanner.astro).
+   --banner-h lo mide consent.ts; hasta entonces se usa una estimación para no mover nada al cargar. */
+:root {
+  --cookie-space: 0px;
+}
+html.needs-consent {
+  --cookie-space: var(--banner-h, 146px);
+}
+@media (min-width: 768px) {
+  html.needs-consent {
+    --cookie-space: var(--banner-h, 74px);
+  }
+}
+html.needs-consent main:not(.main--home) {
+  padding-top: var(--cookie-space);
 }
 body {
   margin: 0;

@@ -49,8 +49,7 @@ function initMobileBar() {
   const state = { heroGone: false, formVisible: false, keyboard: false };
 
   const render = () => {
-    const banner = root.classList.contains('has-cookie-banner');
-    const show = state.heroGone && !state.formVisible && !state.keyboard && !banner;
+    const show = state.heroGone && !state.formVisible && !state.keyboard;
     bar.classList.toggle('is-visible', show);
     bar.toggleAttribute('inert', !show);
     root.classList.toggle('mobilebar-visible', show);
@@ -85,7 +84,6 @@ function initMobileBar() {
   vv?.addEventListener('resize', checkKeyboard);
   document.addEventListener('focusin', checkKeyboard);
   document.addEventListener('focusout', () => setTimeout(checkKeyboard, 50));
-  document.addEventListener('pyp:banner', render);
   render();
 }
 

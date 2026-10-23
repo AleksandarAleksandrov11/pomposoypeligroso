@@ -30,7 +30,7 @@ export const SITE = {
     /** Datos del Registro Mercantil de Barcelona (tomo, folio, hoja). PENDIENTE. */
     registry: '',
     /** Fecha de la última revisión de los textos legales. */
-    updatedAt: '15 de octubre de 2026',
+    updatedAt: '23 de octubre de 2026',
   },
   /** Mostrar antes/después y caso de Noelia (material facilitado por la marca; ver PENDIENTES.md). */
   showTransformations: true,

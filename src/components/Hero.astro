@@ -83,7 +83,8 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
   }
   .hero__content {
     position: relative;
-    padding-top: 24px;
+    /* El aviso de cookies nunca tapa el titular: si no hay sitio, el hero crece */
+    padding-top: calc(24px + var(--cookie-space));
     padding-bottom: 36px;
     text-align: center;
   }
@@ -163,13 +164,6 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
   }
-  /* En escritorio el aviso de cookies va abajo: mientras no hay elección guardada, el hero reserva
-     su hueco desde el primer pintado (clase needs-consent del script inline de Base.astro), sin saltos */
-  @media (min-width: 960px) {
-    :global(html.needs-consent) .hero {
-      padding-bottom: 120px;
-    }
-  }
   @media (min-width: 600px) {
     .hero__ctas {
       align-items: center;
@@ -203,6 +197,7 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
     }
     .hero__content {
       padding-block: clamp(56px, 8vh, 96px);
+      padding-top: calc(clamp(56px, 8vh, 96px) + var(--cookie-space));
     }
     .hero__lead {
       margin-top: 26px;
@@ -211,6 +206,34 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
     }
     .hero__ctas {
       margin-top: 36px;
+    }
+  }
+  /* Pantallas bajas con el aviso de cookies a la vista: un poco más compacto para que el botón y las miniaturas
+     de resultados sigan cabiendo en la primera pantalla */
+  @media (max-width: 959px) and (max-height: 620px) {
+    :global(html.needs-consent) .hero__content {
+      padding-top: calc(12px + var(--cookie-space));
+      padding-bottom: 28px;
+    }
+    :global(html.needs-consent) .hero__title {
+      font-size: 2.9rem;
+    }
+    :global(html.needs-consent) .hero__lead {
+      margin-top: 10px;
+    }
+    :global(html.needs-consent) .hero__ctas {
+      margin-top: 14px;
+    }
+  }
+  @media (min-width: 960px) and (max-height: 820px) {
+    :global(html.needs-consent) .hero__title {
+      font-size: min(var(--fs-h1), 11svh);
+    }
+    :global(html.needs-consent) .hero__lead {
+      margin-top: 16px;
+    }
+    :global(html.needs-consent) .hero__ctas {
+      margin-top: 22px;
     }
   }
 </style>
