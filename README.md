@@ -97,7 +97,7 @@ El código completo está en `apps-script/Code.gs` (sin comentarios, listo para 
 
 1. Crea un Google Sheet nuevo (con la cuenta que vaya a recibir los leads). Ve a **Extensiones → Apps Script**.
 2. Borra el contenido de `Código.gs`, pega todo `apps-script/Code.gs` y guarda.
-3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crea la hoja **Leads**. Si ya tenías la versión anterior del script, `setup` borra el contenido de esa hoja (era solo de pruebas) y quita la hoja **Resumen**.
+3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crean las hojas **Leads** y **Contador**. Si ya tenías la versión de 10 columnas, `setup` le añade la columna Estado sin tocar los leads; si tenías la primera versión de 35 columnas, borra el contenido de esa hoja (era solo de pruebas) y quita la hoja **Resumen**.
 4. **Implementar → Nueva implementación**. Tipo: **Aplicación web**. Ejecutar como: **Yo**. Quién tiene acceso: **Cualquier usuario**. Pulsa **Implementar** y copia la URL que termina en `/exec`.
 5. Pega esa URL en `SITE.formEndpoint` (`src/config/site.ts`), haz commit y despliega.
 6. Prueba: abre la URL `/exec` en el navegador; debe responder `{"ok":true,"status":"alive"}`. Después envía el formulario desde la web y comprueba que aparece la fila en **Leads**.
@@ -107,7 +107,9 @@ Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al p
 
 ### Qué hace
 
-- **Leads:** una fila por lead (la más reciente abajo) con 10 columnas: fecha y hora juntas (Europe/Madrid), nombre, teléfono en texto (E.164), edad, experiencia y los cinco `utm` (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content` con el anuncio y `utm_term` con el conjunto). Nada más: ni IDs, ni referrer, ni dispositivo, ni tiempos.
+- **Leads:** una fila por lead (la más reciente abajo) con 11 columnas: fecha y hora juntas (Europe/Madrid), nombre, teléfono en texto (E.164), edad, experiencia, **Estado** y los cinco `utm` (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content` con el anuncio y `utm_term` con el conjunto). Nada más: ni IDs, ni referrer, ni dispositivo, ni tiempos.
+- **Estado:** desplegable con colores (Nuevo, Contactado, No contesta, Videollamada agendada, Videollamada hecha, Alumna, Descartada). Cada lead entra como Nuevo.
+- **Contador:** hoja aparte que se actualiza sola con fórmulas: total de leads, hoy, ayer, últimos 7 días, últimos 30 días y cuántos hay en cada estado. No hay que tocarla.
 - Valida los datos, neutraliza fórmulas inyectadas, usa `LockService`, no duplica el mismo teléfono en 10 minutos y descarta en silencio el campo trampa (honeypot) de los bots.
 - Manda un email por cada lead nuevo (no por duplicados ni bots).
 

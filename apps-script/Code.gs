@@ -6,9 +6,33 @@ var DUPLICATE_WINDOW_MINUTES = 10;
 
 var TZ = 'Europe/Madrid';
 var SHEET_LEADS = 'Leads';
+var SHEET_COUNTER = 'Contador';
 
 var AGE_OPTIONS = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
 var EXPERIENCE_OPTIONS = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
+
+var STATUS_OPTIONS = ['Nuevo', 'Contactado', 'No contesta', 'Videollamada agendada', 'Videollamada hecha', 'Alumna', 'Descartada'];
+
+var STATUS_COLORS = {
+  'Nuevo': ['#EBE3FF', '#4B2A91'],
+  'Contactado': ['#E3F0FF', '#1D4E89'],
+  'No contesta': ['#FFF1D6', '#8A5A00'],
+  'Videollamada agendada': ['#FFE3F0', '#A2215F'],
+  'Videollamada hecha': ['#FCD3E6', '#7D1A4A'],
+  'Alumna': ['#D7F5E3', '#1B6B3A'],
+  'Descartada': ['#EEEEEE', '#666666']
+};
+
+var BRAND = {
+  lilac: '#B9A4F2',
+  lilac50: '#F5F0FF',
+  purpleDark: '#4B2A91',
+  ink: '#1E1530',
+  muted: '#6B6280',
+  white: '#FFFFFF'
+};
+
+var PREVIOUS_HEADERS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
 var COLUMNS = [
   ['Fecha y hora', 130],
@@ -16,6 +40,7 @@ var COLUMNS = [
   ['Teléfono', 130],
   ['Edad', 115],
   ['Experiencia', 150],
+  ['Estado', 175],
   ['utm_source', 100],
   ['utm_medium', 100],
   ['utm_campaign', 170],
@@ -24,8 +49,8 @@ var COLUMNS = [
 ];
 
 var COL = {
-  fecha: 1, nombre: 2, telefono: 3, edad: 4, experiencia: 5,
-  utm_source: 6, utm_medium: 7, utm_campaign: 8, utm_content: 9, utm_term: 10
+  fecha: 1, nombre: 2, telefono: 3, edad: 4, experiencia: 5, estado: 6,
+  utm_source: 7, utm_medium: 8, utm_campaign: 9, utm_content: 10, utm_term: 11
 };
 
 function doGet() {
@@ -59,6 +84,7 @@ function doPost(e) {
 
       var row = buildRow_(lead, now);
       var r = Math.max(2, sheet.getLastRow() + 1);
+      if (r > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), 500);
       sheet.getRange(r, COL.telefono).setNumberFormat('@');
       sheet.getRange(r, 1, 1, row.length).setValues([row]);
       sheet.getRange(r, COL.fecha).setNumberFormat('dd/mm/yyyy HH:mm');
@@ -133,6 +159,7 @@ function buildRow_(l, now) {
   row[COL.telefono - 1] = l.phone;
   row[COL.edad - 1] = l.age_range;
   row[COL.experiencia - 1] = l.experience;
+  row[COL.estado - 1] = STATUS_OPTIONS[0];
   row[COL.utm_source - 1] = l.utm_source;
   row[COL.utm_medium - 1] = l.utm_medium;
   row[COL.utm_campaign - 1] = l.utm_campaign;
@@ -197,6 +224,12 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
+function headerKey_(sheet) {
+  var values = sheet.getRange(1, 1, 1, sheet.getMaxColumns()).getValues()[0];
+  while (values.length && values[values.length - 1] === '') values.pop();
+  return values.join('|');
+}
+
 function setup() {
   var ss = getSpreadsheet_();
   ss.setSpreadsheetTimeZone(TZ);
@@ -208,15 +241,25 @@ function setup() {
     sheet = ss.insertSheet(SHEET_LEADS, 0);
     var def = ss.getSheetByName('Hoja 1') || ss.getSheetByName('Sheet1');
     if (def && def.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(def);
-  } else if (String(sheet.getRange(1, 1).getValue()) !== COLUMNS[0][0]) {
-    var oldFilter = sheet.getFilter();
-    if (oldFilter) oldFilter.remove();
-    sheet.clear();
-    sheet.clearConditionalFormatRules();
-    sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).clearDataValidations();
-    if (sheet.getMaxColumns() > nCols) sheet.deleteColumns(nCols + 1, sheet.getMaxColumns() - nCols);
-    var oldSummary = ss.getSheetByName('Resumen');
-    if (oldSummary) ss.deleteSheet(oldSummary);
+  } else {
+    var key = headerKey_(sheet);
+    var current = COLUMNS.map(function (c) { return c[0]; }).join('|');
+    if (key === PREVIOUS_HEADERS.join('|')) {
+      var filterBefore = sheet.getFilter();
+      if (filterBefore) filterBefore.remove();
+      sheet.insertColumnBefore(COL.estado);
+      var last = sheet.getLastRow();
+      if (last > 1) sheet.getRange(2, COL.estado, last - 1, 1).setValue(STATUS_OPTIONS[0]);
+    } else if (key !== current) {
+      var oldFilter = sheet.getFilter();
+      if (oldFilter) oldFilter.remove();
+      sheet.clear();
+      sheet.clearConditionalFormatRules();
+      sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).clearDataValidations();
+      if (sheet.getMaxColumns() > nCols) sheet.deleteColumns(nCols + 1, sheet.getMaxColumns() - nCols);
+      var oldSummary = ss.getSheetByName('Resumen');
+      if (oldSummary) ss.deleteSheet(oldSummary);
+    }
   }
 
   if (sheet.getMaxColumns() < nCols) sheet.insertColumnsAfter(sheet.getMaxColumns(), nCols - sheet.getMaxColumns());
@@ -226,8 +269,8 @@ function setup() {
   sheet.getRange(1, 1, 1, nCols)
     .setValues([COLUMNS.map(function (c) { return c[0]; })])
     .setFontWeight('bold')
-    .setFontColor('#FFFFFF')
-    .setBackground('#4B2A91')
+    .setFontColor(BRAND.white)
+    .setBackground(BRAND.purpleDark)
     .setVerticalAlignment('middle');
   sheet.setRowHeight(1, 36);
   sheet.setFrozenRows(1);
@@ -238,9 +281,60 @@ function setup() {
   sheet.getRange(2, COL.telefono, maxRows - 1, 1).setNumberFormat('@');
   sheet.getRange(2, COL.nombre, maxRows - 1, 1).setFontWeight('bold');
 
+  var statusRange = sheet.getRange(2, COL.estado, maxRows - 1, 1);
+  statusRange.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(STATUS_OPTIONS, true).setAllowInvalid(false).build());
+  sheet.setConditionalFormatRules(STATUS_OPTIONS.map(function (st) {
+    var c = STATUS_COLORS[st];
+    return SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(st).setBackground(c[0]).setFontColor(c[1]).setRanges([statusRange]).build();
+  }));
+
   var filter = sheet.getFilter();
   if (filter) filter.remove();
   sheet.getRange(1, 1, maxRows, nCols).createFilter();
 
+  setupCounter_(ss);
   ss.setActiveSheet(sheet);
+}
+
+function setupCounter_(ss) {
+  var sheet = ss.getSheetByName(SHEET_COUNTER);
+  if (!sheet) sheet = ss.insertSheet(SHEET_COUNTER, 1);
+  sheet.clear();
+  sheet.setHiddenGridlines(true);
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).setFontColor(BRAND.ink).setVerticalAlignment('middle');
+  sheet.setColumnWidth(1, 24);
+  for (var c = 2; c <= 6; c++) sheet.setColumnWidth(c, 150);
+
+  var dates = "'" + SHEET_LEADS + "'!A2:A";
+  var names = "'" + SHEET_LEADS + "'!B2:B";
+  var states = "'" + SHEET_LEADS + "'!F2:F";
+
+  sheet.getRange('B1:F1').merge().setValue('Pomposo y Peligroso · Leads')
+    .setFontSize(18).setFontWeight('bold').setFontColor(BRAND.white).setBackground(BRAND.purpleDark);
+  sheet.setRowHeight(1, 48);
+
+  var kpis = [
+    ['Total', '=COUNTA(' + names + ')'],
+    ['Hoy', '=COUNTIFS(' + dates + ',">="&TODAY(),' + dates + ',"<"&TODAY()+1)'],
+    ['Ayer', '=COUNTIFS(' + dates + ',">="&TODAY()-1,' + dates + ',"<"&TODAY())'],
+    ['Últimos 7 días', '=COUNTIFS(' + dates + ',">="&TODAY()-6)'],
+    ['Últimos 30 días', '=COUNTIFS(' + dates + ',">="&TODAY()-29)']
+  ];
+  kpis.forEach(function (k, i) {
+    var col = 2 + i;
+    sheet.getRange(3, col).setValue(k[0]).setFontWeight('bold').setFontColor(BRAND.muted).setBackground(BRAND.lilac50).setHorizontalAlignment('center');
+    sheet.getRange(4, col).setFormula(k[1]).setNumberFormat('0').setFontSize(28).setFontWeight('bold')
+      .setFontColor(BRAND.purpleDark).setBackground(BRAND.lilac50).setHorizontalAlignment('center');
+  });
+  sheet.setRowHeight(3, 28);
+  sheet.setRowHeight(4, 56);
+  sheet.getRange(3, 2, 2, 5).setBorder(true, true, true, true, true, false, BRAND.white, SpreadsheetApp.BorderStyle.SOLID_THICK);
+
+  sheet.getRange('B6:C6').setValues([['Estado', 'Leads']]).setFontWeight('bold').setFontColor(BRAND.purpleDark).setBackground(BRAND.lilac);
+  STATUS_OPTIONS.forEach(function (st, i) {
+    var r = 7 + i;
+    var c = STATUS_COLORS[st];
+    sheet.getRange(r, 2).setValue(st).setBackground(c[0]).setFontColor(c[1]).setFontWeight('bold');
+    sheet.getRange(r, 3).setFormula('=COUNTIF(' + states + ',B' + r + ')').setNumberFormat('0').setHorizontalAlignment('center');
+  });
 }

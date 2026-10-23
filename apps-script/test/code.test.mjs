@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const code = fs.readFileSync(path.join(here, '..', 'Code.gs'), 'utf8');
 
-const N_COLS = 10;
+const N_COLS = 11;
 
 /* ---------- Simulación de una hoja en memoria ---------- */
 class FakeRange {
@@ -41,6 +41,8 @@ class FakeRange {
 class FakeSheet {
   constructor(name) { this.name = name; this.cells = new Map(); }
   cell(r, c) { const k = `${r},${c}`; if (!this.cells.has(k)) this.cells.set(k, {}); return this.cells.get(k); }
+  getMaxRows() { return this.maxRows ?? 1000; }
+  insertRowsAfter(_after, n) { this.maxRows = this.getMaxRows() + n; this.inserted = n; }
   getLastRow() { let m = 0; for (const [k, v] of this.cells) if (v.v !== undefined && v.v !== '' || v.f) m = Math.max(m, +k.split(',')[0]); return m; }
   getRange(r, c, nr, nc) { return new FakeRange(this, r, c, nr, nc); }
   row(r) { const out = []; for (let c = 1; c <= N_COLS; c++) out.push((this.cells.get(`${r},${c}`) || {}).v); return out; }
@@ -74,16 +76,16 @@ function makeContext({ leadsSheet = makeLeadsSheet(), setupMode = null } = {}) {
   const log = { calls: [], args: [] };
   let spreadsheet;
   if (setupMode) {
-    const sheetMock = (header) => chainable(log, {
-      getMaxRows: () => 1000, getMaxColumns: () => 35, getLastRow: () => 0, getFilter: () => null,
-      getRange: () => chainable(log, { getValue: () => header }),
+    const sheetMock = (headers) => chainable(log, {
+      getMaxRows: () => 1000, getMaxColumns: () => 35, getLastRow: () => 3, getFilter: () => null,
+      getRange: () => chainable(log, { getValues: () => [headers.concat(new Array(35 - headers.length).fill(''))], getValue: () => headers[0] ?? '' }),
     });
     const sheets = {};
-    if (setupMode.existing !== undefined) sheets.Leads = sheetMock(setupMode.existing);
-    if (setupMode.oldSummary) sheets.Resumen = sheetMock('');
+    if (setupMode.existing) sheets.Leads = sheetMock(setupMode.existing);
+    if (setupMode.oldSummary) sheets.Resumen = sheetMock([]);
     spreadsheet = chainable(log, {
       getSheetByName: (n) => sheets[n] || null,
-      insertSheet: (n) => (sheets[n] = sheetMock('')),
+      insertSheet: (n) => { log.calls.push('insertSheet:' + n); return (sheets[n] = sheetMock([])); },
       getSheets: () => Object.values(sheets),
       deleteSheet: (s) => { log.calls.push('deleteSheet:' + Object.keys(sheets).find((k) => sheets[k] === s)); },
     });
@@ -98,7 +100,13 @@ function makeContext({ leadsSheet = makeLeadsSheet(), setupMode = null } = {}) {
       createTextOutput: (s) => ({ content: s, setMimeType() { return this; } }),
     },
     MailApp: { sendEmail: (o) => mails.push(o) },
-    SpreadsheetApp: { getActiveSpreadsheet: () => spreadsheet, openById: () => spreadsheet },
+    SpreadsheetApp: {
+      getActiveSpreadsheet: () => spreadsheet,
+      openById: () => spreadsheet,
+      BorderStyle: { SOLID_THICK: 'SOLID_THICK' },
+      newDataValidation: () => chainable(log),
+      newConditionalFormatRule: () => chainable(log),
+    },
   };
   vm.createContext(ctx);
   vm.runInContext(code, ctx);
@@ -148,12 +156,12 @@ test('validateLead_ rechaza datos fuera de los valores permitidos', () => {
   assert.equal(ctx.validateLead_(null).error, 'invalid_payload');
 });
 
-test('la hoja solo tiene fecha y hora juntas, los datos del formulario y los cinco utm', () => {
+test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado y los cinco utm', () => {
   const { ctx } = makeContext();
   assert.equal(ctx.COLUMNS.length, N_COLS);
   assert.deepEqual(
     JSON.parse(JSON.stringify(ctx.COLUMNS)).map((c) => c[0]),
-    ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+    ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
   );
 });
 
@@ -168,7 +176,8 @@ test('buildRow_ devuelve las columnas en el orden de la hoja', () => {
   assert.equal(row[2], '+34612345678');
   assert.equal(row[3], 'De 30 a 39');
   assert.equal(row[4], 'Nunca he entrenado');
-  assert.equal(row.slice(5).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
+  assert.equal(row[5], 'Nuevo');
+  assert.equal(row.slice(6).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
 });
 
 /* ---------- doGet / doPost ---------- */
@@ -186,7 +195,8 @@ test('doPost escribe una fila y responde ok', () => {
   assert.equal(leadsSheet.cell(2, 1).fmt, 'dd/mm/yyyy HH:mm');
   assert.equal(row[2], '+34612345678');
   assert.equal(leadsSheet.cell(2, 3).fmt, '@', 'el teléfono se guarda como texto');
-  assert.equal(row[8], 'Anuncio 1');
+  assert.equal(row[5], 'Nuevo', 'cada lead entra como Nuevo');
+  assert.equal(row[9], 'Anuncio 1');
 });
 
 test('doPost ignora cualquier dato que no sea de la hoja', () => {
@@ -226,7 +236,7 @@ test('doPost nunca escribe sobre la cabecera aunque la hoja esté vacía', () =>
 test('doPost neutraliza inyección de fórmulas', () => {
   const { ctx, leadsSheet } = makeContext();
   post(ctx, { ...valid(), utm_content: '=IMPORTXML("http://x","//a")', name: 'Ana' });
-  assert.equal(leadsSheet.row(2)[8], `'=IMPORTXML("http://x","//a")`);
+  assert.equal(leadsSheet.row(2)[9], `'=IMPORTXML("http://x","//a")`);
 });
 
 test('doPost devuelve errores sin detalles internos', () => {
@@ -257,28 +267,75 @@ test('doPost no avisa de un duplicado ni si NOTIFY_EMAIL está vacío', () => {
   assert.equal(mails.length, 1);
 });
 
-/* ---------- setup ---------- */
-test('setup() crea la hoja Leads cuando no existe', () => {
-  const { ctx, log } = makeContext({ setupMode: {} });
-  ctx.setup();
-  assert.ok(log.calls.includes('setFrozenRows'));
-  assert.ok(log.calls.includes('createFilter'));
-  assert.ok(!log.calls.includes('clear'), 'no borra nada en una hoja nueva');
+test('doPost añade filas si la hoja se queda sin espacio', () => {
+  const { ctx, leadsSheet } = makeContext();
+  leadsSheet.maxRows = 3;
+  leadsSheet.cell(3, 2).v = 'Última fila libre';
+  post(ctx, valid());
+  assert.equal(leadsSheet.inserted, 500);
 });
 
-test('setup() con el diseño antiguo lo limpia y quita el Resumen', () => {
-  const { ctx, log } = makeContext({ setupMode: { existing: 'Fecha', oldSummary: true } });
+/* ---------- setup ---------- */
+const NEW_HEADERS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+const PREVIOUS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+test('setup() crea las hojas Leads y Contador cuando no existen', () => {
+  const { ctx, log } = makeContext({ setupMode: {} });
   ctx.setup();
-  assert.ok(log.calls.includes('clear'));
+  assert.ok(log.calls.includes('insertSheet:Leads'));
+  assert.ok(log.calls.includes('insertSheet:Contador'));
+  assert.ok(log.calls.includes('createFilter'));
+  assert.ok(log.calls.includes('setDataValidation'), 'desplegable de estado');
+  assert.ok(!log.calls.includes('clear') || log.calls.filter((c) => c === 'clear').length === 1, 'solo limpia el contador');
+});
+
+test('las fórmulas del Contador están bien formadas y leen la hoja Leads', () => {
+  const { ctx, log } = makeContext({ setupMode: {} });
+  ctx.setup();
+  const formulas = log.args.filter(([m]) => m === 'setFormula').map(([, a]) => a[0]);
+  assert.equal(formulas.length, 5 + 7, 'cinco contadores y siete estados');
+  for (const f of formulas) {
+    assert.ok(f.startsWith('='), f);
+    assert.ok(!f.includes(';'), 'sin punto y coma (setFormula usa sintaxis inglesa): ' + f);
+    assert.ok(f.includes("'Leads'!"), f);
+    let depth = 0;
+    let inStr = false;
+    for (const ch of f) {
+      if (ch === '"') inStr = !inStr;
+      if (inStr) continue;
+      if (ch === '(') depth++;
+      if (ch === ')') depth--;
+      assert.ok(depth >= 0, 'paréntesis desequilibrados: ' + f);
+    }
+    assert.equal(depth, 0, 'paréntesis desequilibrados: ' + f);
+    assert.ok(!inStr, 'comillas sin cerrar: ' + f);
+  }
+  assert.ok(formulas.some((f) => f.startsWith('=COUNTA(')), 'total');
+  assert.ok(formulas.filter((f) => f.startsWith('=COUNTIF(')).length === 7, 'un contador por estado');
+});
+
+test('setup() con la versión anterior de 10 columnas añade Estado sin borrar leads', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: PREVIOUS } });
+  ctx.setup();
+  assert.ok(log.calls.includes('insertColumnBefore'));
+  assert.ok(!log.calls.includes('deleteColumns'));
+  assert.ok(!log.calls.includes('deleteSheet:Resumen'));
+  assert.ok(log.args.some(([m, a]) => m === 'setValue' && a[0] === 'Nuevo'), 'los leads existentes quedan como Nuevo');
+});
+
+test('setup() con el diseño original lo limpia y quita el Resumen', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: ['Fecha', 'Hora', 'ID lead'], oldSummary: true } });
+  ctx.setup();
   assert.ok(log.calls.includes('clearDataValidations'));
   assert.ok(log.calls.includes('deleteColumns'));
   assert.ok(log.calls.includes('deleteSheet:Resumen'));
 });
 
-test('setup() con la hoja ya nueva conserva los leads', () => {
-  const { ctx, log } = makeContext({ setupMode: { existing: 'Fecha y hora' } });
+test('setup() con la hoja ya actual conserva los leads', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: NEW_HEADERS } });
   ctx.setup();
-  assert.ok(!log.calls.includes('clear'));
-  assert.ok(!log.calls.includes('deleteSheet:Resumen'));
+  assert.ok(!log.calls.includes('insertColumnBefore'));
+  assert.ok(!log.calls.includes('clearDataValidations'));
+  assert.ok(!log.calls.includes('deleteColumns'));
   assert.ok(log.calls.includes('createFilter'));
 });
