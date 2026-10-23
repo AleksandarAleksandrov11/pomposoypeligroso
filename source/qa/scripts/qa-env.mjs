@@ -26,7 +26,7 @@ for (const [name, ua] of Object.entries(UAS)) {
   const bar = await p.evaluate(() => { const el = document.querySelector('[data-mobilebar]'); const r = el.getBoundingClientRect(); return { vis: el.classList.contains('is-visible'), bottom: r.bottom, vh: innerHeight, pos: getComputedStyle(el).position }; });
   ok(`${name}: barra fija visible y pegada abajo`, bar.vis && Math.abs(bar.bottom - bar.vh) < 2 && bar.pos === 'fixed', JSON.stringify(bar));
   const wa = await p.locator('.mobilebar__wa').getAttribute('href');
-  ok(`${name}: enlace wa.me correcto`, /^https:\/\/wa\.me\/34622437549\?text=Hola%2C%20vengo/.test(wa), wa);
+  ok(`${name}: enlace wa.me correcto`, /^https:\/\/wa\.me\/34644117740\?text=Hola%2C%20vengo/.test(wa), wa);
   ok(`${name}: wa.me abre en pestaña nueva con noopener`, (await p.locator('.mobilebar__wa').getAttribute('target')) === '_blank' && (await p.locator('.mobilebar__wa').getAttribute('rel')) === 'noopener');
   // Teclado: al enfocar el campo de nombre la barra desaparece
   await p.locator('#formulario').scrollIntoViewIfNeeded();
