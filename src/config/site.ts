@@ -8,8 +8,8 @@
  */
 export const SITE = {
   name: 'Pomposo y Peligroso',
-  /** Dominio definitivo con https y sin barra final. PENDIENTE. */
-  url: 'https://PENDIENTE-DOMINIO',
+  /** Dominio definitivo con https y sin barra final. */
+  url: 'https://www.pomposoypeligroso.com',
   /** ID del píxel de Meta (solo números). Vacío = el píxel NO se carga. PENDIENTE. */
   metaPixelId: '1162548892864094',
   /** URL del Web App de Google Apps Script (termina en /exec). PENDIENTE. */
