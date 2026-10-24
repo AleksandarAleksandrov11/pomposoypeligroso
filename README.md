@@ -26,7 +26,7 @@ En `npm run dev` cada evento del píxel aparece en la consola del navegador como
 1. Sube el repositorio a GitHub.
 2. En Vercel: **Add New → Project → Import** el repositorio. Vercel detecta Astro solo; no hace falta ninguna variable de entorno.
 3. Despliega. Mientras el dominio esté como PENDIENTE en `site.ts`, el canonical, el Open Graph y el sitemap usan automáticamente la URL de producción de Vercel (`*.vercel.app`).
-4. Cuando tengas dominio: añádelo en Vercel (Settings → Domains) y ponlo en `SITE.url`.
+4. El dominio está en Vercel (Settings → Domains) y en `SITE.url`: https://www.pomposoypeligroso.com. Si cambias de dominio, actualiza las dos cosas.
 
 ## Dónde se edita cada cosa
 
