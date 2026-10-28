@@ -29,6 +29,8 @@ npm run test:e2e               # Playwright en 390x844 (Instagram en iPhone) y 1
 - `apps-script/test/code.test.mjs`: el Apps Script con los servicios de Google simulados.
 - `tests/static/leaks.test.mjs`: sobre `dist/`, falla si aparece un enlace de fuga (WhatsApp, teléfono, email, Instagram u otro dominio externo) o si un enlace a las legales no se abre en pestaña nueva.
 
+Con `E2E_BASE_URL=https://www.pomposoypeligroso.com npm run test:e2e` las mismas pruebas se ejecutan contra producción (sin la de capturas, que escribe archivos: añade `--grep-invert capturas`).
+
 Las pruebas de Playwright (`tests/e2e/`) interceptan siempre el Apps Script, `/api/lead-capi`, Meta (con un `fbq` espía) y WhatsApp: nunca tocan la hoja real ni mandan nada a Meta. Dejan capturas en `source/qa/capturas/e2e-*.png`.
 
 En `npm run dev` cada evento del píxel aparece en la consola del navegador como `[pixel] ...` y el envío del formulario como `[form] ...`, aunque no haya ID de píxel ni endpoint.

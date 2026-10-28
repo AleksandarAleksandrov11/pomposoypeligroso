@@ -14,6 +14,14 @@ Resultados (todo en local sobre el build de producción, con el Apps Script, `/a
 - Accesibilidad (axe, `scripts/qa-links.mjs`): sin violaciones en las 5 páginas. Anchos (`scripts/qa-widths.mjs`): 24/24 sin scroll lateral ni textos cortados. iPhone emulado (`scripts/qa-iphone.mjs`): LCP 0,9 a 1 s, CTA visible y aviso sin tapar el CTA en los cuatro modelos.
 - Capturas en `capturas/e2e-390-*.png` y `capturas/e2e-1440-*.png`: primer pantallazo (versión descubrir y cierre), aviso de cookies, cada paso, y estado de gracias.
 
+Revisión en producción (https://www.pomposoypeligroso.com, 28/10/2026, tras el despliegue):
+
+- Las 47 pruebas de Playwright pasan contra producción (`E2E_BASE_URL=https://www.pomposoypeligroso.com npm run test:e2e`), con todo lo externo interceptado.
+- Lighthouse en producción: móvil 99 / 100 / 100 / 100 (LCP 1,6 s, CLS 0), escritorio 100 / 100 / 100 / 100 (LCP 0,4 s, CLS 0).
+- Los 14 CTA en móvil (13 en escritorio, sin barra fija) llevan al formulario en las tres versiones del hero. Prefijo "Otro", errores de nombre y teléfono y recuperación del progreso al recargar, correctos.
+- Dominio: el canonical, `og:url`, `sitemap.xml` y `robots.txt` apuntan a https://www.pomposoypeligroso.com; `pomposoypeligroso.com` y `http://` redirigen (308) al de `www`. `/api/lead-capi` responde 405 a GET, 403 desde otro origen y 400 a datos no válidos.
+- Un único envío real (nombre `PRUEBA`, +34 600 000 000, iPhone con Instagram emulado, aceptando cookies) el 28/10/2026 a las 14:29 (Madrid): Apps Script `ok: true`; píxel con `FormStart`, `FormStep` 1 a 4 una vez cada uno (aunque se fue atrás), `FormError` de nombre y teléfono, un `Lead` con coincidencia avanzada (`ph`, `fn`, `country`) y el mismo `event_id` que la llamada a `/api/lead-capi` (204), y `Contact` `gracias-auto`; WhatsApp se abrió solo con el resumen y, al volver atrás, se vio el estado de gracias sin reenviar nada. Sin errores de consola.
+
 Los scripts `qa-pixel-form.mjs` y `qa-env.mjs` se han retirado: comprobaban el flujo anterior (casilla, `/gracias`, botones de WhatsApp) y ahora lo cubren las pruebas de `tests/e2e/`.
 
 ## Informe anterior · 22/10/2026 (material real)
