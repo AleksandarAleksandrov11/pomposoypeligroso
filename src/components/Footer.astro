@@ -43,7 +43,7 @@ const year = new Date().getFullYear();
 
     <div class="site-footer__bottom">
       <p>
-        © <span data-year>{year}</span> Pomposo y Peligroso · {SITE.legal.company} · CIF {SITE.legal.cif} · Gavà, Barcelona
+        © <span data-year>{year}</span> Pomposo y Peligroso · {SITE.legal.company} · CIF {SITE.legal.cif} · Gavà, Barcelona · Web creada por <a class="site-footer__credit" href="https://www.aasmarketing.com/">AAS Marketing</a>
       </p>
       <p class="site-footer__disclaimer">Los resultados dependen de cada persona. Este programa no sustituye el consejo médico.</p>
       <a class="site-footer__top" href="#top">Volver arriba <Icon name="arrow-up" size={18} /></a>
@@ -116,6 +116,15 @@ const year = new Date().getFullYear();
   }
   .site-footer__disclaimer {
     font-size: var(--fs-micro);
+  }
+  .site-footer__credit {
+    color: inherit;
+    text-decoration: none;
+  }
+  .site-footer__credit:hover {
+    color: var(--lilac);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
   .site-footer__top {
     display: inline-flex;
