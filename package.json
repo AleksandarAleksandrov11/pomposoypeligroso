@@ -8,7 +8,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test": "npm run test:unit && npm run test:apps-script && npm run build && npm run test:static",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:static": "node --test \"tests/static/*.test.mjs\"",
     "test:apps-script": "node --test apps-script/test/code.test.mjs",
+    "test:e2e": "playwright test",
     "validate:html": "html-validate \"dist/**/*.html\"",
     "check": "astro check"
   },
@@ -21,6 +25,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@playwright/test": "1.56.1",
     "@types/node": "^22.20.5",
     "html-validate": "^9.7.1",
     "typescript": "^6.0.3"

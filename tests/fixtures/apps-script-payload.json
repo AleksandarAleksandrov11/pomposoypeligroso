@@ -1,0 +1,24 @@
+{
+  "_nota": "Payload que el formulario envía hoy al Apps Script, capturado el 2026-10-28 con el endpoint interceptado (commit 9dfefc9 de main). Mismas claves, mismo orden y mismos valores. event_id es un UUID v4 distinto en cada envío; el Apps Script lo ignora y no se guarda en la hoja.",
+  "input": {
+    "url": "/?utm_source=ig&utm_medium=paid_social&utm_campaign=DESCUBRIR_TEST&utm_content=video_1&utm_term=mujeres_30&fbclid=abc123",
+    "age_range": "De 30 a 39",
+    "experience": "Nunca he entrenado",
+    "name": "María José",
+    "prefix": "+34",
+    "phone": "612 345 678"
+  },
+  "payload": {
+    "age_range": "De 30 a 39",
+    "experience": "Nunca he entrenado",
+    "name": "María José",
+    "phone": "+34612345678",
+    "utm_source": "ig",
+    "utm_medium": "paid_social",
+    "utm_campaign": "DESCUBRIR_TEST",
+    "utm_content": "video_1",
+    "utm_term": "mujeres_30",
+    "event_id": "<uuid-v4>",
+    "website": ""
+  }
+}
