@@ -1,4 +1,21 @@
-# Informe de QA · 22/10/2026 (material real)
+# Informe de QA
+
+## Optimización de leads · 28/10/2026
+
+Cambios: API de conversiones (`api/lead-capi.js`), un solo `Lead` por solicitud con `event_id` estable, `FormStep` sin repeticiones y `FormError`, cero fugas antes de enviar, estado de gracias con WhatsApp automático en móvil, casilla de privacidad sustituida por un aviso, hero según el anuncio y atribución que no se pierde al recargar. El Apps Script y la hoja no se han tocado.
+
+Resultados (todo en local sobre el build de producción, con el Apps Script, `/api/lead-capi`, Meta y WhatsApp interceptados):
+
+- `npm test`: 20 pruebas unitarias (formulario, contrato del payload, API de conversiones), 21 del Apps Script y 9 de fugas sobre `dist/`. Todas en verde.
+- `npm run test:e2e` (Playwright, 390x844 con el user agent de Instagram en iPhone y 1440x900): 47 pruebas en verde. Cubren el payload idéntico a la referencia aceptando y rechazando cookies, los UTM tras recargar, 1 `Lead` con el mismo `event_id` que la API de conversiones, 0 eventos de navegador sin consentimiento pero sí API de conversiones, `FormStep` sin repetir, `FormError`, reintentos sin `Lead` doble, errores del servidor sin reintento, WhatsApp automático en móvil antes de 2 s y al menos 800 ms después del `Lead`, sin redirección en escritorio, el mensaje de las FAQ, el estado de gracias al volver, las tres versiones del hero con CLS 0 y el botón en la primera pantalla con el aviso de cookies, la barra móvil de un botón, las legales en pestaña nueva sin perder el formulario y el aviso de cookies.
+- `vercel build` local: las páginas siguen siendo estáticas y `api/lead-capi` sale como función (Node 24). Sin `META_CAPI_TOKEN` responde 204 sin llamar a Meta.
+- Lighthouse en la home, mismo servidor para la versión anterior y la nueva: móvil 99-100 / 100 / 100 / 100 (antes 99 / 100 / 100 / 92, CLS 0,003), escritorio 100 / 100 / 100 / 100 (antes 100 / 100 / 100 / 92, CLS 0,007). El SEO sube a 100 por el texto del enlace del aviso ("Política de cookies") y el CLS baja a 0 al fijar el alto del aviso.
+- Accesibilidad (axe, `scripts/qa-links.mjs`): sin violaciones en las 5 páginas. Anchos (`scripts/qa-widths.mjs`): 24/24 sin scroll lateral ni textos cortados. iPhone emulado (`scripts/qa-iphone.mjs`): LCP 0,9 a 1 s, CTA visible y aviso sin tapar el CTA en los cuatro modelos.
+- Capturas en `capturas/e2e-390-*.png` y `capturas/e2e-1440-*.png`: primer pantallazo (versión descubrir y cierre), aviso de cookies, cada paso, y estado de gracias.
+
+Los scripts `qa-pixel-form.mjs` y `qa-env.mjs` se han retirado: comprobaban el flujo anterior (casilla, `/gracias`, botones de WhatsApp) y ahora lo cubren las pruebas de `tests/e2e/`.
+
+## Informe anterior · 22/10/2026 (material real)
 
 Todo se ha probado sobre el build de producción (`npm run build` + servidor estático con URLs limpias). Para ver los botones de WhatsApp y el teléfono se ha usado además un build de QA con valores de prueba (píxel `123456789012345`, WhatsApp `34600000000`, endpoint simulado). Las capturas de `capturas/` son del build de producción real (sin WhatsApp configurado) y llevan el ancho en el nombre.
 
