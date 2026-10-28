@@ -20,7 +20,8 @@ const L = SITE.legal;
   <p>
     Usamos solo las imprescindibles para que la web funcione y, <strong>únicamente si las aceptas</strong>, las del píxel de
     Meta (cookies de terceros) para medir y personalizar nuestros anuncios en Instagram y Facebook. Hasta que no aceptas,
-    no se carga nada de Meta ni guardamos en tu dispositivo de qué anuncio vienes.
+    no se carga nada de Meta. De qué anuncio vienes sí se guarda mientras tienes la pestaña abierta (almacenamiento de
+    sesión), para adjuntarlo a tu solicitud aunque recargues la página; solo si aceptas el marketing se guarda 30 días.
   </p>
   <div class="table-wrap table-wrap--stack">
     <table>
@@ -40,10 +41,10 @@ const L = SITE.legal;
           <td data-label="Duración">12 meses</td>
         </tr>
         <tr>
-          <td data-label="Nombre">pyp_form_progress, pyp_lead_name</td>
+          <td data-label="Nombre">pyp_form_progress</td>
           <td data-label="Proveedor">Propia (almacenamiento de sesión)</td>
-          <td data-label="Finalidad">Necesaria. Recuerdan lo que has escrito en el formulario si recargas la página y tu nombre para saludarte al enviarlo.</td>
-          <td data-label="Duración">Sesión (se borran al cerrar la pestaña)</td>
+          <td data-label="Finalidad">Necesaria. Recuerda lo que has escrito en el formulario si recargas la página y, tras enviarlo, que ya está enviado.</td>
+          <td data-label="Duración">Sesión (se borra al cerrar la pestaña)</td>
         </tr>
         <tr>
           <td data-label="Nombre">pyp_pending_leads</td>
@@ -52,15 +53,27 @@ const L = SITE.legal;
           <td data-label="Duración">Hasta que se envía</td>
         </tr>
         <tr>
-          <td data-label="Nombre">pyp_first_touch, pyp_last_touch</td>
-          <td data-label="Proveedor">Propia (almacenamiento local)</td>
-          <td data-label="Finalidad">Marketing. Solo si las aceptas: recuerdan de qué anuncio o enlace llegaste, para adjuntarlo a tu solicitud.</td>
-          <td data-label="Duración">30 días</td>
+          <td data-label="Nombre">pyp_ad_variant</td>
+          <td data-label="Proveedor">Propia (almacenamiento de sesión)</td>
+          <td data-label="Finalidad">Funcional. Recuerda qué versión del inicio corresponde al anuncio del que llegas.</td>
+          <td data-label="Duración">Sesión</td>
         </tr>
         <tr>
-          <td data-label="Nombre">pyp_form_started, pyp_lead_sent</td>
+          <td data-label="Nombre">pyp_first_touch, pyp_last_touch</td>
+          <td data-label="Proveedor">Propia (almacenamiento de sesión y, si aceptas el marketing, local)</td>
+          <td data-label="Finalidad">Funcional. Recuerdan de qué anuncio o enlace llegaste (parámetros de la campaña y del clic) para adjuntarlo a tu solicitud.</td>
+          <td data-label="Duración">Sesión, o 30 días si aceptas el marketing</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">pyp_lead_sent</td>
           <td data-label="Proveedor">Propia (almacenamiento de sesión)</td>
-          <td data-label="Finalidad">Marketing. Solo si las aceptas: evitan que el píxel cuente dos veces el mismo formulario.</td>
+          <td data-label="Finalidad">Funcional. Evita que una misma solicitud se cuente dos veces al medir los anuncios.</td>
+          <td data-label="Duración">Sesión</td>
+        </tr>
+        <tr>
+          <td data-label="Nombre">pyp_form_started, pyp_form_steps</td>
+          <td data-label="Proveedor">Propia (almacenamiento de sesión)</td>
+          <td data-label="Finalidad">Marketing. Solo si las aceptas: evitan que el píxel cuente dos veces el inicio del formulario o un mismo paso.</td>
           <td data-label="Duración">Sesión</td>
         </tr>
         <tr>
@@ -95,7 +108,7 @@ const L = SITE.legal;
     Si aceptas, Meta Platforms Ireland Ltd. recibe datos de tu visita y puede transferirlos a Meta Platforms Inc. en
     Estados Unidos, al amparo del Marco de Privacidad de Datos UE‑EE. UU. Más información en la
     <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">política de privacidad de Meta</a> y en
-    nuestra <a href="/privacidad">Política de privacidad</a>.
+    nuestra <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.
   </p>
   <p>
     <button type="button" class="btn" data-open-cookies>Configurar cookies</button>
@@ -123,7 +136,7 @@ const L = SITE.legal;
 
   <h2>5. Más información</h2>
   <p>
-    Para cualquier duda, escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. Consulta también nuestra
-    <a href="/privacidad">Política de privacidad</a>.
+    Para cualquier duda, escríbenos a {SITE.email}. Consulta también nuestra
+    <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.
   </p>
 </Legal>

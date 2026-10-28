@@ -2,10 +2,10 @@
 import '../styles/tokens.css';
 import '../styles/base.css';
 import { SITE } from '../config/site';
+import { AD_VARIANT_RULES } from '../data/ad-variants';
 import MonoSprite from '../components/MonoSprite.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import WhatsAppFab from '../components/WhatsAppFab.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import CookieModal from '../components/CookieModal.astro';
 import Pixel from '../components/Pixel.astro';
@@ -39,6 +39,12 @@ const ogImage = new URL('/og.jpg', site).href;
 // Antes del primer pintado: clase js y, si no hay consentimiento válido guardado, needs-consent
 // (el hero reserva el hueco del aviso de cookies sin mover nada después). Misma regla que readConsent().
 const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(localStorage.getItem('pyp_consent')||'null');if(!c||c.v!==${SITE.consentVersion}||!c.date||Date.now()-new Date(c.date).getTime()>31536e6)d.classList.add('needs-consent')}catch(e){d.classList.add('needs-consent')}})(document.documentElement);`;
+
+// Antes del primer pintado: versión del inicio según el anuncio (src/data/ad-variants.ts). Lee utm_content y, si no
+// encaja con ninguna regla, utm_campaign; la guarda en sessionStorage (pyp_ad_variant) y pone data-ad en <html>.
+// Sin parámetros en la URL usa la versión guardada. Mismas reglas que pickVariant().
+const adRules = JSON.stringify(AD_VARIANT_RULES.map((r) => ({ v: r.variant, m: r.match.map((m) => m.toLowerCase()) })));
+const adScript = `(function(d){try{var R=${adRules},q=new URLSearchParams(location.search),c=q.get('utm_content'),k=q.get('utm_campaign'),K='pyp_ad_variant',v=null;function m(x){x=(x||'').toLowerCase();if(!x)return null;for(var i=0;i<R.length;i++)for(var j=0;j<R[i].m.length;j++)if(x.indexOf(R[i].m[j])>-1)return R[i].v;return null}if(c||k){v=m(c)||m(k);if(v)sessionStorage.setItem(K,v);else sessionStorage.removeItem(K)}else v=sessionStorage.getItem(K);for(var n=0;n<R.length;n++)if(R[n].v===v){d.setAttribute('data-ad',v);break}}catch(e){}})(document.documentElement);`;
 ---
 
 <!doctype html>
@@ -54,6 +60,7 @@ const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(loca
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
     <script is:inline set:html={headScript} />
+    <script is:inline set:html={adScript} />
 
     <link rel="preload" href="/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/allura-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -97,7 +104,6 @@ const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(loca
     </main>
     <Footer home={home} />
     <slot name="after-footer" />
-    <WhatsAppFab home={home} />
     <CookieBanner />
     <CookieModal />
     <Pixel />

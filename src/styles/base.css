@@ -19,11 +19,11 @@ html {
   --cookie-space: 0px;
 }
 html.needs-consent {
-  --cookie-space: var(--banner-h, 146px);
+  --cookie-space: var(--banner-h, 146px); /* 134px de aviso + 12px */
 }
 @media (min-width: 768px) {
   html.needs-consent {
-    --cookie-space: var(--banner-h, 74px);
+    --cookie-space: var(--banner-h, 93px); /* 81px de aviso + 12px */
   }
 }
 html.needs-consent main:not(.main--home) {

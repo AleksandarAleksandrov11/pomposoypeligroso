@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
+import { SITE } from '../config/site';
 
 const ages = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
 const experience = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
@@ -127,26 +127,22 @@ const prefixes: [string, string][] = [
             </div>
             <p class="field-error" id="lf-phone-error" hidden>Escribe un número válido.</p>
 
-            <label class="consent">
-              <input type="checkbox" id="lf-privacy" name="privacy" required aria-describedby="lf-privacy-error" />
-              <span class="consent__box" aria-hidden="true"><Icon name="check" size={16} /></span>
-              <span class="consent__text">
-                He leído la <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a> y acepto que Pomposo y
-                Peligroso me contacte por WhatsApp o llamada sobre el programa.
-              </span>
-            </label>
-            <p class="field-error" id="lf-privacy-error" hidden>Necesitamos tu permiso para poder escribirte.</p>
-
             <button type="submit" class="btn btn--block step__submit" data-submit>
               <span class="spinner" aria-hidden="true"></span>
-              <span data-submit-label>Quiero mi plaza</span>
+              <span data-submit-label>Enviar y abrir WhatsApp</span>
             </button>
 
+            <p class="consent">
+              Al enviar aceptas la <a target="_blank" rel="noopener" href="/privacidad">política de privacidad</a> y que Pomposo y
+              Peligroso te contacte sobre tu solicitud.
+            </p>
+
             <p class="lopd">
-              <strong>Protección de datos.</strong> Responsable: {SITE.legal.company} Finalidad: contactarte sobre el programa.
-              Legitimación: tu consentimiento. Destinatarios: no cedemos tus datos; se guardan con Google como proveedor.
-              Derechos: acceso, rectificación, supresión y los demás que explica la
-              <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>, en {SITE.email}.
+              <strong>Protección de datos.</strong> Responsable: {SITE.legal.company} Finalidad: contactarte sobre tu solicitud y
+              medir nuestros anuncios. Legitimación: tu consentimiento al enviar. Destinatarios: Google, que guarda las solicitudes,
+              y Meta, que recibe tu solicitud cifrada para medir los anuncios. Derechos: acceso, rectificación, supresión y los
+              demás que explica la <a target="_blank" rel="noopener" href="/privacidad">política de privacidad</a>, en
+              {SITE.email}.
             </p>
           </div>
         </div>
@@ -157,43 +153,30 @@ const prefixes: [string, string][] = [
         </div>
 
         <div class="lead-form__error" role="alert" tabindex="-1" data-form-error hidden>
-          <p>Algo ha fallado. {hasWhatsApp ? 'Escríbenos por WhatsApp y te atendemos ahora.' : `Escríbenos a ${SITE.email} y te atendemos enseguida.`}</p>
-          {
-            hasWhatsApp ? (
-              <a class="btn btn--block" href={whatsappUrl()} target="_blank" rel="noopener" data-error-whatsapp data-contact="whatsapp" data-location="form-error">
-                <Icon name="whatsapp" size={22} /> Escribir por WhatsApp
-              </a>
-            ) : (
-              <a class="btn btn--block" href={`mailto:${SITE.email}?subject=${encodeURIComponent('Quiero información sobre Pomposo y Peligroso')}`}>
-                <Icon name="mail" size={22} /> Escribir un email
-              </a>
-            )
-          }
+          <p>Algo ha fallado. Escríbenos por WhatsApp con tus datos y te atendemos ahora.</p>
+          {/* El enlace a WhatsApp lo pone form.ts con los datos del formulario: el HTML no lleva ningún wa.me */}
+          <a class="btn btn--block" href="#formulario" target="_blank" rel="noopener" data-error-whatsapp data-contact="whatsapp" data-location="form-error">
+            <Icon name="whatsapp" size={22} /> Escribir por WhatsApp
+          </a>
         </div>
       </form>
+
+      <div class="lead-thanks" data-thanks hidden>
+        <h3 class="lead-thanks__title" tabindex="-1" data-thanks-title>
+          Gracias, <span data-thanks-name></span>. <span class="script">Te abrimos WhatsApp para que nos escribas ya.</span>
+        </h3>
+        <a class="btn btn--block" href="#formulario" data-thanks-whatsapp>
+          <Icon name="whatsapp" size={22} /> Abrir WhatsApp
+        </a>
+        <p class="lead-thanks__note">Si no se abre solo, pulsa el botón. Si lo prefieres, te escribimos en menos de 24 horas laborables.</p>
+      </div>
 
       <noscript>
         <div class="lead-form__noscript">
           <p>Para rellenar el formulario necesitas tener JavaScript activado.</p>
-          <p>
-            También puedes escribirnos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{hasWhatsApp ? <> o por <a href={whatsappUrl()}>WhatsApp</a>.</> : '.'}
-          </p>
         </div>
       </noscript>
     </div>
-
-    <p class="form-section__help micro">
-      ¿Algún problema? Escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{
-        hasWhatsApp && (
-          <>
-            {' '}o por{' '}
-            <a href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="form-help">
-              WhatsApp
-            </a>
-          </>
-        )
-      }
-    </p>
   </div>
 </section>
 
@@ -267,19 +250,6 @@ const prefixes: [string, string][] = [
     color: var(--pink);
     stroke-width: 2.5;
   }
-  .form-section__help {
-    text-align: center;
-    color: var(--on-dark);
-  }
-  .form-section__help a {
-    color: var(--white);
-    font-weight: 600;
-    overflow-wrap: anywhere;
-  }
-  .form-section__help a:focus-visible {
-    outline-color: var(--white);
-  }
-
   /* Tarjeta */
   .lead-card {
     width: 100%;
@@ -545,60 +515,22 @@ const prefixes: [string, string][] = [
     flex-basis: 100%;
   }
 
+  .step__submit {
+    margin-top: 20px;
+  }
   .consent {
-    position: relative;
-    display: flex;
-    gap: 12px;
-    margin-top: 18px;
-    font-size: 0.875rem;
-    line-height: 1.45;
+    margin-top: 14px;
     color: var(--muted);
-    cursor: pointer;
-  }
-  .consent input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 24px;
-    height: 24px;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-  .consent__box {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 24px;
-    height: 24px;
-    border: 1.5px solid #b7acd0;
-    border-radius: 7px;
-    background: var(--white);
-    color: transparent;
-    transition:
-      background-color 0.15s ease,
-      border-color 0.15s ease;
-  }
-  .consent input:checked + .consent__box {
-    background: var(--purple);
-    border-color: var(--purple);
-    color: var(--white);
-  }
-  .consent input:focus-visible + .consent__box {
-    outline: 3px solid var(--purple);
-    outline-offset: 2px;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    text-align: center;
   }
   .consent a {
     color: var(--purple);
     font-weight: 600;
-    position: relative;
-    z-index: 1;
-  }
-  .step__submit {
-    margin-top: 20px;
   }
   .lopd {
-    margin-top: 14px;
+    margin-top: 10px;
     color: var(--muted);
     font-size: 0.6875rem;
     line-height: 1.45;
@@ -659,9 +591,36 @@ const prefixes: [string, string][] = [
     display: grid;
     gap: 10px;
   }
-  .lead-form__noscript a {
-    color: var(--purple);
-    font-weight: 600;
+
+  /* Estado de gracias tras enviar (sustituye al formulario dentro de la tarjeta) */
+  .lead-thanks {
+    display: grid;
+    gap: 18px;
+    padding: 6px 0 2px;
+    text-align: center;
+  }
+  .lead-thanks[hidden] {
+    display: none;
+  }
+  .lead-thanks__title {
+    font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+  .lead-thanks__title .script {
+    margin-inline: auto;
+    margin-top: 0.12em;
+    font-size: 0.78em;
+    line-height: 1.1;
+    color: var(--pink-strong);
+    transform-origin: 50% 50%;
+  }
+  .lead-thanks__title:focus {
+    outline: none;
+  }
+  .lead-thanks__note {
+    color: var(--muted);
+    font-size: var(--fs-small);
   }
 
   @media (min-width: 400px) {

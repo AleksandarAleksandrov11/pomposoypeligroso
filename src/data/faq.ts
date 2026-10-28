@@ -31,7 +31,6 @@ export const faqs: Faq[] = [
     a: 'Depende de tu caso. Te lo explicamos en la videollamada, sin compromiso.',
   },
   {
-    // PENDIENTE: confirmar el plazo de respuesta.
     q: '¿Qué pasa después de enviar el formulario?',
     a: 'Te escribimos por WhatsApp en menos de 24 horas laborables para agendar una videollamada.',
   },

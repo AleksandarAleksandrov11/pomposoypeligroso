@@ -102,6 +102,25 @@ export function hasMarketingConsent() {
   return granted;
 }
 
+/** true si el píxel está cargado (hay ID y consentimiento de marketing). */
+export function isPixelLoaded() {
+  return granted && loaded && !!window.fbq;
+}
+
+/**
+ * Coincidencia avanzada manual: vuelve a llamar a init con los datos de la solicitud, sin hash
+ * (el píxel los normaliza y cifra antes de enviarlos). Sin consentimiento o sin píxel no hace nada.
+ * ph: cifras con prefijo y sin "+"; fn: nombre de pila en minúsculas; country: ISO de 2 letras en minúsculas.
+ */
+export function setAdvancedMatching(data: { ph: string; fn?: string; country?: string | null }) {
+  if (!isPixelLoaded()) return;
+  const clean: Record<string, string> = { ph: data.ph };
+  if (data.fn) clean.fn = data.fn;
+  if (data.country) clean.country = data.country;
+  devLog('init (coincidencia avanzada)', Object.keys(clean));
+  window.fbq!('init', pixelId, clean);
+}
+
 /** Envía un evento al píxel (estándar o personalizado). */
 export function track(event: string, params: Params = {}, options: Options = {}) {
   const clean: Params = {};

@@ -1,6 +1,6 @@
 /**
  * Comportamiento de interfaz: header, apariciones al hacer scroll, barra fija móvil,
- * botón flotante de WhatsApp, precarga de fotos en segundo plano, clips de vídeo y clics de contacto.
+ * precarga de fotos en segundo plano, clips de vídeo y clics en WhatsApp.
  */
 import { track } from './pixel';
 
@@ -38,11 +38,12 @@ function initReveal() {
   });
 }
 
-/** Barra fija inferior en móvil: CTA + WhatsApp. */
+/** Barra fija inferior en móvil: un solo botón, al formulario. */
 function initMobileBar() {
   const bar = document.querySelector<HTMLElement>('[data-mobilebar]');
   if (!bar) return;
-  const heroCta = document.querySelector('[data-hero-cta]');
+  // El hero tiene un botón por versión del anuncio: se vigila el que se ve
+  const heroCta = [...document.querySelectorAll<HTMLElement>('[data-hero-cta]')].find((el) => el.getClientRects().length > 0);
   const form = document.querySelector('#formulario');
   const root = document.documentElement;
 
@@ -85,14 +86,6 @@ function initMobileBar() {
   document.addEventListener('focusin', checkKeyboard);
   document.addEventListener('focusout', () => setTimeout(checkKeyboard, 50));
   render();
-}
-
-/** Botón flotante de WhatsApp en escritorio: se esconde sobre el footer. */
-function initFab() {
-  const fab = document.querySelector<HTMLElement>('[data-wa-fab]');
-  const footer = document.querySelector('.site-footer');
-  if (!fab || !footer || !('IntersectionObserver' in window)) return;
-  new IntersectionObserver(([e]) => fab.classList.toggle('is-hidden', e.isIntersecting)).observe(footer);
 }
 
 /**
@@ -167,12 +160,15 @@ function initVideos() {
   videos.forEach((v) => visible.observe(v));
 }
 
-/** Evento Contact al pulsar WhatsApp o teléfono. */
+/**
+ * Evento Contact en los únicos enlaces a WhatsApp que quedan fuera del formulario: el botón de /gracias y el del
+ * aviso de error del formulario. El botón del estado de gracias lo registra form.ts (gracias-boton y gracias-auto).
+ */
 function initContactTracking() {
   document.addEventListener('click', (e) => {
     const a = (e.target as Element | null)?.closest<HTMLElement>('[data-contact]');
     if (!a) return;
-    track('Contact', { method: a.dataset.contact, location: a.dataset.location || 'otro' });
+    track('Contact', { content_category: a.dataset.location || 'otro' });
   });
 }
 
@@ -187,7 +183,6 @@ export function initUI() {
   initHeader();
   initReveal();
   initMobileBar();
-  initFab();
   warmUpImages();
   initVideos();
   initContactTracking();

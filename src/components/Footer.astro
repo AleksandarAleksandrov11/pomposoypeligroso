@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { SITE, hasWhatsApp, hasPhone, whatsappUrl, phoneText } from '../config/site';
+import { SITE } from '../config/site';
 
 interface Props {
   home?: boolean;
@@ -9,6 +9,7 @@ interface Props {
 const { home = true } = Astro.props;
 const base = home ? '' : '/';
 const year = new Date().getFullYear();
+// Sin enlaces de contacto ni redes: la única salida es el formulario. Las legales se abren en pestaña nueva.
 ---
 
 <footer class="site-footer on-dark">
@@ -17,26 +18,7 @@ const year = new Date().getFullYear();
       <div class="site-footer__brand">
         <Logo href={home ? '#top' : '/'} variant="footer" />
         <p>Programa online de transformación física para mujeres +30.</p>
-        <div class="site-footer__social">
-          <a class="icon-btn" href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram de Pomposo y Peligroso">
-            <Icon name="instagram" size={22} />
-          </a>
-          {
-            hasWhatsApp && (
-              <a
-                class="icon-btn"
-                href={whatsappUrl()}
-                target="_blank"
-                rel="noopener"
-                aria-label="Escríbenos por WhatsApp"
-                data-contact="whatsapp"
-                data-location="footer-social"
-              >
-                <Icon name="whatsapp" size={22} />
-              </a>
-            )
-          }
-        </div>
+        <a class="btn btn--light site-footer__cta" href={`${base}#formulario`} data-cta="footer">Quiero mi plaza</a>
       </div>
 
       <nav class="site-footer__col" aria-labelledby="f-web">
@@ -45,42 +27,15 @@ const year = new Date().getFullYear();
           <li><a href={`${base}#como-funciona`}>Cómo funciona</a></li>
           <li><a href={`${base}#resultados`}>Resultados</a></li>
           <li><a href={`${base}#preguntas`}>Preguntas</a></li>
-          <li><a href={`${base}#formulario`}>Quiero mi plaza</a></li>
         </ul>
       </nav>
-
-      <div class="site-footer__col">
-        <h2 id="f-contacto">Contacto</h2>
-        <ul role="list" aria-labelledby="f-contacto">
-          {
-            hasPhone && (
-              <li>
-                <a href={SITE.phoneHref} data-contact="phone" data-location="footer">
-                  {phoneText}
-                </a>
-              </li>
-            )
-          }
-          {
-            hasWhatsApp && (
-              <li>
-                <a href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="footer">
-                  WhatsApp
-                </a>
-              </li>
-            )
-          }
-          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
-          <li><a href={SITE.instagram} target="_blank" rel="noopener">Instagram {SITE.instagramHandle}</a></li>
-        </ul>
-      </div>
 
       <nav class="site-footer__col" aria-labelledby="f-legal">
         <h2 id="f-legal">Legal</h2>
         <ul role="list">
-          <li><a href="/aviso-legal">Aviso legal</a></li>
-          <li><a href="/privacidad">Política de privacidad</a></li>
-          <li><a href="/cookies">Política de cookies</a></li>
+          <li><a href="/aviso-legal" target="_blank" rel="noopener">Aviso legal</a></li>
+          <li><a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a></li>
+          <li><a href="/cookies" target="_blank" rel="noopener">Política de cookies</a></li>
           <li><button type="button" class="site-footer__cookies" data-open-cookies>Configurar cookies</button></li>
         </ul>
       </nav>
@@ -115,26 +70,8 @@ const year = new Date().getFullYear();
     max-width: 30ch;
     color: var(--on-dark);
   }
-  .site-footer__social {
-    display: flex;
-    gap: 10px;
+  .site-footer__cta {
     margin-top: 20px;
-  }
-  .icon-btn {
-    display: inline-grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid rgb(233 224 255 / 0.28);
-    border-radius: 50%;
-    color: var(--white);
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease;
-  }
-  .icon-btn:hover {
-    background: rgb(233 224 255 / 0.1);
-    border-color: var(--lilac);
   }
   .site-footer__col h2 {
     font-family: var(--font-text);
@@ -232,12 +169,7 @@ const year = new Date().getFullYear();
   }
   @media (min-width: 900px) {
     .site-footer__grid {
-      grid-template-columns: 0.8fr 1.2fr 1fr;
-    }
-  }
-  @media (min-width: 1180px) {
-    .site-footer__grid {
-      grid-template-columns: 1.3fr 0.8fr 1.3fr 1fr;
+      grid-template-columns: 1.4fr 1fr 1fr;
       gap: 32px;
     }
     .site-footer__brand {

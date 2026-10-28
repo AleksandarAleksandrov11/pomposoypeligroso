@@ -25,11 +25,21 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
   </div>
 
   <div class="container hero__content">
-    <h1 id="hero-title" class="hero__title t-center">Un glúteo pomposo <span class="script">y peligroso.</span></h1>
-    <p class="hero__lead">Programa online de 12 semanas para mujeres +30.<br />Fuerza, comida sin dietas y un coach pendiente de ti.</p>
+    {/* Una versión por tipo de anuncio (src/data/ad-variants.ts). El script del <head> pone data-ad en <html>
+        antes del primer pintado y el CSS muestra solo la activa: sin parpadeo ni saltos. Sin data-ad, "descubrir". */}
+    <h1 id="hero-title" class="hero__title t-center">
+      <span class="hero__v hero__v--descubrir">Un glúteo pomposo <span class="script">y peligroso.</span></span>
+      <span class="hero__v hero__v--cierre">Tu glúteo no se va a poner pomposo <span class="script">solo.</span></span>
+    </h1>
+    <p class="hero__lead hero__v hero__v--descubrir">
+      Programa online de 12 semanas para mujeres +30.<br />Fuerza, comida sin dietas y un coach pendiente de ti.
+    </p>
+    <p class="hero__lead hero__v hero__v--cierre">Pide tu videollamada sin compromiso y vemos si el programa encaja contigo.</p>
     <div class="hero__ctas">
-      <a class="btn" href="#formulario" data-hero-cta data-cta="hero">Quiero mi plaza</a>
-      <p class="hero__note"><Icon name="check" size={16} /> Videollamada sin compromiso</p>
+      <a class="btn hero__v hero__v--descubrir" href="#formulario" data-hero-cta data-cta="hero">Quiero mi plaza</a>
+      <a class="btn hero__v hero__v--cierre" href="#formulario" data-hero-cta data-cta="hero-cierre">Pedir mi videollamada</a>
+      <p class="hero__note hero__v hero__v--descubrir"><Icon name="check" size={16} /> Videollamada sin compromiso</p>
+      <p class="hero__note hero__v hero__v--cierre"><Icon name="check" size={16} /> Plazas limitadas</p>
     </div>
     <a class="proof" href="#resultados">
       <span class="proof__thumbs" aria-hidden="true">
@@ -93,6 +103,15 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
     font-size: var(--fs-h1);
     line-height: 0.98;
     text-shadow: 0 2px 24px rgb(30 21 48 / 0.55);
+  }
+  /* Versión del anuncio: solo se ve la activa (data-ad en <html>, ver Base.astro) */
+  :global(html[data-ad='cierre']) .hero__v--descubrir,
+  :global(html:not([data-ad='cierre'])) .hero__v--cierre {
+    display: none;
+  }
+  /* El titular de cierre es más largo: algo más pequeño para que ocupe lo mismo y el botón siga en la primera pantalla */
+  .hero__title .hero__v--cierre {
+    font-size: 0.8em;
   }
   .hero__lead {
     max-width: 34rem;

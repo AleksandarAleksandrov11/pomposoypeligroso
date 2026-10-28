@@ -20,13 +20,13 @@ const L = SITE.legal;
     <dt>Domicilio</dt>
     <dd>{L.address}</dd>
     <dt>Email</dt>
-    <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+    <dd>{SITE.email}</dd>
     {
       hasPhone && (
         <>
           <dt>Teléfono</dt>
           <dd>
-            <a href={SITE.phoneHref}>{phoneText}</a>
+            {phoneText}
           </dd>
         </>
       )
@@ -50,6 +50,12 @@ const L = SITE.legal;
     de cookies). Esos datos no se guardan en nuestra hoja de solicitudes.
   </p>
   <p>
+    Para medir nuestros anuncios, cuando envías el formulario comunicamos tu solicitud a Meta mediante su API de
+    conversiones: tu teléfono, tu nombre de pila y tu país cifrados (hash SHA-256, no se envían en claro), tu tramo de edad,
+    tu experiencia, el identificador del clic del anuncio si llegas desde uno, tu dirección IP y los datos de tu navegador.
+    Esta comunicación tampoco se guarda en nuestra hoja de solicitudes.
+  </p>
+  <p>
     Si nos escribes por WhatsApp o nos llamas, tratamos tu número, tu nombre de perfil y lo que nos cuentes en la
     conversación.
   </p>
@@ -59,7 +65,7 @@ const L = SITE.legal;
   <ul>
     <li>Contactarte por WhatsApp o por teléfono para informarte del programa y agendar una videollamada.</li>
     <li>Responderte si eres tú quien nos escribe por WhatsApp o nos llama.</li>
-    <li>Saber qué anuncios y campañas funcionan, para mejorar nuestra publicidad.</li>
+    <li>Saber qué anuncios y campañas funcionan, para mejorar nuestra publicidad (también comunicando tu solicitud cifrada a Meta).</li>
     <li>Avisar por email a nuestro equipo de cada solicitud nueva.</li>
   </ul>
   <p>No tomamos decisiones automatizadas que te afecten ni elaboramos perfiles con efectos jurídicos.</p>
@@ -67,9 +73,9 @@ const L = SITE.legal;
   <h2>4. Base legal</h2>
   <ul>
     <li>
-      <strong>Contactarte sobre el programa:</strong> tu consentimiento (artículo 6.1.a del RGPD), que nos das al marcar la
-      casilla del formulario. Si eres tú quien nos escribe por WhatsApp o nos llama, la aplicación de medidas
-      precontractuales a petición tuya (artículo 6.1.b).
+      <strong>Contactarte sobre el programa:</strong> tu consentimiento (artículo 6.1.a del RGPD), que nos das al enviar el
+      formulario. Si eres tú quien nos escribe por WhatsApp o nos llama, la aplicación de medidas precontractuales a
+      petición tuya (artículo 6.1.b).
     </li>
     <li>
       <strong>Datos de campaña:</strong> nuestro interés legítimo en saber qué publicidad funciona (artículo 6.1.f). Puedes
@@ -78,6 +84,11 @@ const L = SITE.legal;
     <li>
       <strong>Píxel de Meta:</strong> tu consentimiento en el aviso o en la configuración de cookies (artículo 22.2 de la
       LSSI‑CE y artículo 6.1.a del RGPD).
+    </li>
+    {/* TODO (legal): revisar Aleks. Base legal del envío de la solicitud a Meta por la API de conversiones. */}
+    <li>
+      <strong>Envío de tu solicitud a Meta por la API de conversiones:</strong> tu consentimiento al enviar el formulario
+      (artículo 6.1.a del RGPD).
     </li>
   </ul>
   <p>Puedes retirar tu consentimiento cuando quieras, sin que afecte a lo tratado antes.</p>
@@ -89,7 +100,7 @@ const L = SITE.legal;
   </p>
 
   <h2>6. Quién más accede a tus datos</h2>
-  <p>No vendemos ni cedemos tus datos. Acceden a ellos solo:</p>
+  <p>No vendemos tus datos. Acceden a ellos solo:</p>
   <ul>
     <li>
       <strong>Google Ireland Ltd. / Google LLC</strong> (Google Sheets y Google Apps Script), donde se guardan las
@@ -97,9 +108,10 @@ const L = SITE.legal;
       obliga a usar los datos solo para prestarnos el servicio.
     </li>
     <li>
-      <strong>Meta Platforms Ireland Ltd.</strong>, solo si aceptas las cookies de marketing. A través del píxel recibe
-      datos de tu visita a esta web. En esa recogida y transmisión somos corresponsables con Meta (artículo 26 del RGPD); lo
-      que Meta haga después con esos datos lo decide Meta como responsable, según su
+      <strong>Meta Platforms Ireland Ltd.</strong>: a través del píxel, solo si aceptas las cookies de marketing, recibe datos
+      de tu visita a esta web; y, al enviar el formulario, recibe tu solicitud cifrada por la API de conversiones para medir
+      los anuncios. En esa recogida y transmisión somos corresponsables con Meta (artículo 26 del RGPD); lo que Meta haga
+      después con esos datos lo decide Meta como responsable, según su
       <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">política de privacidad</a>.
     </li>
     <li>
@@ -116,7 +128,7 @@ const L = SITE.legal;
   <h2>7. Tus derechos</h2>
   <p>
     Puedes pedir el acceso, la rectificación o la supresión de tus datos, oponerte a su tratamiento (también al basado en
-    nuestro interés legítimo), pedir su limitación o su portabilidad y retirar tu consentimiento. Escríbenos a <a href={`mailto:${SITE.email}`}>{SITE.email}</a> indicando
+    nuestro interés legítimo), pedir su limitación o su portabilidad y retirar tu consentimiento. Escríbenos a {SITE.email} indicando
     qué derecho quieres ejercer. Te responderemos en el plazo de un mes.
   </p>
   <p>

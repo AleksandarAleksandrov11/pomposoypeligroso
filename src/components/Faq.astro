@@ -1,7 +1,6 @@
 ---
 import Icon from './Icon.astro';
 import { faqs } from '../data/faq';
-import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
 ---
 
 <section class="section faq" id="preguntas" aria-labelledby="faq-title">
@@ -26,17 +25,7 @@ import { SITE, hasWhatsApp, whatsappUrl } from '../config/site';
     </div>
     <div class="section-cta" data-reveal>
       <a class="btn btn--block-mobile" href="#formulario" data-cta="faq">Quiero mi plaza</a>
-      {
-        hasWhatsApp ? (
-          <a class="link" href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="faq">
-            ¿Otra duda? Escríbenos por WhatsApp
-          </a>
-        ) : (
-          <a class="link" href={`mailto:${SITE.email}`}>
-            ¿Otra duda? Escríbenos
-          </a>
-        )
-      }
+      <a class="link" href="#formulario" data-cta="faq-duda">¿Otra duda? Déjanos tu WhatsApp y te la resolvemos</a>
     </div>
   </div>
 </section>

@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { SITE, hasWhatsApp, hasPhone, whatsappUrl, phoneText } from '../config/site';
+import { SITE, phoneText, whatsappUrl } from '../config/site';
 
-// Esta página NO dispara ningún evento de conversión (el Lead se envía al confirmar el Apps Script).
-const contactNumber = hasPhone ? phoneText : hasWhatsApp ? `+${SITE.whatsappNumber}` : '';
+// Página de respaldo: el formulario ya no trae aquí (muestra el estado de gracias en su tarjeta).
+// No dispara ningún evento de conversión y su única salida es WhatsApp.
+const contactNumber = phoneText;
 const steps = [
   { t: 'Te escribimos.', d: 'Por WhatsApp, muy pronto, para conocerte un poco.' },
   { t: 'Videollamada.', d: 'Vemos tu situación, tus objetivos y si el programa encaja contigo.' },
@@ -17,27 +18,12 @@ const steps = [
     <svg class="thanks__mono" viewBox="0 0 1584 1584" aria-hidden="true" focusable="false"><use href="#pyp-mono"></use></svg>
     <h1 class="t-center" data-thanks-title>Ya está.</h1>
     <p class="thanks__lead">
-      Te escribimos por WhatsApp muy pronto para agendar tu videollamada.
-      {
-        contactNumber ? (
-          <>
-            Guarda nuestro número para que no se te pierda el mensaje: <strong>{contactNumber}</strong>.
-          </>
-        ) : (
-          <>Estate atenta a WhatsApp para que no se te pierda el mensaje.</>
-        )
-      }
+      Te escribimos por WhatsApp en menos de 24 horas laborables para agendar tu videollamada. Guarda nuestro número para
+      que no se te pierda el mensaje: <strong>{contactNumber}</strong>.
     </p>
     <div class="thanks__ctas">
-      {
-        hasWhatsApp && (
-          <a class="btn btn--block-mobile" href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="gracias">
-            <Icon name="whatsapp" size={22} /> Escríbenos ya por WhatsApp
-          </a>
-        )
-      }
-      <a class:list={['btn btn--block-mobile', hasWhatsApp && 'btn--ghost']} href={SITE.instagram} target="_blank" rel="noopener">
-        <Icon name="instagram" size={22} /> Ver nuestro Instagram
+      <a class="btn btn--block-mobile" href={whatsappUrl()} target="_blank" rel="noopener" data-contact="whatsapp" data-location="gracias">
+        <Icon name="whatsapp" size={22} /> Escríbenos ya por WhatsApp
       </a>
     </div>
 
@@ -107,15 +93,6 @@ const steps = [
     justify-content: center;
     gap: 12px;
     margin-top: 32px;
-  }
-  .btn--ghost {
-    --btn-bg: var(--white);
-    --btn-bg-hover: var(--lilac-50);
-    --btn-fg: var(--purple);
-    box-shadow: inset 0 0 0 1.5px var(--purple);
-  }
-  .btn--ghost:hover {
-    box-shadow: inset 0 0 0 1.5px var(--purple);
   }
   .thanks__subtitle {
     margin-top: clamp(56px, 8vw, 88px);

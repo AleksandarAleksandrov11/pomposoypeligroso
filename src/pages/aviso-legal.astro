@@ -22,13 +22,13 @@ const domain = site.hostname;
     <dt>Domicilio</dt>
     <dd>{L.address}</dd>
     <dt>Email</dt>
-    <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+    <dd>{SITE.email}</dd>
     {
       hasPhone && (
         <>
           <dt>Teléfono</dt>
           <dd>
-            <a href={SITE.phoneHref}>{phoneText}</a>
+            {phoneText}
           </dd>
         </>
       )
@@ -83,8 +83,8 @@ const domain = site.hostname;
 
   <h2>7. Protección de datos y cookies</h2>
   <p>
-    El tratamiento de tus datos personales se explica en la <a href="/privacidad">Política de privacidad</a> y el uso de
-    cookies en la <a href="/cookies">Política de cookies</a>.
+    El tratamiento de tus datos personales se explica en la <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a> y el uso de
+    cookies en la <a href="/cookies" target="_blank" rel="noopener">Política de cookies</a>.
   </p>
 
   <h2>8. Legislación aplicable y jurisdicción</h2>

@@ -8,8 +8,8 @@
 
 <section class="cookie-banner" aria-label="Aviso de cookies" data-cookie-banner hidden>
   <p class="cookie-banner__text">
-    Usamos cookies propias necesarias y, si aceptas, cookies de Meta (terceros) para medir y personalizar nuestros anuncios.
-    <a href="/cookies">Más información</a>
+    Usamos cookies propias necesarias y, si aceptas, cookies de Meta (terceros) para medir y personalizar anuncios.
+    <a href="/cookies" target="_blank" rel="noopener">Política de cookies</a>
   </p>
   <div class="cookie-banner__actions">
     <button type="button" class="cookie-btn" data-consent-action="accept">Aceptar</button>
@@ -21,9 +21,12 @@
 <style>
   /* Siempre arriba, justo bajo el header. Mientras se ve, la página le reserva su hueco (clase needs-consent del
      script inline de Base.astro, antes del primer pintado): el hero, el formulario al que saltan los CTA y el inicio
-     de cada página quedan por debajo, y la barra fija inferior y el botón de WhatsApp siguen libres abajo. */
+     de cada página quedan por debajo, y la barra fija inferior sigue libre abajo. */
   .cookie-banner {
     position: fixed;
+    /* Alto fijo por tamaño de pantalla: coincide con el hueco que se reserva antes de que cargue el JS
+       (--cookie-space en base.css), así no se mueve nada al medirlo. */
+    min-height: 134px;
     left: 8px;
     right: 8px;
     top: calc(var(--header-h) + 6px);
@@ -82,6 +85,7 @@
       left: 16px;
       right: 16px;
       top: calc(var(--header-h) + 8px);
+      min-height: 81px;
       font-size: 0.875rem;
     }
     .cookie-banner__actions {
