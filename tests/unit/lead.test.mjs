@@ -134,6 +134,8 @@ test('event_id y fbc', () => {
 test('versión del inicio según el anuncio', () => {
   assert.equal(pickVariant(null, 'DESCUBRIR_octubre'), 'descubrir');
   assert.equal(pickVariant('', 'descubrir'), 'descubrir');
+  assert.equal(pickVariant(null, 'CERRAR'), 'cierre', 'nombre real de la campaña de cierre');
+  assert.equal(pickVariant('video_3', 'cerrar'), 'cierre');
   assert.equal(pickVariant(null, 'CIERRE - Retargeting'), 'cierre');
   assert.equal(pickVariant(null, 'MOFU/BOFU noviembre'), 'cierre');
   assert.equal(pickVariant('video_cierre_1', 'DESCUBRIR'), 'cierre', 'utm_content manda si encaja');

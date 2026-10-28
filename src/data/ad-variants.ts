@@ -13,7 +13,8 @@ export type AdVariant = 'descubrir' | 'cierre';
 export const DEFAULT_VARIANT: AdVariant = 'descubrir';
 
 export const AD_VARIANT_RULES: { variant: AdVariant; match: string[] }[] = [
-  { variant: 'cierre', match: ['cierre', 'retargeting', 'remarketing', 'mofu', 'bofu'] },
+  // La campaña de cierre (MOFU/BOFU) se llama CERRAR
+  { variant: 'cierre', match: ['cerrar', 'cierre', 'retargeting', 'remarketing', 'mofu', 'bofu'] },
   { variant: 'descubrir', match: ['descubrir', 'tofu'] },
 ];
 

@@ -5,7 +5,7 @@ import { setup, isMobileProject } from './helpers.mjs';
 const CASES = [
   { name: 'sin parámetros', url: '/', h1: 'Un glúteo pomposo y peligroso.', cta: 'Quiero mi plaza' },
   { name: 'DESCUBRIR', url: '/?utm_source=ig&utm_campaign=DESCUBRIR_octubre&utm_content=video_1', h1: 'Un glúteo pomposo y peligroso.', cta: 'Quiero mi plaza' },
-  { name: 'cierre', url: '/?utm_source=ig&utm_campaign=CIERRE_retargeting&utm_content=video_2', h1: 'Tu glúteo no se va a poner pomposo solo.', cta: 'Pedir mi videollamada' },
+  { name: 'cierre (CERRAR)', url: '/?utm_source=ig&utm_campaign=CERRAR&utm_content=video_2', h1: 'Tu glúteo no se va a poner pomposo solo.', cta: 'Pedir mi videollamada' },
 ];
 
 /** Suma de layout-shift desde la carga (con buffer), tras dejar que todo se asiente. */

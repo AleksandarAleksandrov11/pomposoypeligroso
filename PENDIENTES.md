@@ -4,10 +4,11 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 ## Lo hace Aleks fuera del código
 
+- [x] Campaña de cierre: se llama CERRAR y ya ve el hero de cierre (`src/data/ad-variants.ts`).
+
 - [ ] **Token de la API de conversiones**: poner `META_CAPI_TOKEN` en Vercel (Settings, Environment Variables, Production) y volver a desplegar. Se genera en el Administrador de eventos de Meta: píxel 1162548892864094, Configuración, API de conversiones, Generar token de acceso. Opcional mientras se prueba: `META_TEST_EVENT_CODE` (y quitarlo después). Sin token la web funciona igual, solo que sin API de conversiones. Nunca en el repo ni en el chat.
 - [ ] **Texto legal**: revisar la frase de la base legal del envío a Meta por la API de conversiones en `src/pages/privacidad.astro` (marcada con `TODO (legal)`).
 - [ ] **Borrar la fila `PRUEBA`** de la hoja (envío de la revisión final en producción).
-- [ ] Si la campaña de cierre no lleva en su nombre "CIERRE", "RETARGETING", "REMARKETING", "MOFU" o "BOFU", añadir la palabra en `src/data/ad-variants.ts` para que vea el hero de cierre.
 
 ## Configuración (`src/config/site.ts`)
 
