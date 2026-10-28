@@ -4,6 +4,8 @@
 import { defineConfig } from '@playwright/test';
 
 const PORT = 4700;
+// E2E_BASE_URL=https://www.pomposoypeligroso.com repite las pruebas contra producción, con todo lo externo interceptado
+const BASE_URL = process.env.E2E_BASE_URL || `http://127.0.0.1:${PORT}`;
 const IG_IPHONE_UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 357.0.0.25.101 (iPhone15,3; iOS 18_1; es_ES; es; scale=3.00; 1290x2796; 640201398)';
 
@@ -15,7 +17,7 @@ export default defineConfig({
   workers: 4,
   reporter: [['list']],
   use: {
-    baseURL: `http://127.0.0.1:${PORT}`,
+    baseURL: BASE_URL,
     locale: 'es-ES',
     timezoneId: 'Europe/Madrid',
   },
@@ -29,9 +31,11 @@ export default defineConfig({
       use: { viewport: { width: 1440, height: 900 } },
     },
   ],
-  webServer: {
-    command: `node tests/e2e/server.mjs ${PORT}`,
-    port: PORT,
-    reuseExistingServer: false,
-  },
+  webServer: process.env.E2E_BASE_URL
+    ? undefined
+    : {
+        command: `node tests/e2e/server.mjs ${PORT}`,
+        port: PORT,
+        reuseExistingServer: false,
+      },
 });

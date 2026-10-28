@@ -52,6 +52,20 @@ for (const c of CASES) {
   });
 }
 
+test('con las fuentes lentas tampoco se mueve nada (las tres versiones)', async ({ page, context }) => {
+  await setup(context);
+  // Las fuentes tardan 500 ms: el titular espera a Anton y Allura y el resto no cambia de alto
+  await page.route('**/fonts/*.woff2', async (route) => {
+    await new Promise((r) => setTimeout(r, 500));
+    await route.continue();
+  });
+  for (const c of CASES) {
+    await page.goto(c.url);
+    expect(await cls(page), c.name).toBe(0);
+    await expect(page.locator('#hero-title')).toBeVisible();
+  }
+});
+
 test('la versión del anuncio se mantiene tras ir a /privacidad y volver', async ({ page, context }) => {
   await setup(context);
   await page.goto(CASES[2].url);

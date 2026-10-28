@@ -19,10 +19,14 @@ export async function setup(context, { appsScript = 'ok' } = {}) {
 
   // Cualquier otra salida a internet se corta: las pruebas son herméticas.
   // Playwright prueba las rutas en orden inverso al de registro: esta, la primera, solo actúa si ninguna otra coincide.
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1)/, (route) => {
-    log.external.push(route.request().url());
-    return route.abort();
-  });
+  const ownHost = new URL(process.env.E2E_BASE_URL || 'http://127.0.0.1').host;
+  await context.route(
+    (url) => url.host !== ownHost && !/^127\.0\.0\.1(:\d+)?$/.test(url.host),
+    (route) => {
+      log.external.push(route.request().url());
+      return route.abort();
+    },
+  );
 
   await context.route('https://script.google.com/**', async (route) => {
     const body = route.request().postData();

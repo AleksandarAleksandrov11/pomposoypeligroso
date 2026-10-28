@@ -36,9 +36,10 @@ const site = Astro.site ?? new URL('http://localhost:4321');
 const canonical = new URL(path, site).href.replace(/\/$/, path === '/' ? '/' : '');
 const ogImage = new URL('/og.jpg', site).href;
 
-// Antes del primer pintado: clase js y, si no hay consentimiento válido guardado, needs-consent
-// (el hero reserva el hueco del aviso de cookies sin mover nada después). Misma regla que readConsent().
-const headScript = `(function(d){d.classList.add('js');try{var c=JSON.parse(localStorage.getItem('pyp_consent')||'null');if(!c||c.v!==${SITE.consentVersion}||!c.date||Date.now()-new Date(c.date).getTime()>31536e6)d.classList.add('needs-consent')}catch(e){d.classList.add('needs-consent')}})(document.documentElement);`;
+// Antes del primer pintado: clase js, fonts-pending (el titular del hero espera a sus fuentes, ver Hero.astro)
+// y, si no hay consentimiento válido guardado, needs-consent (el hero reserva el hueco del aviso de cookies
+// sin mover nada después). Misma regla que readConsent().
+const headScript = `(function(d){d.classList.add('js');if(document.fonts&&document.fonts.load){d.classList.add('fonts-pending');var f=function(){d.classList.remove('fonts-pending')};setTimeout(f,1200);requestAnimationFrame(function(){Promise.all([document.fonts.load('400 1em Anton'),document.fonts.load('400 1em Allura')]).then(f,f)})}try{var c=JSON.parse(localStorage.getItem('pyp_consent')||'null');if(!c||c.v!==${SITE.consentVersion}||!c.date||Date.now()-new Date(c.date).getTime()>31536e6)d.classList.add('needs-consent')}catch(e){d.classList.add('needs-consent')}})(document.documentElement);`;
 
 // Antes del primer pintado: versión del inicio según el anuncio (src/data/ad-variants.ts). Lee utm_content y, si no
 // encaja con ninguna regla, utm_campaign; la guarda en sessionStorage (pyp_ad_variant) y pone data-ad en <html>.
