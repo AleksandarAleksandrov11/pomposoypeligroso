@@ -106,9 +106,11 @@ const proof = [featured.image, transformations.find((t) => t.name === 'Ariadna')
     line-height: 0.98;
     text-shadow: 0 2px 24px rgb(30 21 48 / 0.55);
   }
-  /* El titular se pinta cuando ya están Anton y Allura (como mucho 1,2 s, ver el script del <head> en Base.astro):
-     así el cambio de fuente no mueve nada. Sin JavaScript la clase no existe y el titular se ve siempre. */
-  :global(html.fonts-pending) .hero__title {
+  /* El titular y el subtítulo se pintan cuando ya están Anton, Allura e Inter (como mucho 1,2 s, ver el script del
+     <head> en Base.astro): así el cambio de fuente no mueve nada. El botón se ve siempre. Sin JavaScript la clase no
+     existe y todo se ve desde el principio. */
+  :global(html.fonts-pending) .hero__title,
+  :global(html.fonts-pending) .hero__lead {
     visibility: hidden;
   }
   /* Versión del anuncio: solo se ve la activa (data-ad en <html>, ver Base.astro) */
