@@ -14,13 +14,24 @@ function anchors(html) {
   for (const m of html.matchAll(/<a\b[^>]*>/gi)) {
     const tag = m[0];
     const href = tag.match(/\bhref="([^"]*)"/i)?.[1] ?? '';
+    if (isCredit(tag)) continue;
     out.push({ tag, href, blank: /\btarget="_blank"/i.test(tag) });
   }
   return out;
 }
 
+/** Única salida permitida además de las de referencia: el crédito de la agencia en el pie (commit a74155e). */
+const CREDIT_RE = /\bclass="site-footer__credit"[^>]*href="https:\/\/www\.aasmarketing\.com\/"|href="https:\/\/www\.aasmarketing\.com\/"[^>]*\bclass="site-footer__credit"/;
+const isCredit = (tag) => CREDIT_RE.test(tag);
 const isExternal = (href) => /^(https?:)?\/\//i.test(href) && !href.includes(SITE_HOST);
 const CONTACT_RE = /wa\.me|api\.whatsapp|whatsapp:\/\/|^tel:|^mailto:|instagram\.com|facebook\.com|tiktok\.com|t\.me/i;
+
+test('el crédito de la agencia en el pie es el único enlace externo añadido (y solo uno por página)', () => {
+  for (const page of ['index.html', '404.html', 'gracias.html', 'privacidad.html']) {
+    const n = [...read(page).matchAll(/<a\b[^>]*>/gi)].filter((m) => isCredit(m[0])).length;
+    assert.ok(n <= 1, `${page}: ${n}`);
+  }
+});
 
 test('existe el build', () => {
   assert.ok(fs.existsSync(new URL('index.html', dist)), 'ejecuta npm run build antes');
