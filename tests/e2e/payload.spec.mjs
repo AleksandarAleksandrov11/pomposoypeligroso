@@ -7,7 +7,13 @@ for (const consent of ['reject', 'accept']) {
     const log = await setup(context);
     await page.goto(FIXTURE.input.url);
     await chooseCookies(page, consent);
-    await fillForm(page, { age: FIXTURE.input.age_range, experience: FIXTURE.input.experience, name: FIXTURE.input.name, phone: FIXTURE.input.phone });
+    await fillForm(page, {
+      age: FIXTURE.input.age_range,
+      experience: FIXTURE.input.experience,
+      start: FIXTURE.input.start_when,
+      name: FIXTURE.input.name,
+      phone: FIXTURE.input.phone,
+    });
     await submit(page);
     await expect.poll(() => log.payloads.length).toBe(1);
     const body = log.payloads[0].body;

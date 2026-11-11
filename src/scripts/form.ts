@@ -1,5 +1,5 @@
 /**
- * Formulario de 4 pasos (una pregunta cada vez).
+ * Formulario de 5 pasos (una pregunta cada vez): edad, experiencia, cuándo quiere empezar, nombre y teléfono.
  * Envío a Google Apps Script como text/plain (sin preflight CORS), timeout 12 s y 1 reintento.
  * Si vuelve a fallar por red, la solicitud se guarda en localStorage y se reintenta en la siguiente visita;
  * si el Apps Script la rechaza por un dato no válido (invalid_*), no se reintenta: se marca el campo.
@@ -41,15 +41,17 @@ const STARTED_KEY = 'pyp_form_started';
 const STEPS_KEY = 'pyp_form_steps';
 const LEAD_SENT_KEY = 'pyp_lead_sent';
 const PENDING_KEY = 'pyp_pending_leads';
-const TOTAL = 4;
-const STEP_NAMES = ['', 'edad', 'experiencia', 'nombre', 'telefono'];
+const TOTAL = 5;
+const STEP_NAMES = ['', 'edad', 'experiencia', 'empezar', 'nombre', 'telefono'];
+/** Número de cada paso del formulario. */
+const STEP = { edad: 1, experiencia: 2, empezar: 3, nombre: 4, telefono: 5 } as const;
 /** Tiempo mínimo entre el Lead y cualquier navegación, para que el evento salga. */
 const MIN_LEAD_TO_NAV_MS = 800;
 /** En móvil, WhatsApp se abre solo pasado este tiempo desde el envío. */
 const AUTO_WHATSAPP_MS = 1500;
 
 type Payload = AppsScriptFields;
-type Field = 'age_range' | 'experience' | 'name' | 'phone';
+type Field = 'age_range' | 'experience' | 'start_when' | 'name' | 'phone';
 
 /** El Apps Script ha rechazado un dato: no tiene sentido reintentarlo. */
 class ServerValidationError extends Error {
@@ -274,6 +276,7 @@ export function initForm() {
                 step: current,
                 age_range: (form.elements.namedItem('age_range') as RadioNodeList).value,
                 experience: (form.elements.namedItem('experience') as RadioNodeList).value,
+                start_when: (form.elements.namedItem('start_when') as RadioNodeList).value,
                 name: nameInput.value,
                 prefix: prefixSelect.value,
                 prefix_other: prefixOther.value,
@@ -408,7 +411,7 @@ export function initForm() {
     save();
   };
 
-  /* Pasos 1 y 2: opciones que avanzan solas al tocar */
+  /* Pasos 1, 2 y 3: opciones que avanzan solas al tocar */
   form.addEventListener('keydown', (e) => {
     lastKey = e.key;
     const t = e.target as HTMLInputElement;
@@ -447,7 +450,7 @@ export function initForm() {
   form.querySelector('[data-step="1"]')?.addEventListener('pointerdown', markStarted, { once: true });
   form.querySelector('[data-step="1"]')?.addEventListener('focusin', markStarted, { once: true });
 
-  /* Paso 3: nombre (mismo criterio que el Apps Script) */
+  /* Paso 4: nombre (mismo criterio que el Apps Script) */
   const nameMessage = (problem: ReturnType<typeof nameProblem>) =>
     problem === 'charset' ? 'Escribe tu nombre sin caracteres especiales.' : 'Escribe tu nombre (mínimo 2 letras).';
 
@@ -455,13 +458,13 @@ export function initForm() {
     const problem = nameProblem(nameInput.value);
     if (problem) {
       showError(nameError, nameInput, nameMessage(problem));
-      formError(3, 'name');
+      formError(STEP.nombre, 'name');
       nameInput.focus();
       return;
     }
     clearError(nameError, nameInput);
-    completeStep(3);
-    go(4);
+    completeStep(STEP.nombre);
+    go(STEP.telefono);
   };
   form.querySelector('[data-next-name]')?.addEventListener('click', nextFromName);
   nameInput.addEventListener('keydown', (e) => {
@@ -475,7 +478,7 @@ export function initForm() {
     save();
   });
 
-  /* Paso 4: prefijo y teléfono */
+  /* Paso 5: prefijo y teléfono */
   const syncPrefix = () => {
     const other = prefixSelect.value === 'otro';
     if (prefixValue) prefixValue.textContent = other ? 'Otro' : prefixSelect.value;
@@ -514,7 +517,7 @@ export function initForm() {
     if (errorWa) {
       errorWa.href = whatsappLink(
         SITE.whatsappNumber,
-        whatsappErrorMessage({ name: p.name, phone: p.phone, age_range: p.age_range, experience: p.experience }),
+        whatsappErrorMessage({ name: p.name, phone: p.phone, age_range: p.age_range, experience: p.experience, start_when: p.start_when }),
       );
     }
     if (errorBox) {
@@ -526,16 +529,16 @@ export function initForm() {
   /** El Apps Script ha rechazado un dato: se marca ese campo (sin reintentos ni pendientes). */
   const showServerFieldError = (field: Field) => {
     if (field === 'name') {
-      go(3);
+      go(STEP.nombre);
       showError(nameError, nameInput, 'Revisa tu nombre: escríbelo sin caracteres especiales.');
-      formError(3, 'name');
+      formError(STEP.nombre, 'name');
       nameInput.focus();
     } else if (field === 'phone') {
       showError(phoneError, phoneInput, 'Revisa el número: no parece válido.');
-      formError(4, 'phone');
+      formError(STEP.telefono, 'phone');
       phoneInput.focus();
     } else {
-      go(field === 'age_range' ? 1 : 2);
+      go(field === 'age_range' ? STEP.edad : field === 'experience' ? STEP.experiencia : STEP.empezar);
     }
   };
 
@@ -590,7 +593,7 @@ export function initForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (current !== TOTAL) {
-      if (current === 3) nextFromName();
+      if (current === STEP.nombre) nextFromName();
       return;
     }
     if (sending || submitted) return;
@@ -598,20 +601,20 @@ export function initForm() {
     const prefix = currentPrefix();
     if (!prefix) {
       showError(phoneError, prefixOther, 'Escribe un prefijo válido, por ejemplo +33.');
-      formError(4, 'prefix');
+      formError(STEP.telefono, 'prefix');
       prefixOther.focus();
       return;
     }
     const phone = normalizePhone(prefix, phoneInput.value);
     if (!phone) {
       showError(phoneError, phoneInput, 'Escribe un número válido.');
-      formError(4, 'phone');
+      formError(STEP.telefono, 'phone');
       phoneInput.focus();
       return;
     }
     clearError(phoneError, phoneInput, prefixOther);
 
-    completeStep(4);
+    completeStep(STEP.telefono);
     if (errorBox) errorBox.hidden = true;
 
     const fd = new FormData(form);
@@ -622,6 +625,7 @@ export function initForm() {
     const payload = buildAppsScriptPayload({
       age_range: String(fd.get('age_range') ?? ''),
       experience: String(fd.get('experience') ?? ''),
+      start_when: String(fd.get('start_when') ?? ''),
       name,
       phone,
       utm_source: utm.utm_source,
@@ -654,7 +658,7 @@ export function initForm() {
     setSending(false);
     const url = whatsappLink(
       SITE.whatsappNumber,
-      whatsappMessage({ name, age_range: payload.age_range, experience: payload.experience, fromFaq }),
+      whatsappMessage({ name, age_range: payload.age_range, experience: payload.experience, start_when: payload.start_when, fromFaq }),
     );
     done = { name, url };
     save();
@@ -676,6 +680,7 @@ export function initForm() {
       };
       setRadio('age_range', saved.age_range);
       setRadio('experience', saved.experience);
+      setRadio('start_when', saved.start_when);
       nameInput.value = saved.name || '';
       if (saved.prefix) prefixSelect.value = saved.prefix;
       prefixOther.value = saved.prefix_other || '';
@@ -685,9 +690,10 @@ export function initForm() {
       fromFaq = saved.from_faq === true;
       syncPrefix();
       let step = Number(saved.step) || 1;
-      if (step > 1 && !saved.age_range) step = 1;
-      else if (step > 2 && !saved.experience) step = 2;
-      else if (step > 3 && !validName(saved.name || '')) step = 3;
+      if (step > STEP.edad && !saved.age_range) step = STEP.edad;
+      else if (step > STEP.experiencia && !saved.experience) step = STEP.experiencia;
+      else if (step > STEP.empezar && !saved.start_when) step = STEP.empezar;
+      else if (step > STEP.nombre && !validName(saved.name || '')) step = STEP.nombre;
       go(step, { focus: false });
     } else {
       // Preselección según el anuncio (tabla en src/data/ad-variants.ts; vacía de momento): marca sin avanzar

@@ -1,5 +1,6 @@
-// Contrato del envío al Apps Script: mismas claves, mismo orden y mismos valores que antes de los cambios.
-// La referencia se capturó en el navegador con el endpoint interceptado (tests/fixtures/apps-script-payload.json).
+// Contrato del envío al Apps Script: mismas claves, mismo orden y mismos valores que la referencia.
+// La referencia se capturó en el navegador con el endpoint interceptado y el 11/11/2026 se le añadió start_when
+// (tests/fixtures/apps-script-payload.json).
 // La prueba de Playwright (tests/e2e/payload.spec.mjs) compara además el envío real del navegador con la misma referencia.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,6 +16,7 @@ test('el payload del Apps Script es idéntico a la referencia', () => {
   const payload = buildAppsScriptPayload({
     age_range: input.age_range,
     experience: input.experience,
+    start_when: input.start_when,
     name: cleanName(input.name),
     phone: normalizePhone(input.prefix, input.phone),
     utm_source: url.searchParams.get('utm_source') ?? '',

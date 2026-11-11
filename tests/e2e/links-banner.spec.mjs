@@ -26,14 +26,15 @@ test('las legales se abren en otra pestaña desde el banner, el modal, el formul
   await page.locator('#formulario').scrollIntoViewIfNeeded();
   await page.locator('label.option', { hasText: 'De 30 a 39' }).click();
   await page.locator('label.option', { hasText: 'Nunca he entrenado' }).click();
+  await page.locator('label.option', { hasText: 'En las próximas semanas' }).click();
   await page.locator('#lf-name').fill('Lucía');
   await page.locator('[data-next-name]').click();
-  await page.locator('[data-step="4"].is-active').waitFor();
+  await page.locator('[data-step="5"].is-active').waitFor();
   popup = context.waitForEvent('page');
-  await page.locator('[data-step="4"] .consent a').click();
+  await page.locator('[data-step="5"] .consent a').click();
   expect((await popup).url()).toMatch(/\/privacidad$/);
   await (await popup).close();
-  await expect(page.locator('[data-step="4"]')).toHaveClass(/is-active/);
+  await expect(page.locator('[data-step="5"]')).toHaveClass(/is-active/);
   expect(page.url()).toMatch(/\/(#formulario)?$/);
 
   // Footer

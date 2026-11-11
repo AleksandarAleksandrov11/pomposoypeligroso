@@ -1,6 +1,6 @@
 # Pomposo y Peligroso · Landing para Meta Ads
 
-Landing de captación para el programa online de 12 semanas de **Pomposo y Peligroso** (The Monkeys Centro de Entrenamiento S.L.). Objetivo único: que la usuaria rellene un formulario de 4 pasos para que el equipo la contacte por WhatsApp. La conversión (evento `Lead`) es el envío del formulario: se cuenta en el píxel (con consentimiento) y en la API de conversiones de Meta (siempre), con el mismo `event_id`. Antes de enviar no hay ningún enlace que saque de la web; después, la tarjeta del formulario muestra el estado de gracias y en móvil se abre WhatsApp sola.
+Landing de captación para el programa online de 12 semanas de **Pomposo y Peligroso** (The Monkeys Centro de Entrenamiento S.L.). Objetivo único: que la usuaria rellene un formulario de 5 pasos (edad, experiencia, cuándo quiere empezar, nombre y teléfono) para que el equipo la contacte por WhatsApp. La conversión (evento `Lead`) es el envío del formulario: se cuenta en el píxel (con consentimiento) y en la API de conversiones de Meta (siempre), con el mismo `event_id`. Antes de enviar no hay ningún enlace que saque de la web; después, la tarjeta del formulario muestra el estado de gracias y en móvil se abre WhatsApp sola.
 
 - **Stack:** Astro 7 (salida 100 % estática), CSS propio con variables, JavaScript vanilla (7,4 KB comprimido), fuentes autoalojadas y precargadas (Anton para titulares, Allura para la línea manuscrita, Inter para el texto), fotos en WebP con varios tamaños por foto generadas por `astro:assets`.
 - **Despliegue:** Vercel (`vercel.json` incluido). Las páginas son estáticas (`dist/`) y la API de conversiones es una función de Vercel en `api/lead-capi.js`.
@@ -80,7 +80,7 @@ Pega el ID (solo números) en `SITE.metaPixelId`. El píxel **solo se carga si h
 | `PageView` | Estándar | Al cargar, tras el consentimiento (o en el momento de aceptar) | |
 | `ViewContent` | Estándar | La primera vez que el formulario entra en pantalla | `content_name: 'Formulario'` |
 | `FormStart` | Personalizado | Primera interacción con el paso 1 (una vez por sesión) | |
-| `FormStep` | Personalizado | Al completar cada paso, **una vez por paso y sesión** (ir atrás y adelante no lo repite) | `step` (1 a 4), `step_name` (`edad`, `experiencia`, `nombre`, `telefono`) |
+| `FormStep` | Personalizado | Al completar cada paso, **una vez por paso y sesión** (ir atrás y adelante no lo repite) | `step` (1 a 5), `step_name` (`edad`, `experiencia`, `empezar`, `nombre`, `telefono`) |
 | `FormError` | Personalizado | Error de validación, una vez por campo y paso | `step`, `field` (`name`, `phone`, `prefix`) |
 | `Lead` | Estándar | **Solo cuando el Apps Script responde `ok: true`**, una sola vez por solicitud (también si se reintenta) | `content_name: 'Formulario Pomposo'`, `age_range`, `experience` + `eventID`. Antes, coincidencia avanzada con `fbq('init', id, { ph, fn, country })` |
 | `Contact` | Estándar | WhatsApp tras enviar, o botones de `/gracias` y del aviso de error | `content_category`: `gracias-auto` (se abre solo en móvil), `gracias-boton`, `gracias` (página de respaldo) o `form-error` |
@@ -132,23 +132,24 @@ Tras cambiar una variable hay que volver a desplegar (Deployments → Redeploy) 
 
 El código completo está en `apps-script/Code.gs` (sin comentarios, listo para pegar; esta sección lo explica).
 
-**Los cambios de octubre de 2026 (API de conversiones, WhatsApp tras enviar, hero por anuncio, cero fugas) no tocaron el Apps Script ni la hoja:** el formulario le envía exactamente los mismos campos que antes, con los mismos nombres y valores (lo comprueba `tests/unit/payload.test.mjs` y `tests/e2e/payload.spec.mjs`). `event_id` ya viajaba antes; el Apps Script lo ignora y no se guarda en la hoja.
+**Los cambios de octubre de 2026 (API de conversiones, WhatsApp tras enviar, hero por anuncio, cero fugas) no tocaron el Apps Script ni la hoja.** El 11/11/2026 se añadió el paso "¿Cuándo quieres empezar?": el formulario envía además `start_when` y el Apps Script lo guarda en una columna nueva al final ("Cuándo empezar"), sin mover ni borrar nada. El contrato del envío está en `tests/fixtures/apps-script-payload.json` (lo comprueban `tests/unit/payload.test.mjs` y `tests/e2e/payload.spec.mjs`). `event_id` viaja también, pero el Apps Script lo ignora y no se guarda en la hoja.
 
 ### Instalación
 
 1. Crea un Google Sheet nuevo (con la cuenta que vaya a recibir los leads). Ve a **Extensiones → Apps Script**.
 2. Borra el contenido de `Código.gs`, pega todo `apps-script/Code.gs` y guarda.
-3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crean las hojas **Leads** y **Contador**. Si ya tenías la versión de 10 columnas, `setup` le añade la columna Estado sin tocar los leads; si tenías la primera versión de 35 columnas, borra el contenido de esa hoja (era solo de pruebas) y quita la hoja **Resumen**.
+3. En el desplegable de funciones elige **`setup`** y pulsa **Ejecutar**. Autoriza los permisos (Google avisará de que la app no está verificada: **Configuración avanzada → Ir a ... (no seguro)**, es tu propio script). Se crean las hojas **Leads** y **Contador**. Si ya tenías la versión de 11 columnas, `setup` solo añade la cabecera "Cuándo empezar" al final; si tenías la de 10 columnas, añade la columna Estado sin tocar los leads; si tenías la primera versión de 35 columnas, borra el contenido de esa hoja (era solo de pruebas) y quita la hoja **Resumen**. Con cualquier otra disposición de columnas, `setup` se para con un error y no toca nada.
 4. **Implementar → Nueva implementación**. Tipo: **Aplicación web**. Ejecutar como: **Yo**. Quién tiene acceso: **Cualquier usuario**. Pulsa **Implementar** y copia la URL que termina en `/exec`.
 5. Pega esa URL en `SITE.formEndpoint` (`src/config/site.ts`), haz commit y despliega.
 6. Prueba: abre la URL `/exec` en el navegador; debe responder `{"ok":true,"status":"alive"}`. Después envía el formulario desde la web y comprueba que aparece la fila en **Leads**.
 7. Si cambias el código más adelante: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión → Implementar**. Así la URL no cambia.
 
-Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, anuncio, campaña y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
+Cada lead nuevo manda un aviso por email a la dirección de `NOTIFY_EMAIL` (al principio del script, ahora aaswebmarketing@gmail.com) con nombre, teléfono, edad, experiencia, cuándo quiere empezar, anuncio, campaña y enlace directo a WhatsApp. Para cambiarla, edítala y vuelve a implementar como en el paso 7; vacía, no se envía nada.
 
 ### Qué hace
 
-- **Leads:** una fila por lead (la más reciente abajo) con 11 columnas: fecha y hora juntas (Europe/Madrid), nombre, teléfono en texto (E.164), edad, experiencia, **Estado** y los cinco `utm` (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content` con el anuncio y `utm_term` con el conjunto). Nada más: ni IDs, ni referrer, ni dispositivo, ni tiempos.
+- **Leads:** una fila por lead (la más reciente abajo) con 12 columnas: fecha y hora juntas (Europe/Madrid), nombre, teléfono en texto (E.164), edad, experiencia, **Estado**, los cinco `utm` (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content` con el anuncio y `utm_term` con el conjunto) y, al final, **Cuándo empezar** (Esta semana, En las próximas semanas o Solo quiero información). Nada más: ni IDs, ni referrer, ni dispositivo, ni tiempos.
+- **Cuándo empezar** se añadió el 11/11/2026 como última columna para no mover nada: la primera vez que llega un lead con el código nuevo, el script pone la cabecera solo; los leads anteriores se quedan como estaban (con esa celda vacía). Ese dato no es obligatorio en el servidor, así que un formulario antiguo abierto en un móvil sigue guardando bien.
 - **Estado:** desplegable con colores (Nuevo, Contactado, No contesta, Videollamada agendada, Videollamada hecha, Alumna, Descartada). Cada lead entra como Nuevo.
 - **Contador:** hoja aparte que se actualiza sola con fórmulas: total de leads, hoy, ayer, últimos 7 días, últimos 30 días y cuántos hay en cada estado. No hay que tocarla.
 - Valida los datos, neutraliza fórmulas inyectadas, usa `LockService`, no duplica el mismo teléfono en 10 minutos y descarta en silencio el campo trampa (honeypot) de los bots.

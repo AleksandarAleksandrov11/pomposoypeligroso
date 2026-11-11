@@ -115,7 +115,12 @@ test('texto de WhatsApp tras enviar', () => {
     whatsappMessage({ ...base, fromFaq: true }),
     'Hola, soy María José. Acabo de rellenar el formulario de Pomposo y Peligroso. Edad: De 40 a 49. Experiencia: Menos de 1 año. Quiero información sobre el programa. Tengo una duda: ',
   );
-  const err = whatsappErrorMessage({ ...base, phone: '+34612345678' });
+  assert.equal(
+    whatsappMessage({ ...base, start_when: 'Esta semana' }),
+    'Hola, soy María José. Acabo de rellenar el formulario de Pomposo y Peligroso. Edad: De 40 a 49. Experiencia: Menos de 1 año. Cuándo quiero empezar: Esta semana. Quiero información sobre el programa.',
+  );
+  const err = whatsappErrorMessage({ ...base, phone: '+34612345678', start_when: 'En las próximas semanas' });
+  assert.match(err, /Cuándo quiero empezar: En las próximas semanas\./);
   assert.match(err, /no se ha enviado/);
   assert.match(err, /\+34612345678/);
   assert.match(err, /De 40 a 49/);

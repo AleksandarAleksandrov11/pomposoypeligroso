@@ -4,6 +4,8 @@ import { SITE } from '../config/site';
 
 const ages = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
 const experience = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
+// Pregunta de compromiso: separa a quien quiere empezar de quien solo mira (mismas opciones que START_OPTIONS en src/lib/lead.ts)
+const starts = ['Esta semana', 'En las próximas semanas', 'Solo quiero información'];
 const prefixes: [string, string][] = [
   ['+34', 'España'],
   ['+351', 'Portugal'],
@@ -38,7 +40,7 @@ const prefixes: [string, string][] = [
           <button type="button" class="lead-form__back" data-back hidden>
             <Icon name="chevron-left" size={18} /> Atrás
           </button>
-          <p class="lead-form__count" aria-hidden="true"><span data-step-count>1</span>/4</p>
+          <p class="lead-form__count" aria-hidden="true"><span data-step-count>1</span>/5</p>
         </div>
         <div class="lead-form__progress" aria-hidden="true"><span data-progress></span></div>
         <p class="visually-hidden" aria-live="polite" data-live></p>
@@ -72,7 +74,21 @@ const prefixes: [string, string][] = [
             </div>
           </fieldset>
 
-          <div class="step" data-step="3" inert aria-hidden="true">
+          <fieldset class="step" data-step="3" inert aria-hidden="true">
+            <legend><span class="step__title" tabindex="-1" data-step-title>¿Cuándo quieres empezar?</span></legend>
+            <div class="options">
+              {
+                starts.map((a) => (
+                  <label class="option">
+                    <input type="radio" name="start_when" value={a} required />
+                    <span>{a}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="step" data-step="4" inert aria-hidden="true">
             <label for="lf-name" class="step__title" tabindex="-1" data-step-title>¿Cómo te llamas?</label>
             <input
               class="field"
@@ -93,7 +109,7 @@ const prefixes: [string, string][] = [
             <button type="button" class="btn btn--block step__next" data-next-name>Siguiente</button>
           </div>
 
-          <div class="step" data-step="4" inert aria-hidden="true">
+          <div class="step" data-step="5" inert aria-hidden="true">
             <label for="lf-phone" class="step__title" tabindex="-1" data-step-title>¿A qué número te contactamos?</label>
             <div class="phone-row">
               <div class="prefix">

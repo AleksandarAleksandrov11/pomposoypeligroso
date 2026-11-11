@@ -10,7 +10,8 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const code = fs.readFileSync(path.join(here, '..', 'Code.gs'), 'utf8');
 
-const N_COLS = 11;
+const N_COLS = 12;
+const HEADERS_12 = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'Cuándo empezar'];
 
 /* ---------- Simulación de una hoja en memoria ---------- */
 class FakeRange {
@@ -37,11 +38,20 @@ class FakeRange {
     for (let r = 0; r < this.nr; r++) for (let c = 0; c < this.nc; c++) this.sheet.cell(this.row + r, this.col + c).fmt = fmt;
     return this;
   }
+  getValue() { return this.sheet.cell(this.row, this.col).v ?? ''; }
+  setValue(v) { this.sheet.cell(this.row, this.col).v = v; return this; }
+  setFontWeight() { return this; }
+  setFontColor() { return this; }
+  setBackground() { return this; }
+  setVerticalAlignment() { return this; }
 }
 class FakeSheet {
   constructor(name) { this.name = name; this.cells = new Map(); }
   cell(r, c) { const k = `${r},${c}`; if (!this.cells.has(k)) this.cells.set(k, {}); return this.cells.get(k); }
   getMaxRows() { return this.maxRows ?? 1000; }
+  getMaxColumns() { return this.maxColumns ?? 26; }
+  insertColumnsAfter(_after, n) { this.maxColumns = this.getMaxColumns() + n; }
+  setColumnWidth() {}
   insertRowsAfter(_after, n) { this.maxRows = this.getMaxRows() + n; this.inserted = n; }
   getLastRow() { let m = 0; for (const [k, v] of this.cells) if (v.v !== undefined && v.v !== '' || v.f) m = Math.max(m, +k.split(',')[0]); return m; }
   getRange(r, c, nr, nc) { return new FakeRange(this, r, c, nr, nc); }
@@ -65,9 +75,10 @@ function chainable(log, overrides = {}) {
   return proxy;
 }
 
+/** La hoja como está hoy en producción: 11 columnas, sin "Cuándo empezar". */
 function makeLeadsSheet() {
   const sh = new FakeSheet('Leads');
-  for (let c = 1; c <= N_COLS; c++) sh.cell(1, c).v = `col${c}`;
+  HEADERS_12.slice(0, 11).forEach((h, i) => (sh.cell(1, i + 1).v = h));
   return sh;
 }
 
@@ -156,12 +167,12 @@ test('validateLead_ rechaza datos fuera de los valores permitidos', () => {
   assert.equal(ctx.validateLead_(null).error, 'invalid_payload');
 });
 
-test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado y los cinco utm', () => {
+test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado, los cinco utm y al final cuándo empezar', () => {
   const { ctx } = makeContext();
   assert.equal(ctx.COLUMNS.length, N_COLS);
   assert.deepEqual(
     JSON.parse(JSON.stringify(ctx.COLUMNS)).map((c) => c[0]),
-    ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+    HEADERS_12,
   );
 });
 
@@ -177,7 +188,37 @@ test('buildRow_ devuelve las columnas en el orden de la hoja', () => {
   assert.equal(row[3], 'De 30 a 39');
   assert.equal(row[4], 'Nunca he entrenado');
   assert.equal(row[5], 'Nuevo');
-  assert.equal(row.slice(6).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
+  assert.equal(row.slice(6, 11).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
+  assert.equal(row[11], '', 'sin respuesta (formulario anterior): celda vacía');
+  const withStart = ctx.buildRow_(ctx.validateLead_({ ...valid(), start_when: 'Esta semana' }).lead, when);
+  assert.equal(withStart[11], 'Esta semana');
+});
+
+test('cuándo empezar: opcional, pero si viene tiene que ser una de las tres opciones', () => {
+  const { ctx } = makeContext();
+  for (const v of ['Esta semana', 'En las próximas semanas', 'Solo quiero información', '', undefined, null]) {
+    assert.equal(ctx.validateLead_({ ...valid(), start_when: v }).ok, true, String(v));
+  }
+  assert.equal(ctx.validateLead_({ ...valid(), start_when: 'Mañana' }).error, 'invalid_start_when');
+  assert.equal(ctx.validateLead_({ ...valid(), start_when: '=HYPERLINK("x")' }).error, 'invalid_start_when');
+});
+
+test('doPost en la hoja actual añade la cabecera "Cuándo empezar" al final sin tocar lo que hay', () => {
+  const { ctx, leadsSheet } = makeContext();
+  leadsSheet.cell(2, 1).v = new Date(Date.now() - 3600_000);
+  leadsSheet.cell(2, 2).v = 'Lead anterior';
+  leadsSheet.cell(2, 3).v = '+34699999999';
+  leadsSheet.cell(2, 6).v = 'Contactado';
+  post(ctx, { ...valid(), start_when: 'En las próximas semanas' });
+  assert.deepEqual(leadsSheet.row(1), HEADERS_12);
+  assert.equal(leadsSheet.cell(2, 2).v, 'Lead anterior', 'los leads anteriores no cambian');
+  assert.equal(leadsSheet.cell(2, 6).v, 'Contactado');
+  assert.equal(leadsSheet.cell(2, 12).v, undefined, 'a los anteriores no se les añade nada');
+  assert.equal(leadsSheet.row(3)[11], 'En las próximas semanas');
+  // La segunda vez la cabecera ya está y no se toca
+  post(ctx, { ...valid(), phone: '+34688888888', start_when: 'Esta semana' });
+  assert.deepEqual(leadsSheet.row(1), HEADERS_12);
+  assert.equal(leadsSheet.row(4)[11], 'Esta semana');
 });
 
 /* ---------- doGet / doPost ---------- */
@@ -254,6 +295,7 @@ test('doPost avisa por email a aaswebmarketing@gmail.com', () => {
   assert.equal(mails[0].to, 'aaswebmarketing@gmail.com');
   assert.match(mails[0].body, /wa\.me\/34612345678/);
   assert.match(mails[0].body, /Anuncio: Anuncio 1/);
+  assert.match(mails[0].body, /Cuándo quiere empezar: \(sin respuesta\)/);
   assert.match(mails[0].subject, /María José/);
 });
 
@@ -276,7 +318,7 @@ test('doPost añade filas si la hoja se queda sin espacio', () => {
 });
 
 /* ---------- setup ---------- */
-const NEW_HEADERS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+const NEW_HEADERS = HEADERS_12;
 const PREVIOUS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
 test('setup() crea las hojas Leads y Contador cuando no existen', () => {
@@ -330,6 +372,23 @@ test('setup() con el diseño original lo limpia y quita el Resumen', () => {
   assert.ok(log.calls.includes('clearDataValidations'));
   assert.ok(log.calls.includes('deleteColumns'));
   assert.ok(log.calls.includes('deleteSheet:Resumen'));
+});
+
+test('setup() con la hoja de 11 columnas de ahora solo añade la cabecera nueva, sin borrar ni mover nada', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: HEADERS_12.slice(0, 11) } });
+  ctx.setup();
+  assert.ok(!log.calls.includes('insertColumnBefore'));
+  assert.ok(!log.calls.includes('clear') || log.calls.filter((c) => c === 'clear').length === 1, 'solo limpia el contador');
+  assert.ok(!log.calls.includes('clearDataValidations'));
+  assert.ok(!log.calls.includes('deleteColumns'));
+  assert.ok(log.args.some(([m, a]) => m === 'setValues' && JSON.stringify(a[0]) === JSON.stringify([HEADERS_12])), 'escribe las 12 cabeceras');
+});
+
+test('setup() con columnas que no reconoce no toca nada', () => {
+  const { ctx, log } = makeContext({ setupMode: { existing: ['Algo', 'Distinto'] } });
+  assert.throws(() => ctx.setup(), /no se reconocen/);
+  assert.ok(!log.calls.includes('clear'));
+  assert.ok(!log.calls.includes('deleteColumns'));
 });
 
 test('setup() con la hoja ya actual conserva los leads', () => {

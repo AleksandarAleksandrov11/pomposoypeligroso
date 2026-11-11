@@ -67,16 +67,21 @@ export async function chooseCookies(page, action) {
   await page.locator('[data-cookie-banner]').waitFor({ state: 'hidden' });
 }
 
-/** Rellena los 4 pasos (sin enviar). */
-export async function fillForm(page, { age = 'De 30 a 39', experience = 'Nunca he entrenado', name = 'María José', phone = '612 345 678' } = {}) {
+/** Rellena los 5 pasos (sin enviar). */
+export async function fillForm(
+  page,
+  { age = 'De 30 a 39', experience = 'Nunca he entrenado', start = 'Esta semana', name = 'María José', phone = '612 345 678' } = {},
+) {
   await page.locator('#formulario').scrollIntoViewIfNeeded();
   await page.locator('label.option', { hasText: age }).click();
   await page.locator('[data-step="2"].is-active').waitFor();
   await page.locator('label.option', { hasText: experience }).click();
   await page.locator('[data-step="3"].is-active').waitFor();
+  await page.locator('label.option', { hasText: start }).click();
+  await page.locator('[data-step="4"].is-active').waitFor();
   await page.locator('#lf-name').fill(name);
   await page.locator('[data-next-name]').click();
-  await page.locator('[data-step="4"].is-active').waitFor();
+  await page.locator('[data-step="5"].is-active').waitFor();
   await page.locator('#lf-phone').fill(phone);
 }
 

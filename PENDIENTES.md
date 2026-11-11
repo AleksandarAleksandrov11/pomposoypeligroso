@@ -4,6 +4,8 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 ## Lo hace Aleks fuera del código
 
+- [ ] **Pegar el Apps Script nuevo** (`apps-script/Code.gs`, pregunta "¿Cuándo quieres empezar?"): Apps Script, borrar todo, pegar y guardar; luego **Implementar → Gestionar implementaciones → lápiz → Versión: Nueva versión → Implementar** (la URL no cambia). No hace falta ejecutar `setup`. Hasta que se haga, los leads se siguen guardando igual, solo que sin esa respuesta.
+
 - [x] Campaña de cierre: se llama CERRAR y ya ve el hero de cierre (`src/data/ad-variants.ts`).
 
 - [ ] **Token de la API de conversiones**: poner `META_CAPI_TOKEN` en Vercel (Settings, Environment Variables, Production) y volver a desplegar. Se genera en el Administrador de eventos de Meta: píxel 1162548892864094, Configuración, API de conversiones, Generar token de acceso. Opcional mientras se prueba: `META_TEST_EVENT_CODE` (y quitarlo después). Sin token la web funciona igual, solo que sin API de conversiones. Nunca en el repo ni en el chat.
