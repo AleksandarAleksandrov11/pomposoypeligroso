@@ -18,6 +18,8 @@ import {
   uuidv4,
   fbcFromFbclid,
   COUNTRY_BY_PREFIX,
+  START_OPTIONS,
+  INVESTMENT_OPTIONS,
 } from '../../src/lib/lead.ts';
 import { pickVariant, pickPreselect, AD_PRESELECT, DEFAULT_VARIANT } from '../../src/data/ad-variants.ts';
 import { COUNTRY_BY_PREFIX as SERVER_COUNTRIES } from '../../api/_lib/capi.js';
@@ -153,4 +155,15 @@ test('versión del inicio según el anuncio', () => {
 test('preselección por anuncio: tabla preparada y vacía', () => {
   assert.equal(AD_PRESELECT.length, 0);
   assert.equal(pickPreselect('cualquier_anuncio'), null);
+});
+
+test('las opciones de cuándo empezar e inversión son las mismas en la web, el formulario y el Apps Script', async () => {
+  const fs = await import('node:fs');
+  const gs = fs.readFileSync(new URL('../../apps-script/Code.gs', import.meta.url), 'utf8');
+  const form = fs.readFileSync(new URL('../../src/components/LeadForm.astro', import.meta.url), 'utf8');
+  const listIn = (src, re) => JSON.parse(src.match(re)[1].replace(/'/g, '"'));
+  assert.deepEqual(listIn(gs, /var START_OPTIONS = (\[[^\]]*\]);/), [...START_OPTIONS]);
+  assert.deepEqual(listIn(gs, /var INVESTMENT_OPTIONS = (\[[^\]]*\]);/), [...INVESTMENT_OPTIONS]);
+  assert.deepEqual(listIn(form, /const starts = (\[[^\]]*\]);/), [...START_OPTIONS]);
+  assert.deepEqual(listIn(form, /const investments = (\[[^\]]*\]);/), [...INVESTMENT_OPTIONS]);
 });

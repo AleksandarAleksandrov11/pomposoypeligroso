@@ -20,6 +20,8 @@ export default defineConfig({
     baseURL: BASE_URL,
     locale: 'es-ES',
     timezoneId: 'Europe/Madrid',
+    // PW_CHROMIUM_PATH=/ruta/al/chromium usa un navegador ya instalado si no coincide con la versión de Playwright
+    ...(process.env.PW_CHROMIUM_PATH ? { launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH } } : {}),
   },
   projects: [
     {

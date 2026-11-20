@@ -9,7 +9,7 @@ test('las legales se abren en otra pestaña desde el banner, el modal, el formul
   // Banner: "Más información"
   let popup = context.waitForEvent('page');
   await page.locator('[data-cookie-banner] a').click();
-  expect((await popup).url()).toMatch(/\/cookies$/);
+  await (await popup).waitForURL(/\/cookies$/);
   await (await popup).close();
 
   // Modal: "Política de cookies"
@@ -17,7 +17,7 @@ test('las legales se abren en otra pestaña desde el banner, el modal, el formul
   await expect(page.locator('[data-cookie-modal]')).toBeVisible();
   popup = context.waitForEvent('page');
   await page.locator('[data-cookie-modal] a[href="/cookies"]').click();
-  expect((await popup).url()).toMatch(/\/cookies$/);
+  await (await popup).waitForURL(/\/cookies$/);
   await (await popup).close();
   await page.locator('[data-cookie-close]').click();
   await chooseCookies(page, 'reject');
@@ -27,14 +27,15 @@ test('las legales se abren en otra pestaña desde el banner, el modal, el formul
   await page.locator('label.option', { hasText: 'De 30 a 39' }).click();
   await page.locator('label.option', { hasText: 'Nunca he entrenado' }).click();
   await page.locator('label.option', { hasText: 'En las próximas semanas' }).click();
+  await page.locator('label.option', { hasText: 'Sí, pero quiero saber el precio antes' }).click();
   await page.locator('#lf-name').fill('Lucía');
   await page.locator('[data-next-name]').click();
-  await page.locator('[data-step="5"].is-active').waitFor();
+  await page.locator('[data-step="6"].is-active').waitFor();
   popup = context.waitForEvent('page');
-  await page.locator('[data-step="5"] .consent a').click();
-  expect((await popup).url()).toMatch(/\/privacidad$/);
+  await page.locator('[data-step="6"] .consent a').click();
+  await (await popup).waitForURL(/\/privacidad$/);
   await (await popup).close();
-  await expect(page.locator('[data-step="5"]')).toHaveClass(/is-active/);
+  await expect(page.locator('[data-step="6"]')).toHaveClass(/is-active/);
   expect(page.url()).toMatch(/\/(#formulario)?$/);
 
   // Footer
@@ -45,7 +46,7 @@ test('las legales se abren en otra pestaña desde el banner, el modal, el formul
   ]) {
     popup = context.waitForEvent('page');
     await page.locator('.site-footer a', { hasText: text }).click();
-    expect((await popup).url()).toMatch(new RegExp(`${path}$`));
+    await (await popup).waitForURL(new RegExp(`${path}$`));
     await (await popup).close();
   }
   await expect(page.locator('#lf-name')).toHaveValue('Lucía');

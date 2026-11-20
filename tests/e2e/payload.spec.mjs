@@ -11,6 +11,7 @@ for (const consent of ['reject', 'accept']) {
       age: FIXTURE.input.age_range,
       experience: FIXTURE.input.experience,
       start: FIXTURE.input.start_when,
+      investment: FIXTURE.input.investment,
       name: FIXTURE.input.name,
       phone: FIXTURE.input.phone,
     });

@@ -11,6 +11,7 @@ var SHEET_COUNTER = 'Contador';
 var AGE_OPTIONS = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o más'];
 var EXPERIENCE_OPTIONS = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
 var START_OPTIONS = ['Esta semana', 'En las próximas semanas', 'Solo quiero información'];
+var INVESTMENT_OPTIONS = ['Sí, si el programa encaja conmigo', 'Sí, pero quiero saber el precio antes', 'Ahora mismo no puedo invertir'];
 
 var STATUS_OPTIONS = ['Nuevo', 'Contactado', 'No contesta', 'Videollamada agendada', 'Videollamada hecha', 'Alumna', 'Descartada'];
 
@@ -35,6 +36,7 @@ var BRAND = {
 
 var PREVIOUS_HEADERS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 var HEADERS_11 = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+var HEADERS_12 = HEADERS_11.concat(['Cuándo empezar']);
 var ORIGINAL_HEADERS_START = 'Fecha|Hora|ID lead';
 
 var COLUMNS = [
@@ -49,12 +51,13 @@ var COLUMNS = [
   ['utm_campaign', 170],
   ['utm_content', 170],
   ['utm_term', 160],
-  ['Cuándo empezar', 180]
+  ['Cuándo empezar', 180],
+  ['Inversión', 250]
 ];
 
 var COL = {
   fecha: 1, nombre: 2, telefono: 3, edad: 4, experiencia: 5, estado: 6,
-  utm_source: 7, utm_medium: 8, utm_campaign: 9, utm_content: 10, utm_term: 11, empezar: 12
+  utm_source: 7, utm_medium: 8, utm_campaign: 9, utm_content: 10, utm_term: 11, empezar: 12, inversion: 13
 };
 
 function doGet() {
@@ -84,7 +87,7 @@ function doPost(e) {
     lock.waitLock(20000);
     try {
       var sheet = getLeadsSheet_();
-      ensureStartColumn_(sheet);
+      ensureExtraColumns_(sheet);
       if (isRecentDuplicate_(sheet, lead.phone, now)) return json_({ ok: true, duplicate: true });
 
       var row = buildRow_(lead, now);
@@ -141,6 +144,8 @@ function validateLead_(d) {
   if (EXPERIENCE_OPTIONS.indexOf(d.experience) === -1) return { ok: false, error: 'invalid_experience' };
   var start = d.start_when === undefined || d.start_when === null ? '' : d.start_when;
   if (start !== '' && START_OPTIONS.indexOf(start) === -1) return { ok: false, error: 'invalid_start_when' };
+  var investment = d.investment === undefined || d.investment === null ? '' : d.investment;
+  if (investment !== '' && INVESTMENT_OPTIONS.indexOf(investment) === -1) return { ok: false, error: 'invalid_investment' };
 
   return {
     ok: true,
@@ -150,6 +155,7 @@ function validateLead_(d) {
       age_range: d.age_range,
       experience: d.experience,
       start_when: start,
+      investment: investment,
       utm_source: sanitize_(d.utm_source, 200),
       utm_medium: sanitize_(d.utm_medium, 200),
       utm_campaign: sanitize_(d.utm_campaign, 300),
@@ -174,6 +180,7 @@ function buildRow_(l, now) {
   row[COL.utm_content - 1] = l.utm_content;
   row[COL.utm_term - 1] = l.utm_term;
   row[COL.empezar - 1] = l.start_when;
+  row[COL.inversion - 1] = l.investment;
   return row;
 }
 
@@ -191,17 +198,20 @@ function getLeadsSheet_() {
   return sheet;
 }
 
-function ensureStartColumn_(sheet) {
-  if (sheet.getMaxColumns() < COL.empezar) sheet.insertColumnsAfter(sheet.getMaxColumns(), COL.empezar - sheet.getMaxColumns());
-  var header = sheet.getRange(1, COL.empezar);
-  if (header.getValue() === COLUMNS[COL.empezar - 1][0]) return;
-  header
-    .setValue(COLUMNS[COL.empezar - 1][0])
-    .setFontWeight('bold')
-    .setFontColor(BRAND.white)
-    .setBackground(BRAND.purpleDark)
-    .setVerticalAlignment('middle');
-  sheet.setColumnWidth(COL.empezar, COLUMNS[COL.empezar - 1][1]);
+function ensureExtraColumns_(sheet) {
+  var lastCol = COLUMNS.length;
+  if (sheet.getMaxColumns() < lastCol) sheet.insertColumnsAfter(sheet.getMaxColumns(), lastCol - sheet.getMaxColumns());
+  [COL.empezar, COL.inversion].forEach(function (col) {
+    var header = sheet.getRange(1, col);
+    if (header.getValue() === COLUMNS[col - 1][0]) return;
+    header
+      .setValue(COLUMNS[col - 1][0])
+      .setFontWeight('bold')
+      .setFontColor(BRAND.white)
+      .setBackground(BRAND.purpleDark)
+      .setVerticalAlignment('middle');
+    sheet.setColumnWidth(col, COLUMNS[col - 1][1]);
+  });
 }
 
 function isRecentDuplicate_(sheet, phone, now) {
@@ -230,6 +240,7 @@ function notify_(l) {
     'Edad: ' + l.age_range,
     'Experiencia: ' + l.experience,
     'Cuándo quiere empezar: ' + (l.start_when || '(sin respuesta)'),
+    'Inversión: ' + (l.investment || '(sin respuesta)'),
     'Anuncio: ' + (l.utm_content || '(sin anuncio)'),
     'Campaña: ' + (l.utm_campaign || '(sin campaña)'),
     '',
@@ -267,7 +278,7 @@ function setup() {
   } else {
     var key = headerKey_(sheet);
     var current = COLUMNS.map(function (c) { return c[0]; }).join('|');
-    var known = key === current || key === HEADERS_11.join('|');
+    var known = key === current || key === HEADERS_11.join('|') || key === HEADERS_12.join('|');
     if (!known) {
       if (key === PREVIOUS_HEADERS.join('|')) {
         var filterBefore = sheet.getFilter();

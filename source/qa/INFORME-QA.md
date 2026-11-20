@@ -1,5 +1,13 @@
 # Informe de QA
 
+## Pregunta de inversión · 20/11/2026
+
+Cambios: paso nuevo "¿Estás dispuesta a invertir en tu cambio?" (paso 4 de 6) y aviso encima del formulario de que es un programa de pago de 12 semanas con 3 o 4 entrenos semanales. El formulario envía `investment` y el Apps Script lo guarda en la columna 13 ("Inversión"), que añade solo al final con el primer lead; no borra ni mueve nada y sigue aceptando envíos sin ese dato.
+
+- `npm test`: 21 pruebas unitarias (incluida la de opciones iguales en la web, el formulario y el Apps Script), 28 del Apps Script (hoja de 11 y de 12 columnas sin tocar los leads anteriores, `setup` sin borrar nada) y 10 de fugas. Todas en verde.
+- `npm run test:e2e`: 49 en verde y 3 que solo aplican a un dispositivo, con todo lo externo interceptado. Ningún envío real.
+- Capturas del recorrido de 6 pasos en `capturas/`.
+
 ## Optimización de leads · 28/10/2026
 
 Cambios: API de conversiones (`api/lead-capi.js`), un solo `Lead` por solicitud con `event_id` estable, `FormStep` sin repeticiones y `FormError`, cero fugas antes de enviar, estado de gracias con WhatsApp automático en móvil, casilla de privacidad sustituida por un aviso, hero según el anuncio y atribución que no se pierde al recargar. El Apps Script y la hoja no se han tocado.

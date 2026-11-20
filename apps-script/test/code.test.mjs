@@ -10,8 +10,10 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const code = fs.readFileSync(path.join(here, '..', 'Code.gs'), 'utf8');
 
-const N_COLS = 12;
-const HEADERS_12 = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'Cuándo empezar'];
+const N_COLS = 13;
+const HEADERS_13 = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'Estado', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'Cuándo empezar', 'Inversión'];
+const HEADERS_12 = HEADERS_13.slice(0, 12);
+const INVESTMENTS = ['Sí, si el programa encaja conmigo', 'Sí, pero quiero saber el precio antes', 'Ahora mismo no puedo invertir'];
 
 /* ---------- Simulación de una hoja en memoria ---------- */
 class FakeRange {
@@ -75,10 +77,10 @@ function chainable(log, overrides = {}) {
   return proxy;
 }
 
-/** La hoja como está hoy en producción: 11 columnas, sin "Cuándo empezar". */
-function makeLeadsSheet() {
+/** La hoja como está hoy en producción: 12 columnas, con "Cuándo empezar" y sin "Inversión". */
+function makeLeadsSheet(headers = HEADERS_12) {
   const sh = new FakeSheet('Leads');
-  HEADERS_12.slice(0, 11).forEach((h, i) => (sh.cell(1, i + 1).v = h));
+  headers.forEach((h, i) => (sh.cell(1, i + 1).v = h));
   return sh;
 }
 
@@ -167,12 +169,12 @@ test('validateLead_ rechaza datos fuera de los valores permitidos', () => {
   assert.equal(ctx.validateLead_(null).error, 'invalid_payload');
 });
 
-test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado, los cinco utm y al final cuándo empezar', () => {
+test('la hoja tiene fecha y hora juntas, los datos del formulario, el estado, los cinco utm y al final cuándo empezar e inversión', () => {
   const { ctx } = makeContext();
   assert.equal(ctx.COLUMNS.length, N_COLS);
   assert.deepEqual(
     JSON.parse(JSON.stringify(ctx.COLUMNS)).map((c) => c[0]),
-    HEADERS_12,
+    HEADERS_13,
   );
 });
 
@@ -190,8 +192,10 @@ test('buildRow_ devuelve las columnas en el orden de la hoja', () => {
   assert.equal(row[5], 'Nuevo');
   assert.equal(row.slice(6, 11).join('|'), 'ig|paid_social|Captación octubre|Anuncio 1|Mujeres 30-45');
   assert.equal(row[11], '', 'sin respuesta (formulario anterior): celda vacía');
-  const withStart = ctx.buildRow_(ctx.validateLead_({ ...valid(), start_when: 'Esta semana' }).lead, when);
+  assert.equal(row[12], '', 'sin respuesta de inversión: celda vacía');
+  const withStart = ctx.buildRow_(ctx.validateLead_({ ...valid(), start_when: 'Esta semana', investment: INVESTMENTS[1] }).lead, when);
   assert.equal(withStart[11], 'Esta semana');
+  assert.equal(withStart[12], INVESTMENTS[1]);
 });
 
 test('cuándo empezar: opcional, pero si viene tiene que ser una de las tres opciones', () => {
@@ -203,22 +207,53 @@ test('cuándo empezar: opcional, pero si viene tiene que ser una de las tres opc
   assert.equal(ctx.validateLead_({ ...valid(), start_when: '=HYPERLINK("x")' }).error, 'invalid_start_when');
 });
 
-test('doPost en la hoja actual añade la cabecera "Cuándo empezar" al final sin tocar lo que hay', () => {
-  const { ctx, leadsSheet } = makeContext();
+test('inversión: opcional, pero si viene tiene que ser una de las tres opciones', () => {
+  const { ctx } = makeContext();
+  for (const v of [...INVESTMENTS, '', undefined, null]) {
+    assert.equal(ctx.validateLead_({ ...valid(), investment: v }).ok, true, String(v));
+  }
+  assert.equal(ctx.validateLead_({ ...valid(), investment: 'Mucho' }).error, 'invalid_investment');
+  assert.equal(ctx.validateLead_({ ...valid(), investment: '=HYPERLINK("x")' }).error, 'invalid_investment');
+});
+
+test('doPost en la hoja de 11 columnas añade "Cuándo empezar" e "Inversión" al final sin tocar lo que hay', () => {
+  const { ctx, leadsSheet } = makeContext({ leadsSheet: makeLeadsSheet(HEADERS_13.slice(0, 11)) });
   leadsSheet.cell(2, 1).v = new Date(Date.now() - 3600_000);
   leadsSheet.cell(2, 2).v = 'Lead anterior';
   leadsSheet.cell(2, 3).v = '+34699999999';
   leadsSheet.cell(2, 6).v = 'Contactado';
   post(ctx, { ...valid(), start_when: 'En las próximas semanas' });
-  assert.deepEqual(leadsSheet.row(1), HEADERS_12);
+  assert.deepEqual(leadsSheet.row(1), HEADERS_13);
   assert.equal(leadsSheet.cell(2, 2).v, 'Lead anterior', 'los leads anteriores no cambian');
   assert.equal(leadsSheet.cell(2, 6).v, 'Contactado');
   assert.equal(leadsSheet.cell(2, 12).v, undefined, 'a los anteriores no se les añade nada');
   assert.equal(leadsSheet.row(3)[11], 'En las próximas semanas');
   // La segunda vez la cabecera ya está y no se toca
   post(ctx, { ...valid(), phone: '+34688888888', start_when: 'Esta semana' });
-  assert.deepEqual(leadsSheet.row(1), HEADERS_12);
+  assert.deepEqual(leadsSheet.row(1), HEADERS_13);
   assert.equal(leadsSheet.row(4)[11], 'Esta semana');
+});
+
+test('doPost en la hoja actual de 12 columnas añade la cabecera "Inversión" al final sin tocar lo que hay', () => {
+  const { ctx, leadsSheet } = makeContext();
+  leadsSheet.cell(2, 1).v = new Date(Date.now() - 3600_000);
+  leadsSheet.cell(2, 2).v = 'Lead anterior';
+  leadsSheet.cell(2, 3).v = '+34699999999';
+  leadsSheet.cell(2, 6).v = 'Contactado';
+  leadsSheet.cell(2, 12).v = 'Esta semana';
+  post(ctx, { ...valid(), start_when: 'Solo quiero información', investment: INVESTMENTS[2] });
+  assert.deepEqual(leadsSheet.row(1), HEADERS_13);
+  assert.deepEqual(leadsSheet.row(2).slice(0, 12).map((v) => (v instanceof Date ? 'fecha' : v)),
+    ['fecha', 'Lead anterior', '+34699999999', undefined, undefined, 'Contactado', undefined, undefined, undefined, undefined, undefined, 'Esta semana'],
+    'los leads anteriores no cambian');
+  assert.equal(leadsSheet.cell(2, 13).v, undefined, 'a los anteriores no se les añade nada');
+  assert.equal(leadsSheet.row(3)[11], 'Solo quiero información');
+  assert.equal(leadsSheet.row(3)[12], INVESTMENTS[2]);
+  // Un formulario antiguo sin inversión sigue funcionando
+  const res = post(ctx, { ...valid(), phone: '+34688888888' });
+  assert.deepEqual(res, { ok: true });
+  assert.deepEqual(leadsSheet.row(1), HEADERS_13);
+  assert.equal(leadsSheet.row(4)[12], '');
 });
 
 /* ---------- doGet / doPost ---------- */
@@ -296,6 +331,9 @@ test('doPost avisa por email a aaswebmarketing@gmail.com', () => {
   assert.match(mails[0].body, /wa\.me\/34612345678/);
   assert.match(mails[0].body, /Anuncio: Anuncio 1/);
   assert.match(mails[0].body, /Cuándo quiere empezar: \(sin respuesta\)/);
+  assert.match(mails[0].body, /Inversión: \(sin respuesta\)/);
+  post(ctx, { ...valid(), phone: '+34699999999', investment: INVESTMENTS[1] });
+  assert.match(mails[1].body, /Inversión: Sí, pero quiero saber el precio antes/);
   assert.match(mails[0].subject, /María José/);
 });
 
@@ -318,7 +356,7 @@ test('doPost añade filas si la hoja se queda sin espacio', () => {
 });
 
 /* ---------- setup ---------- */
-const NEW_HEADERS = HEADERS_12;
+const NEW_HEADERS = HEADERS_13;
 const PREVIOUS = ['Fecha y hora', 'Nombre', 'Teléfono', 'Edad', 'Experiencia', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
 test('setup() crea las hojas Leads y Contador cuando no existen', () => {
@@ -374,15 +412,18 @@ test('setup() con el diseño original lo limpia y quita el Resumen', () => {
   assert.ok(log.calls.includes('deleteSheet:Resumen'));
 });
 
-test('setup() con la hoja de 11 columnas de ahora solo añade la cabecera nueva, sin borrar ni mover nada', () => {
-  const { ctx, log } = makeContext({ setupMode: { existing: HEADERS_12.slice(0, 11) } });
-  ctx.setup();
-  assert.ok(!log.calls.includes('insertColumnBefore'));
-  assert.ok(!log.calls.includes('clear') || log.calls.filter((c) => c === 'clear').length === 1, 'solo limpia el contador');
-  assert.ok(!log.calls.includes('clearDataValidations'));
-  assert.ok(!log.calls.includes('deleteColumns'));
-  assert.ok(log.args.some(([m, a]) => m === 'setValues' && JSON.stringify(a[0]) === JSON.stringify([HEADERS_12])), 'escribe las 12 cabeceras');
-});
+for (const n of [11, 12]) {
+  test(`setup() con la hoja de ${n} columnas solo añade las cabeceras nuevas, sin borrar ni mover nada`, () => {
+    const { ctx, log } = makeContext({ setupMode: { existing: HEADERS_13.slice(0, n) } });
+    ctx.setup();
+    assert.ok(!log.calls.includes('insertColumnBefore'));
+    assert.ok(!log.calls.includes('clear') || log.calls.filter((c) => c === 'clear').length === 1, 'solo limpia el contador');
+    assert.ok(!log.calls.includes('clearDataValidations'));
+    assert.ok(!log.calls.includes('deleteColumns'));
+    assert.ok(!log.calls.includes('deleteSheet:Resumen'));
+    assert.ok(log.args.some(([m, a]) => m === 'setValues' && JSON.stringify(a[0]) === JSON.stringify([HEADERS_13])), 'escribe las 13 cabeceras');
+  });
+}
 
 test('setup() con columnas que no reconoce no toca nada', () => {
   const { ctx, log } = makeContext({ setupMode: { existing: ['Algo', 'Distinto'] } });

@@ -36,8 +36,8 @@ test('aceptando cookies: 1 Lead con el mismo event_id que la CAPI y el Apps Scri
 
   // Embudo
   expect(fbqEvents(log, 'FormStart').length).toBe(1);
-  expect(fbqEvents(log, 'FormStep').map((c) => c.args[2].step)).toEqual([1, 2, 3, 4, 5]);
-  expect(fbqEvents(log, 'FormStep').map((c) => c.args[2].step_name)).toEqual(['edad', 'experiencia', 'empezar', 'nombre', 'telefono']);
+  expect(fbqEvents(log, 'FormStep').map((c) => c.args[2].step)).toEqual([1, 2, 3, 4, 5, 6]);
+  expect(fbqEvents(log, 'FormStep').map((c) => c.args[2].step_name)).toEqual(['edad', 'experiencia', 'empezar', 'inversion', 'nombre', 'telefono']);
   expect(fbqEvents(log, 'ViewContent').length).toBe(1);
   expect(log.external).toEqual([]);
   expect(errors, 'sin errores de consola ni de CSP').toEqual([]);
@@ -98,7 +98,7 @@ test('un error en el teléfono dispara FormError una sola vez por campo y paso',
   await page.waitForTimeout(300);
   const errors = fbqEvents(log, 'FormError');
   expect(errors.length).toBe(1);
-  expect(errors[0].args[2]).toEqual({ step: 5, field: 'phone' });
+  expect(errors[0].args[2]).toEqual({ step: 6, field: 'phone' });
   expect(log.payloads.length).toBe(0);
 });
 
@@ -112,13 +112,15 @@ test('nombre con letras que el servidor no admite: error claro antes de enviar',
   await page.locator('[data-step="3"].is-active').waitFor();
   await page.locator('label.option', { hasText: 'Esta semana' }).click();
   await page.locator('[data-step="4"].is-active').waitFor();
+  await page.locator('label.option', { hasText: 'Sí, si el programa encaja conmigo' }).click();
+  await page.locator('[data-step="5"].is-active').waitFor();
   await page.locator('#lf-name').fill('Анна');
   await page.locator('[data-next-name]').click();
   await expect(page.locator('#lf-name-error')).toHaveText('Escribe tu nombre sin caracteres especiales.');
   await page.locator('#lf-name').fill('A');
   await page.locator('[data-next-name]').click();
   await expect(page.locator('#lf-name-error')).toHaveText('Escribe tu nombre (mínimo 2 letras).');
-  expect(fbqEvents(log, 'FormError').map((c) => c.args[2])).toEqual([{ step: 4, field: 'name' }]);
+  expect(fbqEvents(log, 'FormError').map((c) => c.args[2])).toEqual([{ step: 5, field: 'name' }]);
 });
 
 test('un fallo y un reintento en la misma visita: mismo event_id y un solo Lead', async ({ page, context }) => {

@@ -6,6 +6,8 @@ const ages = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 59', '60 o má
 const experience = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'];
 // Pregunta de compromiso: separa a quien quiere empezar de quien solo mira (mismas opciones que START_OPTIONS en src/lib/lead.ts)
 const starts = ['Esta semana', 'En las próximas semanas', 'Solo quiero información'];
+// Pregunta de inversión: deja claro que es un programa de pago (mismas opciones que INVESTMENT_OPTIONS en src/lib/lead.ts)
+const investments = ['Sí, si el programa encaja conmigo', 'Sí, pero quiero saber el precio antes', 'Ahora mismo no puedo invertir'];
 const prefixes: [string, string][] = [
   ['+34', 'España'],
   ['+351', 'Portugal'],
@@ -28,6 +30,10 @@ const prefixes: [string, string][] = [
   <div class="container form-section__inner">
     <div class="section-head form-section__intro">
       <h2 id="form-title">Mira si encajas <span class="script script--low">cuéntanos sobre ti.</span></h2>
+      <p class="form-section__commit">
+        Es un programa de pago de 12 semanas con coach personal: 3 o 4 entrenos a la semana de unos 45 minutos. Pide tu plaza
+        si estás lista para comprometerte.
+      </p>
       <ul class="form-section__chips" role="list">
         <li><Icon name="check" size={16} /> Plazas limitadas</li>
         <li><Icon name="check" size={16} /> Videollamada sin compromiso</li>
@@ -40,7 +46,7 @@ const prefixes: [string, string][] = [
           <button type="button" class="lead-form__back" data-back hidden>
             <Icon name="chevron-left" size={18} /> Atrás
           </button>
-          <p class="lead-form__count" aria-hidden="true"><span data-step-count>1</span>/5</p>
+          <p class="lead-form__count" aria-hidden="true"><span data-step-count>1</span>/6</p>
         </div>
         <div class="lead-form__progress" aria-hidden="true"><span data-progress></span></div>
         <p class="visually-hidden" aria-live="polite" data-live></p>
@@ -88,7 +94,24 @@ const prefixes: [string, string][] = [
             </div>
           </fieldset>
 
-          <div class="step" data-step="4" inert aria-hidden="true">
+          <fieldset class="step" data-step="4" inert aria-hidden="true">
+            <legend>
+              <span class="step__title" tabindex="-1" data-step-title>¿Estás dispuesta a invertir en tu cambio?</span>
+              <span class="step__help">Es un programa de pago de 12 semanas con coach personal.</span>
+            </legend>
+            <div class="options">
+              {
+                investments.map((a) => (
+                  <label class="option">
+                    <input type="radio" name="investment" value={a} required />
+                    <span>{a}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="step" data-step="5" inert aria-hidden="true">
             <label for="lf-name" class="step__title" tabindex="-1" data-step-title>¿Cómo te llamas?</label>
             <input
               class="field"
@@ -109,7 +132,7 @@ const prefixes: [string, string][] = [
             <button type="button" class="btn btn--block step__next" data-next-name>Siguiente</button>
           </div>
 
-          <div class="step" data-step="5" inert aria-hidden="true">
+          <div class="step" data-step="6" inert aria-hidden="true">
             <label for="lf-phone" class="step__title" tabindex="-1" data-step-title>¿A qué número te contactamos?</label>
             <div class="phone-row">
               <div class="prefix">
@@ -242,6 +265,13 @@ const prefixes: [string, string][] = [
     z-index: 1;
     display: grid;
     gap: 28px;
+  }
+  .form-section__commit {
+    max-width: 34rem;
+    margin: 14px auto 0;
+    color: var(--on-dark);
+    font-size: var(--fs-small);
+    line-height: 1.5;
   }
   .form-section__chips {
     display: flex;
@@ -386,6 +416,13 @@ const prefixes: [string, string][] = [
   }
   .step__title:focus {
     outline: none;
+  }
+  .step__help {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    line-height: 1.4;
   }
   .step__title:focus-visible {
     outline: 3px solid var(--purple);

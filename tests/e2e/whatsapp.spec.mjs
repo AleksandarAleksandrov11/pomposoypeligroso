@@ -96,7 +96,7 @@ test('el botón final dice "Enviar y abrir WhatsApp" y no hay casilla de privaci
   await fillForm(page);
   await expect(page.locator('[data-submit-label]')).toHaveText('Enviar y abrir WhatsApp');
   await expect(page.locator('#lf-privacy')).toHaveCount(0);
-  const notice = page.locator('[data-step="5"] .consent');
+  const notice = page.locator('[data-step="6"] .consent');
   await expect(notice).toContainText('Al enviar aceptas la política de privacidad y que Pomposo y Peligroso te contacte sobre tu solicitud.');
   await expect(notice.locator('a')).toHaveAttribute('target', '_blank');
 });

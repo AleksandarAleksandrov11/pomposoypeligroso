@@ -26,9 +26,9 @@ export const faqs: Faq[] = [
     a: 'Sí. Plan, seguimiento, chat y videollamadas. Lo haces desde donde estés.',
   },
   {
-    // PENDIENTE: confirmar si se quiere mostrar el precio en la web.
+    // Sin precio en la web: se explica en la videollamada (decisión de Aleks).
     q: '¿Cuánto cuesta?',
-    a: 'Depende de tu caso. Te lo explicamos en la videollamada, sin compromiso.',
+    a: 'Es un programa de pago: 12 semanas de inversión en ti, con coach personal. El precio depende de tu caso y te lo explicamos en la videollamada, sin compromiso.',
   },
   {
     q: '¿Qué pasa después de enviar el formulario?',

@@ -4,7 +4,7 @@ Todo lo que falta por confirmar o facilitar. La web funciona igual mientras tant
 
 ## Lo hace Aleks fuera del código
 
-- [ ] **Pegar el Apps Script nuevo** (`apps-script/Code.gs`, pregunta "¿Cuándo quieres empezar?"): Apps Script, borrar todo, pegar y guardar; luego **Implementar → Gestionar implementaciones → lápiz → Versión: Nueva versión → Implementar** (la URL no cambia). No hace falta ejecutar `setup`. Hasta que se haga, los leads se siguen guardando igual, solo que sin esa respuesta.
+- [ ] **Pegar el Apps Script nuevo** (`apps-script/Code.gs`, preguntas "¿Cuándo quieres empezar?" y "¿Estás dispuesta a invertir en tu cambio?"): Apps Script, borrar todo, pegar y guardar; luego **Implementar → Gestionar implementaciones → lápiz → Versión: Nueva versión → Implementar** (la URL no cambia). No hace falta ejecutar `setup`. Hasta que se haga, los leads se siguen guardando igual, solo que sin esas respuestas. Añade las columnas "Cuándo empezar" e "Inversión" al final con el primer lead; no borra ni mueve nada.
 
 - [x] Campaña de cierre: se llama CERRAR y ya ve el hero de cierre (`src/data/ad-variants.ts`).
 

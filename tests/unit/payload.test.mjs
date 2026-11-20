@@ -17,6 +17,7 @@ test('el payload del Apps Script es idéntico a la referencia', () => {
     age_range: input.age_range,
     experience: input.experience,
     start_when: input.start_when,
+    investment: input.investment,
     name: cleanName(input.name),
     phone: normalizePhone(input.prefix, input.phone),
     utm_source: url.searchParams.get('utm_source') ?? '',

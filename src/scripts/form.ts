@@ -1,5 +1,6 @@
 /**
- * Formulario de 5 pasos (una pregunta cada vez): edad, experiencia, cuándo quiere empezar, nombre y teléfono.
+ * Formulario de 6 pasos (una pregunta cada vez): edad, experiencia, cuándo quiere empezar, si está dispuesta a
+ * invertir, nombre y teléfono.
  * Envío a Google Apps Script como text/plain (sin preflight CORS), timeout 12 s y 1 reintento.
  * Si vuelve a fallar por red, la solicitud se guarda en localStorage y se reintenta en la siguiente visita;
  * si el Apps Script la rechaza por un dato no válido (invalid_*), no se reintenta: se marca el campo.
@@ -41,17 +42,17 @@ const STARTED_KEY = 'pyp_form_started';
 const STEPS_KEY = 'pyp_form_steps';
 const LEAD_SENT_KEY = 'pyp_lead_sent';
 const PENDING_KEY = 'pyp_pending_leads';
-const TOTAL = 5;
-const STEP_NAMES = ['', 'edad', 'experiencia', 'empezar', 'nombre', 'telefono'];
+const TOTAL = 6;
+const STEP_NAMES = ['', 'edad', 'experiencia', 'empezar', 'inversion', 'nombre', 'telefono'];
 /** Número de cada paso del formulario. */
-const STEP = { edad: 1, experiencia: 2, empezar: 3, nombre: 4, telefono: 5 } as const;
+const STEP = { edad: 1, experiencia: 2, empezar: 3, inversion: 4, nombre: 5, telefono: 6 } as const;
 /** Tiempo mínimo entre el Lead y cualquier navegación, para que el evento salga. */
 const MIN_LEAD_TO_NAV_MS = 800;
 /** En móvil, WhatsApp se abre solo pasado este tiempo desde el envío. */
 const AUTO_WHATSAPP_MS = 1500;
 
 type Payload = AppsScriptFields;
-type Field = 'age_range' | 'experience' | 'start_when' | 'name' | 'phone';
+type Field = 'age_range' | 'experience' | 'start_when' | 'investment' | 'name' | 'phone';
 
 /** El Apps Script ha rechazado un dato: no tiene sentido reintentarlo. */
 class ServerValidationError extends Error {
@@ -277,6 +278,7 @@ export function initForm() {
                 age_range: (form.elements.namedItem('age_range') as RadioNodeList).value,
                 experience: (form.elements.namedItem('experience') as RadioNodeList).value,
                 start_when: (form.elements.namedItem('start_when') as RadioNodeList).value,
+                investment: (form.elements.namedItem('investment') as RadioNodeList).value,
                 name: nameInput.value,
                 prefix: prefixSelect.value,
                 prefix_other: prefixOther.value,
@@ -411,7 +413,7 @@ export function initForm() {
     save();
   };
 
-  /* Pasos 1, 2 y 3: opciones que avanzan solas al tocar */
+  /* Pasos 1 a 4: opciones que avanzan solas al tocar */
   form.addEventListener('keydown', (e) => {
     lastKey = e.key;
     const t = e.target as HTMLInputElement;
@@ -450,7 +452,7 @@ export function initForm() {
   form.querySelector('[data-step="1"]')?.addEventListener('pointerdown', markStarted, { once: true });
   form.querySelector('[data-step="1"]')?.addEventListener('focusin', markStarted, { once: true });
 
-  /* Paso 4: nombre (mismo criterio que el Apps Script) */
+  /* Paso 5: nombre (mismo criterio que el Apps Script) */
   const nameMessage = (problem: ReturnType<typeof nameProblem>) =>
     problem === 'charset' ? 'Escribe tu nombre sin caracteres especiales.' : 'Escribe tu nombre (mínimo 2 letras).';
 
@@ -478,7 +480,7 @@ export function initForm() {
     save();
   });
 
-  /* Paso 5: prefijo y teléfono */
+  /* Paso 6: prefijo y teléfono */
   const syncPrefix = () => {
     const other = prefixSelect.value === 'otro';
     if (prefixValue) prefixValue.textContent = other ? 'Otro' : prefixSelect.value;
@@ -538,7 +540,8 @@ export function initForm() {
       formError(STEP.telefono, 'phone');
       phoneInput.focus();
     } else {
-      go(field === 'age_range' ? STEP.edad : field === 'experience' ? STEP.experiencia : STEP.empezar);
+      const steps: Record<string, number> = { age_range: STEP.edad, experience: STEP.experiencia, start_when: STEP.empezar, investment: STEP.inversion };
+      go(steps[field] ?? STEP.edad);
     }
   };
 
@@ -626,6 +629,7 @@ export function initForm() {
       age_range: String(fd.get('age_range') ?? ''),
       experience: String(fd.get('experience') ?? ''),
       start_when: String(fd.get('start_when') ?? ''),
+      investment: String(fd.get('investment') ?? ''),
       name,
       phone,
       utm_source: utm.utm_source,
@@ -681,6 +685,7 @@ export function initForm() {
       setRadio('age_range', saved.age_range);
       setRadio('experience', saved.experience);
       setRadio('start_when', saved.start_when);
+      setRadio('investment', saved.investment);
       nameInput.value = saved.name || '';
       if (saved.prefix) prefixSelect.value = saved.prefix;
       prefixOther.value = saved.prefix_other || '';
@@ -693,6 +698,7 @@ export function initForm() {
       if (step > STEP.edad && !saved.age_range) step = STEP.edad;
       else if (step > STEP.experiencia && !saved.experience) step = STEP.experiencia;
       else if (step > STEP.empezar && !saved.start_when) step = STEP.empezar;
+      else if (step > STEP.inversion && !saved.investment) step = STEP.inversion;
       else if (step > STEP.nombre && !validName(saved.name || '')) step = STEP.nombre;
       go(step, { focus: false });
     } else {

@@ -10,6 +10,8 @@ export const AGE_OPTIONS = ['Menos de 30', 'De 30 a 39', 'De 40 a 49', 'De 50 a 
 export const EXPERIENCE_OPTIONS = ['Nunca he entrenado', 'Menos de 1 año', 'Entre 1 y 2 años', 'Entre 2 y 3 años', 'Más de 3 años'] as const;
 /** Pregunta de compromiso (paso 3): sirve para saber qué leads están listos para empezar. */
 export const START_OPTIONS = ['Esta semana', 'En las próximas semanas', 'Solo quiero información'] as const;
+/** Pregunta de inversión (paso 4): deja claro que es un programa de pago y separa a quien no puede invertir ahora. */
+export const INVESTMENT_OPTIONS = ['Sí, si el programa encaja conmigo', 'Sí, pero quiero saber el precio antes', 'Ahora mismo no puedo invertir'] as const;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -163,6 +165,7 @@ export interface AppsScriptFields {
   age_range: string;
   experience: string;
   start_when: string;
+  investment: string;
   name: string;
   phone: string;
   utm_source: string;
@@ -176,7 +179,8 @@ export interface AppsScriptFields {
 
 /**
  * Lo que recibe el Apps Script, con las claves en este orden (contrato fijado en tests/fixtures/apps-script-payload.json).
- * El 11/11/2026 se añadió start_when (paso 3, columna "Cuándo empezar" al final de la hoja). Cualquier otro cambio
+ * El 11/11/2026 se añadió start_when (paso 3, columna "Cuándo empezar") y el 20/11/2026 investment (paso 4, columna
+ * "Inversión"), las dos al final de la hoja. Cualquier otro cambio
  * de campos necesita su cambio en apps-script/Code.gs y en la referencia.
  */
 export function buildAppsScriptPayload(f: AppsScriptFields): AppsScriptFields {
@@ -184,6 +188,7 @@ export function buildAppsScriptPayload(f: AppsScriptFields): AppsScriptFields {
     age_range: f.age_range,
     experience: f.experience,
     start_when: f.start_when,
+    investment: f.investment,
     name: f.name,
     phone: f.phone,
     utm_source: f.utm_source,
@@ -197,10 +202,11 @@ export function buildAppsScriptPayload(f: AppsScriptFields): AppsScriptFields {
 }
 
 /** Errores de validación que devuelve el Apps Script (no se reintentan) y el campo al que corresponden. */
-export const SERVER_FIELD_ERRORS: Record<string, 'age_range' | 'experience' | 'start_when' | 'name' | 'phone'> = {
+export const SERVER_FIELD_ERRORS: Record<string, 'age_range' | 'experience' | 'start_when' | 'investment' | 'name' | 'phone'> = {
   invalid_age_range: 'age_range',
   invalid_experience: 'experience',
   invalid_start_when: 'start_when',
+  invalid_investment: 'investment',
   invalid_name: 'name',
   invalid_phone: 'phone',
 };
